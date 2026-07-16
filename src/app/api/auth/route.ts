@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '@/lib/env';
 import { getSession, apiError, apiResponse } from '@/lib/auth';
 import { z } from 'zod';
+export const runtime = "nodejs";
 
 const COOKIE_NAME = 'auth_token';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days

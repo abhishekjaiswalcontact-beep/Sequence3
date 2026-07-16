@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+export const runtime = "nodejs";
 
 export const maxDuration = 30; // NextJS serverless timeout config
 

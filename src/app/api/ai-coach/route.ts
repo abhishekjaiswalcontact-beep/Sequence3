@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
+export const runtime = "nodejs";
 /* ─────────────────────────────────────────────────────────────────────────────
    SYSTEM PROMPT — shared across all AI providers
 ───────────────────────────────────────────────────────────────────────────── */

@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAdmin, apiError, apiResponse } from '@/lib/auth';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
+export const runtime = "nodejs";
 
 const PatchUserSchema = z.object({
   userId: z.number(),
