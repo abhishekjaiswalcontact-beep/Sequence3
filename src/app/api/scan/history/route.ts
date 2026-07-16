@@ -24,7 +24,8 @@ export async function GET() {
     });
 
     // Parse workoutPlan JSON if needed
-    const formattedScans = scans.map((scan) => {
+    type Scan = Awaited<ReturnType<typeof prisma.scanResult.findMany>>[number];
+    const formattedScans = scans.map((scan: Scan) => {
       let parsedPlan = [];
       if (scan.workoutPlan) {
          try {
