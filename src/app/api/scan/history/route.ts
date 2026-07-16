@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { ScanResult } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
 
@@ -17,14 +18,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const scans = await prisma.scanResult.findMany({
+    const scans: ScanResult[] = await prisma.scanResult.findMany({
       where: { userId: userIdNum },
       orderBy: { createdAt: 'desc' },
       take: 5,
     });
 
     // Parse workoutPlan JSON if needed
-    const formattedScans = scans.map(scan => {
+    const formattedScans = scans.map((scan: ScanResult) => {
       let parsedPlan = [];
       if (scan.workoutPlan) {
          try {
