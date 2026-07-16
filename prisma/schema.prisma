@@ -1,4 +1,3 @@
-import { ScanResult } from "@prisma/client";
 generator client {
   provider = "prisma-client-js"
 }
