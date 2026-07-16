@@ -91,8 +91,16 @@ export async function POST(req: Request) {
     }
 
     return apiError("Invalid action.", 400);
-  } catch (error) {
-    console.error(error);
-    return apiError("Internal server error.", 500);
-  }
+  }  catch (error) {
+  console.error("[AUTH_API_ERROR FULL]", error);
+
+  return Response.json(
+    {
+      message: "Internal Server Error",
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : null,
+    },
+    { status: 500 }
+  );
+}
 }
