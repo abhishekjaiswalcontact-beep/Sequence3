@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String   @default("")
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        Int          @id @default(autoincrement())
+  email     String       @unique(map: "email")
+  password  String
+  name      String
+  isActive  Boolean      @default(true)
+  isAdmin   Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  scans     ScanResult[]
+
+  @@map("users")
+}
+
+model ScanResult {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  bodyFat      Float?
+  muscleMass   Float?
+  postureScore Float?
+  workoutPlan  String?  @db.Text
+  dietPlan     String?  @db.Text
+  feedback     String?  @db.Text
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "scan_results_userId_fkey")
+  @@map("scan_results")
+}

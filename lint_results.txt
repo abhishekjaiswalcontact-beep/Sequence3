@@ -1,0 +1,96 @@
+
+> temp-app@0.1.0 lint
+> next lint
+
+
+./src/app/api/auth/route.ts
+29:11  Error: 'user' is never reassigned. Use 'const' instead.  prefer-const
+48:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/chat/route.ts
+47:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/scan/analyze/route.ts
+10:19  Error: 'image' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+171:13  Error: 'text' is never reassigned. Use 'const' instead.  prefer-const
+
+./src/app/api/scan/history/route.ts
+28:19  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/careers/page.tsx
+50:15  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+100:16  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+103:28  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+103:79  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/dashboard/page.tsx
+6:49  Error: 'UserIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+15:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:64  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+83:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/login/page.tsx
+107:15  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/page.tsx
+23:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/program/[slug]/page.tsx
+4:20  Error: 'useRef' is defined but never used.  @typescript-eslint/no-unused-vars
+27:38  Error: 'Program' is defined but never used.  @typescript-eslint/no-unused-vars
+93:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+337:72  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+406:75  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+406:93  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+517:75  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+517:96  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/scan/page.tsx
+7:10  Error: 'Camera' is defined but never used.  @typescript-eslint/no-unused-vars
+7:18  Error: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+14:10  Error: 'progress' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+25:9  Error: 'startScan' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+30:80  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/scan/results/page.tsx
+7:3  Error: 'CheckCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+325:77  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+325:100  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/CareersSection.tsx
+5:10  Error: 'Briefcase' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/Chatbot.tsx
+5:10  Error: 'MessageCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+5:34  Error: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+146:16  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+176:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+322:37  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/ContactUs.tsx
+68:11  Error: 'name' is never reassigned. Use 'const' instead.  prefer-const
+332:71  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+332:113  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+332:123  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/Footer.tsx
+130:84  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+133:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+184:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/Navbar.tsx
+34:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/Programs.tsx
+3:8  Error: 'Link' is defined but never used.  @typescript-eslint/no-unused-vars
+75:28  Error: 'isHydrated' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/Scanner/WebcamPoseEstimator.tsx
+33:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+334:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/lib/prisma.ts
+18:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
