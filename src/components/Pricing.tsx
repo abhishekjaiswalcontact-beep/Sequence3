@@ -8,7 +8,7 @@ const plans = [
   {
     id: 'monthly',
     title: 'Monthly',
-    price: '3999',
+    price: '4999',
     period: 'month',
     subtitle: 'Flexible commitment',
     savings: '',
@@ -18,7 +18,7 @@ const plans = [
   {
     id: 'quarterly',
     title: '3 Months',
-    price: '7999',
+    price: '9999',
     period: '3 months',
     subtitle: 'Strong foundation',
     savings: 'Save ₹3998',
@@ -28,7 +28,7 @@ const plans = [
   {
     id: 'half_yearly',
     title: '6 Months',
-    price: '14999',
+    price: '15999',
     period: '6 months',
     subtitle: 'Serious transformation',
     savings: 'Save ₹8995',
