@@ -83,7 +83,7 @@ export default function Chatbot() {
             const lowerText = text.toLowerCase();
 
             if (lowerText.includes("gym membership")) {
-                botResponse = "All our plans include identical premium features (Full access, unlimited classes, personal training, spa & more). We offer duration-based pricing:\n\n• **Monthly**: ₹2499/month\n• **3 Months**: ₹5999 (Save ₹1498)\n• **6 Months**: ₹9999 (Most Popular - Save ₹4995)\n• **Yearly**: ₹17999 (Best Value - Save ₹11989)\n\nWhich duration works best for you?";
+                botResponse = "All our plans include identical premium features (Full access, unlimited classes, personal training, spa & more). We offer duration-based pricing:\n\n• **Monthly**: ₹4999/month\n• **3 Months**: ₹9999 (Save ₹1498)\n• **6 Months**: ₹15999 (Most Popular - Save ₹4995)\n• **Yearly**: ₹21999 (Best Value - Save ₹11989)\n\nWhich duration works best for you?";
             } else if (lowerText.includes("gym program")) {
                 botResponse = `Explore our elite training programs here:\n[🏋️ View Gym Programs](/#programs)`;
             } else if (lowerText.includes("free trial")) {
@@ -309,7 +309,7 @@ export default function Chatbot() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-neon-strong transition-all duration-300 overflow-hidden",
+        "w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-neon-strong transition-all duration-300 overflow-hidden", 
           isOpen ? "bg-white text-black rotate-90" : "bg-brand text-white"
         )}
       >
