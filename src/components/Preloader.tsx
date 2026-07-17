@@ -20,7 +20,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoadingComplete }) => {
     // Animate the motion value to the actual progress
     const controls = animate(progressValue, progress, {
       type: "spring",
-      stiffness: 50,
+      stiffness: 30,
       damping: 20,
       onUpdate: (latest) => {
         if (progressRef.current) {
@@ -34,7 +34,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoadingComplete }) => {
   useEffect(() => {
     // Ensure the animation completes fully within 10 seconds
     const duration = 10000; // 10 seconds
-    const intervalTime = 30; // 30ms per tick
+    const intervalTime = 1; // 30ms per tick
     const steps = duration / intervalTime;
     let currentStep = 0;
 
@@ -75,18 +75,18 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoadingComplete }) => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{
-            opacity: 0,
-            scale: 2.05,
+            opacity: 0.1,
+            scale: 1.05,
             filter: "blur(10px)",
-            transition: { duration: 1.8, ease: [0.43, 0.13, 0.23, 0.96] }
+            transition: { duration: 1.0, ease: [0.13, 0.13, 0.13, 0.96] }
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] overflow-hidden"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-[#050505] via-[#0d0d0d] to-[#111111]"
         >
           {/* Animated Background Effects */}
           <motion.div
             animate={{
-              rotate: 180,
-              scale: [1, 1.2, 1],
+              rotate: 360,
+              scale: [0, 1.2, 0],
               opacity: [0.3, 0.5, 0.3]
             }}
             transition={{
@@ -96,6 +96,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoadingComplete }) => {
             }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/10 blur-[120px] rounded-full -z-10"
           />
+          <motion.div
+            className="will-change-transform"
+             style={{ willChange: "transform" }}
+            > 
+           </motion.div>
           <motion.div
             animate={{
               rotate: -360,
@@ -141,10 +146,10 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoadingComplete }) => {
 
               {/* Logo */}
               <motion.div
-                animate={{ scale: [0.95, 1.05, 0.95] }}
+                animate={{ scale: [1,1.03,1],opacity:[0.9,1,0.9] }}
                 transition={{
-                  duration: 4,
-                  ease: "easeInOut",
+                  duration: 18,
+                  ease: "linear",
                   repeat: Infinity,
                 }}
                 className="relative w-28 h-28 md:w-36 md:h-36 z-10"

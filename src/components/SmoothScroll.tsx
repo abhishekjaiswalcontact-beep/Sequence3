@@ -1,23 +1,25 @@
 'use client';
 
 import { ReactLenis } from 'lenis/react';
-import { ReactNode } from 'react';
-import ScrollSound from './ScrollSound';
 
-export default function SmoothScroll({ children }: { children: ReactNode }) {
+export default function SmoothScroll({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ReactLenis
       root
       options={{
-        lerp: 0.1,
-        duration: 1.5,
+        lerp: 0.08,
+        duration: 1.2,
         smoothWheel: true,
+        syncTouch: false,
+        touchMultiplier: 1,
         wheelMultiplier: 1,
-        touchMultiplier: 2,
         infinite: false,
       }}
     >
-      <ScrollSound />
       {children}
     </ReactLenis>
   );

@@ -2,22 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Lenis */
 html {
-  scroll-behavior: initial;
+  scroll-behavior: auto !important;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: #050505;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #252525;
   border-radius: 5px;
   border: 2px solid #050505;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #8b5cf6;
 }
@@ -32,11 +57,19 @@ html {
   .text-balance {
     text-wrap: balance;
   }
+
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@layer utilities {
+  .will-change-transform {
+    will-change: transform;
   }
 }
