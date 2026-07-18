@@ -22,7 +22,7 @@ const CATEGORIES = [
 ];
 
 const CONTACT_LINK = "/#contact";
-const OWNER_EMAIL = "info@pinakafitness.com";
+const OWNER_EMAIL = "pinakafitnessnoida127@gmail.com";
 
 interface Message {
   id: string;

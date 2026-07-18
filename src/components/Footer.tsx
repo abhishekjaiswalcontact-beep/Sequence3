@@ -130,7 +130,8 @@ export default function Footer() {
                     </div>
                     <div>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            +91 98765 43210
+                            +91 78358 70089 <br/>
+                            +91 78358 70082
                         </p>
                     </div>
                 </div>
@@ -140,7 +141,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <p className="text-gray-400 text-sm leading-relaxed hover:text-white transition-colors cursor-pointer">
-                            contact@pinakafitness.com
+                            pinakafitnessnoida127@gmail.com
                         </p>
                     </div>
                 </div>
