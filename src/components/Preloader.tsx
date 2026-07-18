@@ -131,8 +131,7 @@ export default function Preloader({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: .8 }}
-              className="mt-8 text-4xl md:text-5xl font-black uppercase tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-b from-white via-violet-200 to-violet-500"
-            >
+              className="mt-8text-2xlsm:text-3xlmd:text-5xlfont-blackuppercasetracking-[0.08em]md:tracking-[0.22em]text-centerpx-5leading-tighttext-transparentbg-clip-textbg-gradient-to-bfrom-whitevia-violet-200to-violet-500">
               PINAKA FITNESS
             </motion.h1>
 
@@ -147,7 +146,7 @@ export default function Preloader({
             >
               {loadingTexts[textIndex]}
             </motion.p>
-                        {/* Progress Bar */}
+            {/* Progress Bar */}
 
             <div className="mt-10 w-[320px] max-w-[85vw]">
 
