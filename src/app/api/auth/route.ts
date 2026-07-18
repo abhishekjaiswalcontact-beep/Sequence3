@@ -27,8 +27,8 @@ const CreateUserSchema = z.object({
   isAdmin: z.boolean().optional(),
 });
 
-const ADMIN_EMAIL = "admin@gmail.com";
-const ADMIN_PASSWORD = "12345678";
+const ADMIN_EMAIL = "pinakaadmin@gmail.com";
+const ADMIN_PASSWORD = "pinakaadmin127";
 
 export async function POST(req: Request) {
   try {
