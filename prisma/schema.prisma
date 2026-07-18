@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model ContactMessage {
@@ -17,7 +17,7 @@ model ContactMessage {
 
 model User {
   id        Int          @id @default(autoincrement())
-  email     String       @unique(map: "email")
+  email     String       @unique
   password  String
   name      String
   isActive  Boolean      @default(true)
@@ -34,12 +34,13 @@ model ScanResult {
   bodyFat      Float?
   muscleMass   Float?
   postureScore Float?
-  workoutPlan  String?  @db.Text
-  dietPlan     String?  @db.Text
-  feedback     String?  @db.Text
+  workoutPlan  String?
+  dietPlan     String?
+  feedback     String?
   createdAt    DateTime @default(now())
-  user         User     @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "scan_results_userId_fkey")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@map("scan_results")
 }
