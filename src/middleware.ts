@@ -2,14 +2,26 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
+
 const COOKIE_NAME = 'auth_token';
 
 // Strategy: Lock by default, allow specific public routes
-const PUBLIC_ROUTES = ['/', '/login', '/api/contact', '/careers']; // Landing page, Login & Careers
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/careers',
+  '/api/contact',
+  '/api/auth',
+  '/api/auth/me',
+]; // Landing page, Login & Careers
+
 const AUTH_ROUTES = ['/login'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
   const token = request.cookies.get(COOKIE_NAME)?.value;
 
   // 1. Permanent redirect for /signup
@@ -26,8 +38,13 @@ export async function middleware(request: NextRequest) {
       payload = p as { sub: string; isAdmin?: boolean };
     } catch {
       // Invalid/expired token -> clear it
-      const response = NextResponse.redirect(new URL('/login', request.url));
+      payload = null;
+      const response = NextResponse.next();
       response.cookies.delete(COOKIE_NAME);
+      // API routes ko redirect mat karo
+      if (pathname.startsWith("/api")) {
+        return response;
+      }
       return response;
     }
   }
@@ -73,13 +90,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api/contact (public contact API)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api/contact|_next/static|_next/image|favicon.ico).*)',
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
