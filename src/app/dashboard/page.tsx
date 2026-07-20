@@ -89,7 +89,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/scan')}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40">
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40 pointer-events-none">
                 <Image 
                    src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=70&w=800" 
                    alt="" 
@@ -122,7 +122,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/diet')}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40">
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40 pointer-events-none">
                 <Image 
                    src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=70&w=800" 
                    alt="" 
@@ -155,7 +155,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/dashboard/membership')}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-30">
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-30 pointer-events-none">
                 <Image 
                    src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=70&w=800" 
                    alt="" 
