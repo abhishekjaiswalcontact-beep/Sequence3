@@ -64,6 +64,7 @@ export default function AdminMembershipsPage() {
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Search and Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -398,8 +399,9 @@ export default function AdminMembershipsPage() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    router.push("/");
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try { await logout(); } finally { window.location.replace("/login"); }
   };
 
   const formatDate = (dateStr: string) => {
@@ -520,9 +522,10 @@ export default function AdminMembershipsPage() {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            disabled={isLoggingOut}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-wait"
           >
-            <LogOut className="w-4 h-4" /> Logout
+            <LogOut className="w-4 h-4" /> {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </header>

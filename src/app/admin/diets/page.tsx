@@ -69,6 +69,7 @@ function AdminDietsPageContent() {
   // States
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   // Selected User's Details
@@ -366,13 +367,15 @@ function AdminDietsPageContent() {
             </div>
           </div>
           <button
-            onClick={() => {
-              logout();
-              router.push("/");
+            onClick={async () => {
+              if (isLoggingOut) return;
+              setIsLoggingOut(true);
+              try { await logout(); } finally { window.location.replace("/login"); }
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            disabled={isLoggingOut}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-wait"
           >
-            <LogOut className="w-4 h-4" /> Logout
+            <LogOut className="w-4 h-4" /> {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </header>

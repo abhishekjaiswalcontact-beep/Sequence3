@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScannerModalOpen, setIsScannerModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { isAuthenticated: isLoggedIn, logout } = useAuth();
 
   // Prevent background scrolling when mobile menu is open
@@ -32,10 +33,16 @@ export default function Navbar() {
     { title: "Contact Us", hasDropdown: false }
   ];
 
-  const handleLogout = useCallback(() => {
-    logout();
-    window.location.href = "/";
-  }, [logout]);
+  const handleLogout = useCallback(async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      // Hard navigation clears all JS state and ensures browser sends no stale cookies
+      window.location.replace("/login");
+    }
+  }, [logout, isLoggingOut]);
 
   return (
     <>
@@ -141,9 +148,10 @@ export default function Navbar() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-sm font-heading font-semibold uppercase tracking-[0.15em] text-white/40 hover:text-red-500 transition-all duration-300 hover:-translate-y-0.5"
+                disabled={isLoggingOut}
+                className="text-sm font-heading font-semibold uppercase tracking-[0.15em] text-white/40 hover:text-red-500 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-wait"
               >
-                Exit
+                {isLoggingOut ? "Exiting..." : "Exit"}
               </button>
             </div>
           ) : (
@@ -234,9 +242,10 @@ export default function Navbar() {
                         </Link>
                         <button
                             onClick={handleLogout}
-                            className="text-xl font-heading font-bold text-red-500/90 uppercase tracking-[0.15em] text-left hover:text-red-400 transition-all duration-300 hover:translate-x-2"
+                            disabled={isLoggingOut}
+                            className="text-xl font-heading font-bold text-red-500/90 uppercase tracking-[0.15em] text-left hover:text-red-400 transition-all duration-300 hover:translate-x-2 disabled:opacity-50 disabled:cursor-wait"
                         >
-                            Sign Out
+                            {isLoggingOut ? "Signing Out..." : "Sign Out"}
                         </button>
                     </div>
                 ) : (

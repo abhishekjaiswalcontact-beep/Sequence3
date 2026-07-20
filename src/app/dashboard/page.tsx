@@ -15,6 +15,7 @@ export default function DashboardPage() {
 
   const [scans, setScans] = useState<Array<{ id: string; feedback?: string; postureScore?: number; createdAt: string | Date; [key: string]: unknown }>>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Redirect if not logged in — middleware handles this too, but belt-and-suspenders
   useEffect(() => {
@@ -39,8 +40,13 @@ export default function DashboardPage() {
   }, [router]);
 
   const handleLogout = async () => {
-    await logout(); // calls /api/auth (logout action) to clear httpOnly cookie
-    router.push('/');
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      window.location.replace('/login');
+    }
   };
 
   return (
@@ -64,8 +70,8 @@ export default function DashboardPage() {
                  </button>
                </Link>
              )}
-             <button onClick={handleLogout} className="px-5 py-2 border border-surfaceBorder rounded-full text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2">
-                 <LogOut className="w-4 h-4"/> Logout
+             <button onClick={handleLogout} disabled={isLoggingOut} className="px-5 py-2 border border-surfaceBorder rounded-full text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-wait">
+                  <LogOut className="w-4 h-4"/> {isLoggingOut ? "Logging out..." : "Logout"}
              </button>
              <Link href="/">
                  <button className="px-5 py-2 border border-surfaceBorder rounded-full text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2">

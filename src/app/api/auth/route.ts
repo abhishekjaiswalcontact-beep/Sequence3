@@ -365,14 +365,60 @@ if (action === "login") {
     // ==========================
 
     if (action === "logout") {
-      const response = apiResponse({
-        message: "Logged out.",
-      });
+      let cookieStore;
+      try {
+        cookieStore = await import("next/headers").then((m) => m.cookies());
+      } catch {
+        // Ignore if headers cannot be resolved
+      }
 
-      response.cookies.set(COOKIE_NAME, "", {
-        maxAge: 0,
-        path: "/",
-      });
+      // Invalidate the session in the database so the JWT can't be replayed
+      try {
+        if (cookieStore) {
+          const token = cookieStore.get(COOKIE_NAME)?.value;
+          if (token) {
+            const { jwtVerify } = await import("jose");
+            const secret = new TextEncoder().encode(env.JWT_SECRET);
+            const { payload } = await jwtVerify(token, secret).catch(() => ({ payload: null }));
+            if (payload && payload.sub) {
+              const userId = parseInt(String(payload.sub), 10);
+              if (!isNaN(userId)) {
+                await prisma.user.update({
+                  where: { id: userId },
+                  data: { currentSessionId: null },
+                }).catch(() => {}); // non-fatal — cookie deletion below still logs out
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("[Auth API] Session invalidation error during logout:", err);
+      }
+
+      // Delete cookie from Next.js headers store (avoids Next.js overriding NextResponse cookies)
+      try {
+        if (cookieStore) {
+          cookieStore.delete(COOKIE_NAME);
+        }
+      } catch (err) {
+        console.warn("[Auth API] Failed to delete cookie from next/headers:", err);
+      }
+
+      const response = apiResponse({ message: "Logged out." });
+
+      // Fallback: Delete cookie on the NextResponse object
+      try {
+        response.cookies.set(COOKIE_NAME, "", {
+          httpOnly: true,
+          secure: env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 0,
+          path: "/",
+          expires: new Date(0),
+        });
+      } catch (err) {
+        console.warn("[Auth API] Failed to set deleted cookie on response object:", err);
+      }
 
       return response;
     }
