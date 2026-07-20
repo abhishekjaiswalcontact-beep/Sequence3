@@ -14,6 +14,16 @@ html.lenis body {
 
 body {
   overflow-x: hidden;
+  /* Eliminate 300ms tap delay on Android Chrome */
+  touch-action: pan-y;
+  /* Faster font rendering on mobile */
+  text-rendering: optimizeSpeed;
+}
+
+/* iOS momentum scroll */
+.overflow-y-auto,
+.overflow-y-scroll {
+  -webkit-overflow-scrolling: touch;
 }
 
 .lenis.lenis-smooth {
@@ -71,5 +81,26 @@ body {
 @layer utilities {
   .will-change-transform {
     will-change: transform;
+  }
+
+  /* content-visibility: auto — tells the browser to skip rendering off-screen sections */
+  .section-optimized {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 600px; /* estimated height to prevent CLS */
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Respect prefers-reduced-motion — accessibility
+   + performance on devices with this preference
+───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

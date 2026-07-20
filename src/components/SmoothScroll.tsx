@@ -11,13 +11,14 @@ export default function SmoothScroll({
     <ReactLenis
       root
       options={{
-        lerp: 0.08,
+        lerp: 0.1,             // Slightly reduced — smoother on low-end devices
         duration: 1.2,
         smoothWheel: true,
-        syncTouch: false,
-        touchMultiplier: 1,
-        wheelMultiplier: 1,
+        syncTouch: true,       // Enable smooth scroll on touch / mobile
+        touchMultiplier: 1.5,  // Natural touch feel
+        wheelMultiplier: 0.8,  // Less aggressive on desktop trackpads
         infinite: false,
+        autoRaf: true,         // Lenis manages its own RAF loop — avoids double RAF
       }}
     >
       {children}

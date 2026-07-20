@@ -28,11 +28,23 @@ export async function GET() {
         isAdmin: true,
         isActive: true,
         createdAt: true,
+        memberships: {
+          select: {
+            id: true,
+            membershipId: true,
+            plan: true,
+            status: true,
+            endDate: true,
+          },
+          orderBy: { startDate: 'desc' },
+          take: 1,
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
     return apiResponse(users);
-  } catch {
+  } catch (error) {
+    console.error("[ADMIN_USERS_GET]", error);
     return apiError("Unauthorized", 403);
   }
 }

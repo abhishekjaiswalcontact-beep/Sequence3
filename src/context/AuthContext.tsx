@@ -8,6 +8,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
+import SessionExpiredModal from "@/components/SessionExpiredModal";
 
 interface AuthUser {
   id: string;
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isSessionExpired, setIsSessionExpired] = useState(false);
 
   // On mount, call /api/auth/me to restore session from httpOnly cookie
   useEffect(() => {
@@ -77,9 +79,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  // Monitor session validity in the background
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.status === 200) {
+          const data = await res.json();
+          if (!data.authenticated) {
+            setIsSessionExpired(true);
+            await logout();
+          }
+        }
+      } catch {
+        // Ignore network errors to prevent false logouts during connectivity drop
+      }
+    }, 10000); // Check session validity every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated, logout]);
+
   return (
     <AuthContext.Provider value={{ isAuthenticated, isHydrated, user, login, logout }}>
       {children}
+      <SessionExpiredModal
+        isOpen={isSessionExpired}
+        onRedirect={() => setIsSessionExpired(false)}
+      />
     </AuthContext.Provider>
   );
 }

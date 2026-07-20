@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { env } from './env';
 import { NextResponse } from 'next/server';
+import { prisma } from './prisma';
 import "server-only";
 
 const COOKIE_NAME = 'auth_token';
@@ -11,6 +12,7 @@ export interface AuthPayload {
   email: string;
   name: string | null;
   isAdmin: boolean;
+  sessionId: string;
 }
 
 /**
@@ -26,7 +28,23 @@ export async function getSession(): Promise<AuthPayload | null> {
   try {
     const secret = new TextEncoder().encode(env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-    return payload as unknown as AuthPayload;
+    const authPayload = payload as unknown as AuthPayload;
+
+    if (!authPayload.sub || !authPayload.sessionId) {
+      return null;
+    }
+
+    // Verify sessionId against the database
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(authPayload.sub) },
+      select: { currentSessionId: true, isActive: true },
+    });
+
+    if (!user || !user.isActive || user.currentSessionId !== authPayload.sessionId) {
+      return null;
+    }
+
+    return authPayload;
   } catch {
     return null;
   }

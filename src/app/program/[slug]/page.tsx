@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -49,6 +50,8 @@ function DifficultyBadge({ level }: { level: 'Beginner' | 'Intermediate' | 'Adva
   );
 }
 
+const MotionImage = motion(Image);
+
 // ─── Image Carousel ──────────────────────────────────────────────────────────
 function ImageCarousel({ images, accent }: { images: { proper: string; wrong?: string }[]; accent: string }) {
   const [active, setActive] = useState(0);
@@ -57,11 +60,13 @@ function ImageCarousel({ images, accent }: { images: { proper: string; wrong?: s
     <div className="space-y-3">
       <div className="relative rounded-2xl overflow-hidden aspect-video bg-white/5 border border-white/10">
         <AnimatePresence mode="wait">
-          <motion.img
+          <MotionImage
             key={active}
             src={images[active].proper}
             alt="Exercise form"
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 768px) 100vw, 800px"
+            className="object-cover"
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
@@ -74,7 +79,7 @@ function ImageCarousel({ images, accent }: { images: { proper: string; wrong?: s
             background: `linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)`,
           }}
         />
-        <div className="absolute bottom-3 left-3 text-xs font-bold text-white/80 uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1 rounded-full">
+        <div className="absolute bottom-3 left-3 text-xs font-bold text-white/80 uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1 rounded-full z-10">
           Proper Form
         </div>
       </div>
@@ -90,7 +95,13 @@ function ImageCarousel({ images, accent }: { images: { proper: string; wrong?: s
                 opacity: active === i ? 1 : 0.5,
               }}
             >
-              <img src={img.proper} alt="" className="w-full h-full object-cover" />
+              <Image
+                src={img.proper}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 30vw, 200px"
+                className="object-cover"
+              />
             </button>
           ))}
         </div>

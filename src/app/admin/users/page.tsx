@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, UserPlus, Users, Eye, EyeOff, Trash2, Edit2,
   ToggleLeft, ToggleRight, LogOut, ArrowLeft, AlertCircle,
-  CheckCircle, Crown, X, Key, Mail, User as UserIcon
+  CheckCircle, Crown, X, Key, Mail, User as UserIcon, Apple
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -17,6 +17,13 @@ interface ManagedUser {
   isAdmin: boolean;
   isActive: boolean;
   createdAt: string;
+  memberships?: Array<{
+    id: number;
+    membershipId: string;
+    plan: string;
+    status: string;
+    endDate: string;
+  }>;
 }
 
 interface Toast {
@@ -35,10 +42,72 @@ export default function AdminUsersPage() {
 
   // Create user form state
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", isAdmin: false });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    isAdmin: false,
+    // Membership fields
+    assignMembership: false,
+    membershipPlan: "Monthly",
+    membershipStartDate: new Date().toISOString().split("T")[0],
+    membershipCustomEndDate: "",
+    membershipTotalAmount: 1500,
+    membershipDiscount: 0,
+    membershipAmountPaid: 1500,
+    membershipPaymentMode: "Cash",
+    membershipStatus: "Active",
+    membershipPTIncluded: false,
+    membershipPTTrainerName: "",
+    membershipPTStartDate: "",
+    membershipPTEndDate: "",
+    membershipNotes: "",
+    membershipRemarks: ""
+  });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [showFormPassword, setShowFormPassword] = useState(false);
+
+  // Auto-calculate creation membership details
+  useEffect(() => {
+    if (!formData.membershipStartDate) return;
+    const start = new Date(formData.membershipStartDate);
+    const end = new Date(start);
+
+    if (formData.membershipPlan === "Monthly") {
+      end.setMonth(start.getMonth() + 1);
+      setFormData(prev => ({
+        ...prev,
+        membershipCustomEndDate: end.toISOString().split("T")[0],
+        membershipTotalAmount: 1500,
+        membershipAmountPaid: 1500 - prev.membershipDiscount
+      }));
+    } else if (formData.membershipPlan === "Quarterly (3 Months)") {
+      end.setMonth(start.getMonth() + 3);
+      setFormData(prev => ({
+        ...prev,
+        membershipCustomEndDate: end.toISOString().split("T")[0],
+        membershipTotalAmount: 4000,
+        membershipAmountPaid: 4000 - prev.membershipDiscount
+      }));
+    } else if (formData.membershipPlan === "Half Yearly (6 Months)") {
+      end.setMonth(start.getMonth() + 6);
+      setFormData(prev => ({
+        ...prev,
+        membershipCustomEndDate: end.toISOString().split("T")[0],
+        membershipTotalAmount: 7500,
+        membershipAmountPaid: 7500 - prev.membershipDiscount
+      }));
+    } else if (formData.membershipPlan === "Yearly") {
+      end.setFullYear(start.getFullYear() + 1);
+      setFormData(prev => ({
+        ...prev,
+        membershipCustomEndDate: end.toISOString().split("T")[0],
+        membershipTotalAmount: 12000,
+        membershipAmountPaid: 12000 - prev.membershipDiscount
+      }));
+    }
+  }, [formData.membershipPlan, formData.membershipStartDate, formData.membershipDiscount]);
 
   // Edit user state
   const [editTarget, setEditTarget] = useState<ManagedUser | null>(null);
@@ -134,23 +203,65 @@ export default function AdminUsersPage() {
     setFormLoading(true);
     setFormError("");
 
+    const payload: Record<string, string | number | boolean | null | undefined> = {
+      action: "create-user",
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      isAdmin: formData.isAdmin,
+      assignMembership: formData.assignMembership
+    };
+
+    if (formData.assignMembership) {
+      payload.membershipPlan = formData.membershipPlan;
+      payload.membershipStartDate = formData.membershipStartDate;
+      payload.membershipCustomEndDate = formData.membershipPlan === "Custom" && formData.membershipCustomEndDate ? formData.membershipCustomEndDate : null;
+      payload.membershipTotalAmount = Number(formData.membershipTotalAmount);
+      payload.membershipDiscount = Number(formData.membershipDiscount);
+      payload.membershipAmountPaid = Number(formData.membershipAmountPaid);
+      payload.membershipPaymentMode = formData.membershipPaymentMode;
+      payload.membershipStatus = formData.membershipStatus;
+      payload.membershipPTIncluded = formData.membershipPTIncluded;
+      if (formData.membershipPTIncluded) {
+        payload.membershipPTTrainerName = formData.membershipPTTrainerName;
+        payload.membershipPTStartDate = formData.membershipPTStartDate ? new Date(formData.membershipPTStartDate).toISOString() : null;
+        payload.membershipPTEndDate = formData.membershipPTEndDate ? new Date(formData.membershipPTEndDate).toISOString() : null;
+      }
+      payload.membershipNotes = formData.membershipNotes || null;
+      payload.membershipRemarks = formData.membershipRemarks || null;
+    }
+
     const res = await fetch("/api/auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        action: "create-user", 
-        name: formData.name, 
-        email: formData.email, 
-        password: formData.password, 
-        isAdmin: formData.isAdmin 
-      }),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
 
     if (res.ok) {
       addToast("success", `User "${data.user.name}" created successfully!`);
-      setFormData({ name: "", email: "", password: "", isAdmin: false });
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        isAdmin: false,
+        assignMembership: false,
+        membershipPlan: "Monthly",
+        membershipStartDate: new Date().toISOString().split("T")[0],
+        membershipCustomEndDate: "",
+        membershipTotalAmount: 1500,
+        membershipDiscount: 0,
+        membershipAmountPaid: 1500,
+        membershipPaymentMode: "Cash",
+        membershipStatus: "Active",
+        membershipPTIncluded: false,
+        membershipPTTrainerName: "",
+        membershipPTStartDate: "",
+        membershipPTEndDate: "",
+        membershipNotes: "",
+        membershipRemarks: ""
+      });
       setShowForm(false);
       fetchUsers();
     } else {
@@ -299,15 +410,29 @@ export default function AdminUsersPage() {
         {/* Controls */}
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-heading font-bold uppercase">All Users</h2>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-brand rounded-xl text-sm font-bold uppercase tracking-wide shadow-neon hover:bg-brand-light transition-colors"
-          >
-            <UserPlus className="w-4 h-4" />
-            Create User
-          </motion.button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push("/admin/diets")}
+              className="px-5 py-2.5 border border-brand/40 text-brand rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-brand/10 transition-colors"
+            >
+              Manage Diets
+            </button>
+            <button
+              onClick={() => router.push("/admin/memberships")}
+              className="px-5 py-2.5 border border-white/10 rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors"
+            >
+              Memberships Directory
+            </button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowForm((v) => !v)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-brand rounded-xl text-sm font-bold uppercase tracking-wide shadow-neon hover:bg-brand-light transition-colors"
+            >
+              <UserPlus className="w-4 h-4" />
+              Create User
+            </motion.button>
+          </div>
         </div>
 
         {/* Create user form */}
@@ -381,6 +506,190 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
+                {/* Membership assignment fields */}
+                <div className="border-t border-white/5 pt-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold uppercase tracking-wider text-brand-light flex items-center gap-1.5">
+                      <Crown className="w-4 h-4" /> Assign Subscription Plan
+                    </span>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <div
+                        onClick={() => setFormData(d => ({ ...d, assignMembership: !d.assignMembership }))}
+                        className={`w-10 h-5.5 rounded-full transition-colors relative ${formData.assignMembership ? "bg-brand" : "bg-white/20"}`}
+                      >
+                        <span className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full transition-transform ${formData.assignMembership ? "translate-x-5" : "translate-x-0.5"}`} />
+                      </div>
+                      <span className="text-xs text-gray-300">Assign plan on registration</span>
+                    </label>
+                  </div>
+
+                  {formData.assignMembership && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="space-y-4 pt-2"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Plan *</label>
+                          <select
+                            value={formData.membershipPlan}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipPlan: e.target.value }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand"
+                          >
+                            <option value="Monthly">Monthly</option>
+                            <option value="Quarterly (3 Months)">Quarterly (3 Months)</option>
+                            <option value="Half Yearly (6 Months)">Half Yearly (6 Months)</option>
+                            <option value="Yearly">Yearly</option>
+                            <option value="Custom">Custom</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Start Date *</label>
+                          <input
+                            type="date"
+                            value={formData.membershipStartDate}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipStartDate: e.target.value }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">
+                            {formData.membershipPlan === "Custom" ? "End Date * (Manual)" : "End Date (Calculated)"}
+                          </label>
+                          <input
+                            type="date"
+                            disabled={formData.membershipPlan !== "Custom"}
+                            value={formData.membershipCustomEndDate}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipCustomEndDate: e.target.value }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Payment Mode</label>
+                          <select
+                            value={formData.membershipPaymentMode}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipPaymentMode: e.target.value }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand"
+                          >
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/2 border border-white/5 p-4 rounded-xl">
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Total Price (₹)</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={formData.membershipTotalAmount}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipTotalAmount: Number(e.target.value) }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Discount (₹)</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={formData.membershipDiscount}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipDiscount: Number(e.target.value) }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Paid Amount (₹)</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={formData.membershipAmountPaid}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipAmountPaid: Number(e.target.value) }))}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-brand"
+                          />
+                        </div>
+                      </div>
+
+                      {/* PT Inclusion */}
+                      <div className="bg-white/2 border border-white/5 p-4 rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-gray-300">Include Personal Trainer?</span>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <div
+                              onClick={() => setFormData(d => ({ ...d, membershipPTIncluded: !d.membershipPTIncluded }))}
+                              className={`w-9 h-5 rounded-full transition-colors relative ${formData.membershipPTIncluded ? "bg-brand" : "bg-white/20"}`}
+                            >
+                              <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${formData.membershipPTIncluded ? "translate-x-4.5" : "translate-x-0.5"}`} />
+                            </div>
+                          </label>
+                        </div>
+                        {formData.membershipPTIncluded && (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-white/5">
+                            <div className="space-y-1">
+                              <label className="text-xs text-gray-400">Trainer Name</label>
+                              <input
+                                type="text"
+                                required
+                                value={formData.membershipPTTrainerName}
+                                onChange={(e) => setFormData(d => ({ ...d, membershipPTTrainerName: e.target.value }))}
+                                placeholder="Trainer name"
+                                className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs text-gray-400">PT Start Date</label>
+                              <input
+                                type="date"
+                                required
+                                value={formData.membershipPTStartDate}
+                                onChange={(e) => setFormData(d => ({ ...d, membershipPTStartDate: e.target.value }))}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs text-gray-400">PT End Date</label>
+                              <input
+                                type="date"
+                                required
+                                value={formData.membershipPTEndDate}
+                                onChange={(e) => setFormData(d => ({ ...d, membershipPTEndDate: e.target.value }))}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Notes/Remarks */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Admin Notes</label>
+                          <textarea
+                            value={formData.membershipNotes}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipNotes: e.target.value }))}
+                            placeholder="Add internal notes"
+                            rows={2}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none resize-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-gray-400 font-medium">Remarks for Member</label>
+                          <textarea
+                            value={formData.membershipRemarks}
+                            onChange={(e) => setFormData(d => ({ ...d, membershipRemarks: e.target.value }))}
+                            placeholder="Add remarks for member"
+                            rows={2}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white focus:outline-none resize-none"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
                 {formError && (
                   <div className="flex items-center gap-2 text-sm text-red-400 bg-red-900/20 border border-red-800/40 rounded-xl px-4 py-2.5">
                     <AlertCircle className="w-4 h-4 shrink-0" /> {formError}
@@ -434,6 +743,7 @@ export default function AdminUsersPage() {
                     <th className="text-left py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider hidden md:table-cell">Joined</th>
                     <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Admin</th>
                     <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Access</th>
+                    <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Membership</th>
                     <th className="text-right py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -494,8 +804,35 @@ export default function AdminUsersPage() {
                             : <><ToggleLeft className="w-5 h-5" /><span className="text-xs font-medium">Blocked</span></>}
                         </button>
                       </td>
+                      <td className="py-4 px-6 text-center">
+                        {u.memberships && u.memberships[0] ? (
+                          <div className="flex flex-col items-center gap-0.5">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                              u.memberships[0].status === "Active"
+                                ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                                : u.memberships[0].status === "Upcoming"
+                                ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                                : u.memberships[0].status === "Frozen"
+                                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                                : "bg-red-500/20 text-red-400 border border-red-500/30"
+                            }`}>
+                              {u.memberships[0].status}
+                            </span>
+                            <span className="text-[9px] text-gray-400 font-medium">{u.memberships[0].plan}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[9px] text-gray-500 font-semibold bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">None</span>
+                        )}
+                      </td>
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => router.push(`/admin/diets?userId=${u.id}`)}
+                            title="Manage user diet & progress"
+                            className="p-2 rounded-lg text-gray-600 hover:text-brand hover:bg-brand/10 transition-colors"
+                          >
+                            <Apple className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => openEditModal(u)}
                             title="Edit user"
@@ -607,6 +944,41 @@ export default function AdminUsersPage() {
                         {showEditPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
+                  </div>
+
+                  <div className="bg-brand/5 border border-brand/10 p-4 rounded-2xl flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-brand font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <Crown className="w-3.5 h-3.5" /> Membership Details
+                      </span>
+                      {editTarget.memberships && editTarget.memberships[0] ? (
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                          editTarget.memberships[0].status === "Active"
+                            ? "bg-green-500/20 text-green-400 border-green-500/30"
+                            : "bg-red-500/20 text-red-400 border-red-500/30"
+                        }`}>
+                          {editTarget.memberships[0].plan} ({editTarget.memberships[0].status})
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-gray-500 uppercase font-medium bg-white/5 border border-white/10 px-2 py-0.5 rounded">None Assigned</span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-gray-400 leading-normal">
+                      {editTarget.memberships && editTarget.memberships[0]
+                        ? `This member has an assigned ${editTarget.memberships[0].plan} subscription (expires ${new Date(editTarget.memberships[0].endDate).toLocaleDateString()}).`
+                        : "No active membership is currently assigned to this user."
+                      }
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditTarget(null);
+                        router.push(`/admin/memberships?userId=${editTarget.id}`);
+                      }}
+                      className="w-full py-2 bg-brand text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-neon hover:bg-brand-light transition-all"
+                    >
+                      Manage Subscriptions & Billing
+                    </button>
                   </div>
                 </div>
 

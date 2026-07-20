@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, ChevronDown, ArrowRight, Info, Camera, Target, Activity, Scan } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -31,40 +32,32 @@ export default function Navbar() {
     { title: "Contact Us", hasDropdown: false }
   ];
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     window.location.href = "/";
-  };
+  }, [logout]);
 
   return (
     <>
       <header className="fixed top-0 left-0 w-full max-w-[100vw] z-[1000] flex flex-col">
         {/* Futuristic Announcement Bar */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+        <div
           className="w-full relative overflow-hidden bg-[#050505]/80 backdrop-blur-xl text-white px-4 md:px-12 py-2.5 flex justify-between items-center border-b border-brand/20 z-[1001] group"
+          style={{ opacity: 1 }}
         >
           {/* Animated Background Glow */}
           <div className="absolute inset-0 bg-gradient-to-r from-brand/10 via-blue-600/10 to-brand/10 opacity-70 pointer-events-none" />
           
-          {/* Moving Light Shimmer */}
-          <motion.div 
-            animate={{ x: ['-100%', '200%'] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
-            className="absolute top-0 bottom-0 w-1/4 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none"
-          />
+          {/* CSS-only shimmer — runs on hover instead of infinite loop */}
+          <div className="absolute top-0 bottom-0 w-1/4 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Left Content */}
           <div className="flex items-center gap-3 z-10 flex-1 min-w-0">
-            <motion.div
-              animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            <div
               className="text-brand shrink-0 drop-shadow-[0_0_8px_rgba(139,92,246,0.8)]"
             >
               <Scan size={16} />
-            </motion.div>
+            </div>
             
             <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap min-w-0">
               <span className="text-[10px] sm:text-xs font-medium tracking-wide truncate">
@@ -80,36 +73,37 @@ export default function Navbar() {
 
           {/* Right Buttons */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0 ml-2 z-10">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button 
               onClick={() => setIsScannerModalOpen(true)}
-              className="relative px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-brand/10 hover:border-brand/50 transition-all text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 group/btn overflow-hidden"
+              className="relative px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-brand/10 hover:border-brand/50 transition-all text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 group/btn overflow-hidden active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand/0 via-brand/20 to-brand/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
               <Info size={14} className="text-gray-400 group-hover/btn:text-brand-light transition-colors" />
               <span className="hidden sm:inline text-gray-300 group-hover/btn:text-white transition-colors">About</span>
-            </motion.button>
+            </button>
 
             {!isLoggedIn && (
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <div className="hover:scale-105 active:scale-95 transition-transform">
                 <Link href="/login" className="px-3 sm:px-4 py-1.5 rounded-lg bg-gradient-to-r from-brand to-blue-600 hover:from-brand-light hover:to-blue-500 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.4)] transition-all group/login">
                   Login
                   <ArrowRight size={14} className="group-hover/login:translate-x-0.5 transition-transform" />
                 </Link>
-              </motion.div>
+              </div>
             )}
           </div>
-        </motion.div>
+        </div>
         
         <nav className="w-full max-w-[100vw] h-16 md:h-20 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
       <div className="max-w-[1600px] mx-auto flex justify-between items-center px-4 md:px-12 h-full w-full relative">
         {/* Logo Section */}
         <Link href="/" className="flex items-center shrink-0 group h-full relative z-[110] py-1">
-          <img
+          <Image
             src="/logo0.png"
             alt="Pinaka Fitness"
+            width={120}
+            height={56}
             className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            priority
           />
         </Link>
 

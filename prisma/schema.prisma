@@ -17,16 +17,63 @@ model ContactMessage {
 }
 
 model User {
-  id        Int          @id @default(autoincrement())
-  email     String       @unique
-  password  String
-  name      String
-  isActive  Boolean      @default(true)
-  isAdmin   Boolean      @default(false)
-  createdAt DateTime     @default(now())
-  scans     ScanResult[]
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  password    String
+  name        String
+  isActive    Boolean      @default(true)
+  isAdmin     Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  scans       ScanResult[]
+  dietPlans   DietPlan[]
+  memberships Membership[]
+  profile     UserProfile?
+  waterLogs   WaterLog[]
+  weightLogs  WeightLog[]
+  mealLogs    MealLog[]
+  chatLogs    DietChatLog[]
+
+  currentSessionId String?
+  lastLoginAt      DateTime?
+  lastLoginIp      String?
+  lastLoginUA      String?
 
   @@map("users")
+}
+
+model DietPlan {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  goal            String
+  preference      String
+  calories        Int
+  protein         Float
+  carbs           Float
+  fat             Float
+  meals           String   // JSON string storing the meals array
+  height          Float?
+  weight          Float?
+  age             Int?
+  activityLevel   String?
+  allergies       String?
+  createdAt       DateTime @default(now())
+
+  // Upgraded Fields
+  isLocked                   Boolean  @default(false)
+  isManual                   Boolean  @default(false)
+  trainerNotes               String?
+  budget                     String?
+  groceryList                String?  // JSON string
+  supplementRecommendations  String?  // JSON string
+  waterGoal                  Float?
+  fiber                      Float?
+  sugar                      Float?
+  micronutrients             String?  // JSON string
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("diet_plans")
 }
 
 model ScanResult {
@@ -44,4 +91,136 @@ model ScanResult {
 
   @@index([userId])
   @@map("scan_results")
+}
+
+model Membership {
+  id                     Int       @id @default(autoincrement())
+  membershipId           String    @unique // e.g. MEM-XXXXXX
+  userId                 Int
+  plan                   String    // Monthly, Quarterly (3 Months), Half Yearly (6 Months), Yearly, Custom
+  startDate              DateTime
+  endDate                DateTime
+  duration               String    // e.g. "30 Days"
+  status                 String    // Active, Expired, Upcoming, Frozen, Cancelled
+  joinDate               DateTime  @default(now())
+  renewalDate            DateTime
+  expiryDate             DateTime
+  paymentStatus          String    // Paid, Pending, Partial
+  paymentMode            String    // Cash, UPI, Card, Bank Transfer
+  amountPaid             Float
+  totalAmount            Float
+  discount               Float     @default(0)
+  remainingBalance       Float     @default(0)
+  personalTrainerIncluded Boolean   @default(false)
+  ptStartDate            DateTime?
+  ptEndDate              DateTime?
+  ptTrainerName          String?
+  notes                  String?
+  remarks                String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("memberships")
+}
+
+model UserProfile {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @unique
+  age                Int
+  gender             String
+  height             Float
+  currentWeight      Float
+  targetWeight       Float
+  bodyFat            Float?
+  bmi                Float?
+  activityLevel      String
+  workoutFrequency   Int?     // e.g. times per week
+  workoutTiming      String?  // e.g. "Morning", "Evening"
+  fitnessGoal        String   // "weight-loss", "fat-loss", "muscle-gain", "lean-bulk", "body-recomp", "maintain"
+  
+  // Health conditions (comma-separated)
+  healthConditions   String?  // e.g. "diabetes,thyroid,pcos"
+  allergies          String?  // e.g. "peanuts,dairy"
+  
+  // Diet Preferences
+  preference         String   // "veg", "vegan", "eggitarian", "non-veg"
+  restrictions       String?  // e.g. "jain,halal,no-beef,no-pork"
+  excludedFoods      String?  // JSON array of strings
+  
+  // Budget & Timings
+  budget             String?  // "50", "100", "150", "250", "500", "1000", "no-limit"
+  wakeUpTime         String?
+  breakfastTime      String?
+  midMorningTime     String?
+  lunchTime          String?
+  eveningSnackTime   String?
+  dinnerTime         String?
+  bedtimeMealTime    String?
+  
+  // Reminders JSON config
+  remindersEnabled   String?  // e.g. '{"breakfast":true,"lunch":true,"dinner":true,"water":true}'
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_profiles")
+}
+
+model WaterLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  amount    Float    // in ml
+  date      String   // stored as YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("water_logs")
+}
+
+model WeightLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  weight    Float
+  bmi       Float?
+  bodyFat   Float?
+  waist     Float?
+  chest     Float?
+  arms      Float?
+  thighs    Float?
+  date      String   // stored as YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("weight_logs")
+}
+
+model MealLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  dietPlanId Int
+  mealName   String   // e.g. "Breakfast"
+  status     String   // "completed", "skipped"
+  date       String   // YYYY-MM-DD
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("meal_logs")
+}
+
+model DietChatLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("diet_chat_logs")
 }

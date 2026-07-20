@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, ChevronRight } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
@@ -166,8 +167,14 @@ export default function Chatbot() {
             {/* Header */}
             <div className="p-4 bg-black border-b border-white/10 flex items-center justify-between text-white">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md overflow-hidden">
-                  <img src="/chatbot.png" alt="Chatbot" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md overflow-hidden relative">
+                  <Image
+                    src="/chatbot.png"
+                    alt="Chatbot"
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-lg leading-tight">Pinaka Assistant</h3>
@@ -309,11 +316,23 @@ export default function Chatbot() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-        "w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-neon-strong transition-all duration-300 overflow-hidden", 
+        "w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-neon-strong transition-all duration-300 overflow-hidden relative", 
           isOpen ? "bg-white text-black rotate-90" : "bg-brand text-white"
         )}
       >
-        {isOpen ? <X size={28} className="md:size-36" /> : <img src="/chatbot.png" alt="Chatbot" className="w-8 h-8 md:w-10 md:h-10 object-contain" />}
+        {isOpen ? (
+          <X size={28} className="md:size-36" />
+        ) : (
+          <div className="w-8 h-8 md:w-10 md:h-10 relative">
+            <Image
+              src="/chatbot.png"
+              alt="Chatbot"
+              fill
+              sizes="(max-width: 768px) 32px, 40px"
+              className="object-contain"
+            />
+          </div>
+        )}
       </motion.button>
     </div>
   );

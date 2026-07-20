@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, Mail, ArrowRight, Dumbbell, Users, Target, Phone, Quote } from 'lucide-react';
 
 
@@ -103,8 +104,15 @@ export default function Footer() {
 
           {/* Column 1: Brand & Location (4 spans) */}
           <div className="lg:col-span-4 flex flex-col">
-            <Link href="/" className="mb-8 block">
-                <img src="/logo0.png" alt="Pinaka Fitness" className="h-14 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+            <Link href="/" className="mb-8 block h-14 w-auto relative">
+                <Image
+                  src="/logo0.png"
+                  alt="Pinaka Fitness"
+                  width={120}
+                  height={56}
+                  className="h-14 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                  loading="lazy"
+                />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-md">
                We don&apos;t just build bodies; we build character. A premium sanctuary dedicated to absolute physical and mental transformation.

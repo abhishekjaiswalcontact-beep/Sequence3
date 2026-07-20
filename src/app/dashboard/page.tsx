@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Activity, History, ArrowRight, LogOut, ShieldCheck } from 'lucide-react';
+import { Activity, History, ArrowRight, LogOut, ShieldCheck, Apple, CreditCard } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import AICoachGate from '@/components/AICoachGate';
 
@@ -76,33 +77,109 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Main Action Card */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-2 relative rounded-[2rem] overflow-hidden group cursor-pointer border border-brand/30 shadow-neon-strong bg-brand/10"
-            onClick={() => router.push('/scan')}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
-            <img 
-               src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop" 
-               alt="Scan bg" 
-               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-40"
-            />
-            <div className="relative z-20 p-12 h-full flex flex-col justify-end min-h-[400px]">
-               <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mb-6 shadow-neon">
-                 <Activity className="w-8 h-8 text-white" />
-               </div>
-               <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 uppercase">Start Full Body AI Scan</h2>
-               <p className="text-gray-300 max-w-md mb-8">
-                 Experience our ultra-precise pose detection algorithm to assess posture, estimate body fat, and map muscle symmetry in real time.
-               </p>
-               <button className="self-start px-8 py-4 bg-white text-black font-bold uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2">
-                 Launch Scanner <ArrowRight className="w-5 h-5" />
-               </button>
-            </div>
-          </motion.div>
+          {/* Main Actions Column */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            
+            {/* Main Action Card: Scanner */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative rounded-[2rem] overflow-hidden group cursor-pointer border border-brand/30 hover:border-brand/50 shadow-neon-strong bg-brand/10"
+              onClick={() => router.push('/scan')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40">
+                <Image 
+                   src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=70&w=800" 
+                   alt="" 
+                   fill
+                   sizes="(max-width: 768px) 100vw, 600px"
+                   className="object-cover"
+                   loading="lazy"
+                />
+              </div>
+              <div className="relative z-20 p-12 h-full flex flex-col justify-end min-h-[360px]">
+                 <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mb-6 shadow-neon">
+                   <Activity className="w-8 h-8 text-white" />
+                 </div>
+                 <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 uppercase">Start Full Body AI Scan</h2>
+                 <p className="text-gray-300 max-w-md mb-8 text-sm">
+                   Experience our ultra-precise pose detection algorithm to assess posture, estimate body fat, and map muscle symmetry in real time.
+                 </p>
+                 <button className="self-start px-8 py-3.5 bg-white text-black font-bold uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2 text-xs">
+                   Launch Scanner <ArrowRight className="w-4 h-4" />
+                 </button>
+              </div>
+            </motion.div>
+
+            {/* Main Action Card: Diet Planner */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative rounded-[2rem] overflow-hidden group cursor-pointer border border-brand/30 hover:border-brand/50 shadow-neon bg-brand/5"
+              onClick={() => router.push('/diet')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-40">
+                <Image 
+                   src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=70&w=800" 
+                   alt="" 
+                   fill
+                   sizes="(max-width: 768px) 100vw, 600px"
+                   className="object-cover"
+                   loading="lazy"
+                />
+              </div>
+              <div className="relative z-20 p-12 h-full flex flex-col justify-end min-h-[360px]">
+                 <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mb-6 shadow-neon">
+                   <Apple className="w-8 h-8 text-white" />
+                 </div>
+                 <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 uppercase">AI Diet Planner</h2>
+                 <p className="text-gray-300 max-w-md mb-8 text-sm">
+                   Construct a macro-precise nutritional layout suited for your exact biology. Adjust meals dynamically with our sports nutritionist bot.
+                 </p>
+                 <button className="self-start px-8 py-3.5 bg-brand text-white font-bold uppercase tracking-widest rounded-full hover:bg-brand-light transition-colors flex items-center gap-2 text-xs shadow-lg shadow-brand/35">
+                   Plan Nutrition <ArrowRight className="w-4 h-4" />
+                 </button>
+              </div>
+            </motion.div>
+
+            {/* Main Action Card: My Membership */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative rounded-[2rem] overflow-hidden group cursor-pointer border border-brand/30 hover:border-brand/50 shadow-neon bg-brand/5"
+              onClick={() => router.push('/dashboard/membership')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-30">
+                <Image 
+                   src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=70&w=800" 
+                   alt="" 
+                   fill
+                   sizes="(max-width: 768px) 100vw, 600px"
+                   className="object-cover"
+                   loading="lazy"
+                />
+              </div>
+              <div className="relative z-20 p-12 h-full flex flex-col justify-end min-h-[360px]">
+                 <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mb-6 shadow-neon">
+                   <CreditCard className="w-8 h-8 text-white" />
+                 </div>
+                 <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 uppercase">My Membership</h2>
+                 <p className="text-gray-300 max-w-md mb-8 text-sm">
+                   View details about your active subscription, renew plans, access trainer information, and view transaction history.
+                 </p>
+                 <button className="self-start px-8 py-3.5 bg-brand text-white font-bold uppercase tracking-widest rounded-full hover:bg-brand-light transition-colors flex items-center gap-2 text-xs shadow-lg shadow-brand/35">
+                   View Membership <ArrowRight className="w-4 h-4" />
+                 </button>
+              </div>
+            </motion.div>
+
+          </div>
 
           {/* Quick Stats / History Sidebar */}
           <motion.div 

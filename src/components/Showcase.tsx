@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
@@ -101,17 +102,19 @@ export default function Showcase() {
   const [visibleCount, setVisibleCount] = useState(6);
   const lenis = useLenis();
 
-  const filteredItems = showcaseItems.filter(item => 
-    activeFilter === 'All' || item.category === activeFilter
+  // Memoize filtered items — avoids recompute on every render
+  const filteredItems = useMemo(
+    () => showcaseItems.filter(item => activeFilter === 'All' || item.category === activeFilter),
+    [activeFilter]
   );
 
-  const openLightbox = (index: number) => {
+  const openLightbox = useCallback((index: number) => {
     setSelectedImage(index);
-  };
+  }, []);
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setSelectedImage(null);
-  };
+  }, []);
 
   // Lenis Scroll Lock
   useEffect(() => {
@@ -205,12 +208,17 @@ export default function Showcase() {
                 onClick={() => openLightbox(idx)}
                 className="group relative cursor-pointer overflow-hidden rounded-2xl md:rounded-3xl bg-surface border border-white/5 aspect-[4/5] md:aspect-square"
               >
-                {/* Image */}
-                <img 
-                  src={item.src} 
-                  alt={item.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.3] group-hover:grayscale-0"
-                />
+                {/* Image — Next.js Image for lazy loading + WebP */}
+                <div className="absolute inset-0">
+                  <Image
+                    src={item.src}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.3] group-hover:grayscale-0"
+                    loading="lazy"
+                  />
+                </div>
                 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />

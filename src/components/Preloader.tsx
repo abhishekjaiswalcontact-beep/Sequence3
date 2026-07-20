@@ -64,37 +64,10 @@ export default function Preloader({
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(124,58,237,.15),transparent_70%)]" />
 
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 50,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="absolute w-[850px] h-[850px] rounded-full border border-violet-500/10"
-          />
-
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{
-              duration: 70,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="absolute w-[600px] h-[600px] rounded-full border border-violet-400/10"
-          />
-
-          <motion.div
-            animate={{
-              scale: [1, 1.08, 1],
-              opacity: [0.15, 0.3, 0.15],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-            }}
-            className="absolute w-[400px] h-[400px] rounded-full bg-violet-600 blur-[120px]"
-          />
+          {/* Background decorations — CSS animations (GPU thread, not JS thread) */}
+          <div className="absolute w-[850px] h-[850px] rounded-full border border-violet-500/10 animate-[spin_50s_linear_infinite]" />
+          <div className="absolute w-[600px] h-[600px] rounded-full border border-violet-400/10 animate-[spin_70s_linear_infinite_reverse]" />
+          <div className="absolute w-[400px] h-[400px] rounded-full bg-violet-600 blur-[120px] animate-[pulse_5s_ease-in-out_infinite] opacity-20" />
 
           {/* Content */}
 

@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import crypto from "crypto";
 
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
@@ -25,6 +26,21 @@ const CreateUserSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8),
   isAdmin: z.boolean().optional(),
+  assignMembership: z.boolean().optional(),
+  membershipPlan: z.string().optional(),
+  membershipStartDate: z.string().optional(),
+  membershipCustomEndDate: z.string().nullable().optional(),
+  membershipTotalAmount: z.number().optional(),
+  membershipDiscount: z.number().optional(),
+  membershipAmountPaid: z.number().optional(),
+  membershipPaymentMode: z.string().optional(),
+  membershipStatus: z.string().optional(),
+  membershipPTIncluded: z.boolean().optional(),
+  membershipPTTrainerName: z.string().nullable().optional(),
+  membershipPTStartDate: z.string().nullable().optional(),
+  membershipPTEndDate: z.string().nullable().optional(),
+  membershipNotes: z.string().nullable().optional(),
+  membershipRemarks: z.string().nullable().optional(),
 });
 
 const ADMIN_EMAIL = "pinakaadmin@gmail.com";
@@ -60,12 +76,40 @@ if (action === "login") {
     email === ADMIN_EMAIL &&
     password === ADMIN_PASSWORD
   ) {
+    const sessionId = crypto.randomUUID();
+    const userAgent = req.headers.get("user-agent") || "unknown";
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+
+    const adminUser = await prisma.user.upsert({
+      where: { email: ADMIN_EMAIL },
+      update: {
+        currentSessionId: sessionId,
+        lastLoginAt: new Date(),
+        lastLoginIp: ip,
+        lastLoginUA: userAgent,
+        isAdmin: true,
+        isActive: true,
+      },
+      create: {
+        email: ADMIN_EMAIL,
+        name: "Admin",
+        password: await bcrypt.hash(ADMIN_PASSWORD, 12),
+        isAdmin: true,
+        isActive: true,
+        currentSessionId: sessionId,
+        lastLoginAt: new Date(),
+        lastLoginIp: ip,
+        lastLoginUA: userAgent,
+      },
+    });
+
     const token = jwt.sign(
       {
-        sub: "1",
+        sub: String(adminUser.id),
         email: ADMIN_EMAIL,
         name: "Admin",
         isAdmin: true,
+        sessionId: sessionId,
       },
       env.JWT_SECRET,
       {
@@ -76,7 +120,7 @@ if (action === "login") {
     const response = apiResponse({
       message: "Login successful.",
       user: {
-        id: 1,
+        id: adminUser.id,
         email: ADMIN_EMAIL,
         name: "Admin",
         isAdmin: true,
@@ -121,12 +165,27 @@ if (action === "login") {
     return apiError("Invalid credentials.", 401);
   }
 
+  const sessionId = crypto.randomUUID();
+  const userAgent = req.headers.get("user-agent") || "unknown";
+  const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      currentSessionId: sessionId,
+      lastLoginAt: new Date(),
+      lastLoginIp: ip,
+      lastLoginUA: userAgent,
+    },
+  });
+
   const token = jwt.sign(
     {
       sub: String(user.id),
       email: user.email,
       name: user.name,
       isAdmin: user.isAdmin,
+      sessionId: sessionId,
     },
     env.JWT_SECRET,
     {
@@ -165,7 +224,7 @@ if (action === "login") {
       const parse = CreateUserSchema.safeParse(body);
 
       if (!parse.success) {
-        return apiError("Invalid user data.", 400);
+        return apiError("Invalid user data: " + parse.error.issues.map(i => i.message).join(", "), 400);
       }
 
       const { name, email, password, isAdmin } = parse.data;
@@ -182,14 +241,117 @@ if (action === "login") {
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-          isAdmin: isAdmin ?? false,
-          isActive: true,
-        },
+      // Local helpers for date/status calculations
+      const calculateMembershipDates = (plan: string, startDateStr: string, customEndDateStr?: string | null) => {
+        const start = new Date(startDateStr);
+        let end = new Date(start);
+
+        if (plan === "Monthly") {
+          end.setMonth(start.getMonth() + 1);
+        } else if (plan === "Quarterly (3 Months)") {
+          end.setMonth(start.getMonth() + 3);
+        } else if (plan === "Half Yearly (6 Months)") {
+          end.setMonth(start.getMonth() + 6);
+        } else if (plan === "Yearly") {
+          end.setFullYear(start.getFullYear() + 1);
+        } else if (plan === "Custom" && customEndDateStr) {
+          end = new Date(customEndDateStr);
+        } else {
+          end.setMonth(start.getMonth() + 1);
+        }
+
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+
+        const durationDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        const duration = `${durationDays} Days`;
+
+        return {
+          startDate: start,
+          endDate: end,
+          duration,
+          renewalDate: end,
+          expiryDate: end,
+        };
+      };
+
+      const determineStatus = (startDate: Date, endDate: Date, currentStatus: string) => {
+        if (currentStatus === "Frozen" || currentStatus === "Cancelled") {
+          return currentStatus;
+        }
+        const now = new Date();
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        if (now > end) return "Expired";
+        if (now < start) return "Upcoming";
+        return "Active";
+      };
+
+      const user = await prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            name,
+            email,
+            password: hashedPassword,
+            isAdmin: isAdmin ?? false,
+            isActive: true,
+          },
+        });
+
+        if (parse.data.assignMembership && parse.data.membershipPlan) {
+          const plan = parse.data.membershipPlan;
+          const startDateStr = parse.data.membershipStartDate || new Date().toISOString();
+          const customEndDateStr = parse.data.membershipCustomEndDate;
+
+          const dateCalcs = calculateMembershipDates(plan, startDateStr, customEndDateStr);
+          const status = determineStatus(dateCalcs.startDate, dateCalcs.endDate, parse.data.membershipStatus || "Active");
+
+          const totalAmount = parse.data.membershipTotalAmount ?? 0;
+          const discount = parse.data.membershipDiscount ?? 0;
+          const amountPaid = parse.data.membershipAmountPaid ?? 0;
+          const remainingBalance = Math.max(0, totalAmount - discount - amountPaid);
+          const paymentStatus = remainingBalance === 0 ? "Paid" : amountPaid === 0 ? "Pending" : "Partial";
+
+          // Generate a unique card ID
+          let unique = false;
+          let membershipId = "";
+          while (!unique) {
+            membershipId = "MEM-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const exists = await tx.membership.findUnique({ where: { membershipId } });
+            if (!exists) unique = true;
+          }
+
+          await tx.membership.create({
+            data: {
+              membershipId,
+              userId: newUser.id,
+              plan,
+              startDate: dateCalcs.startDate,
+              endDate: dateCalcs.endDate,
+              duration: dateCalcs.duration,
+              status,
+              joinDate: new Date(),
+              renewalDate: dateCalcs.renewalDate,
+              expiryDate: dateCalcs.expiryDate,
+              paymentStatus,
+              paymentMode: parse.data.membershipPaymentMode || "Cash",
+              amountPaid,
+              totalAmount,
+              discount,
+              remainingBalance,
+              personalTrainerIncluded: parse.data.membershipPTIncluded ?? false,
+              ptStartDate: parse.data.membershipPTIncluded && parse.data.membershipPTStartDate ? new Date(parse.data.membershipPTStartDate) : null,
+              ptEndDate: parse.data.membershipPTIncluded && parse.data.membershipPTEndDate ? new Date(parse.data.membershipPTEndDate) : null,
+              ptTrainerName: parse.data.membershipPTIncluded ? parse.data.membershipPTTrainerName : null,
+              notes: parse.data.membershipNotes,
+              remarks: parse.data.membershipRemarks,
+            },
+          });
+        }
+
+        return newUser;
       });
 
       return apiResponse({
