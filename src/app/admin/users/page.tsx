@@ -111,10 +111,11 @@ export default function AdminUsersPage() {
 
   // Edit user state
   const [editTarget, setEditTarget] = useState<ManagedUser | null>(null);
-  const [editFormData, setEditFormData] = useState({ name: "", email: "", password: "" });
+  const [editFormData, setEditFormData] = useState({ name: "", email: "", newPassword: "" });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
   const [showEditPassword, setShowEditPassword] = useState(false);
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<ManagedUser | null>(null);
@@ -277,21 +278,13 @@ export default function AdminUsersPage() {
     setEditLoading(true);
     setEditError("");
 
-    interface UpdatePayload {
-      userId: number;
-      name: string;
-      email: string;
-      password?: string;
-    }
-
-    const updatePayload: UpdatePayload = {
+    const updatePayload: Record<string, string | number | boolean> = {
       userId: editTarget.id,
       name: editFormData.name,
       email: editFormData.email,
     };
-
-    if (editFormData.password) {
-      updatePayload.password = editFormData.password;
+    if (editFormData.newPassword.trim().length >= 8) {
+      updatePayload.password = editFormData.newPassword.trim();
     }
 
     const res = await fetch("/api/admin/users", {
@@ -317,10 +310,11 @@ export default function AdminUsersPage() {
     setEditFormData({
       name: u.name || "",
       email: u.email,
-      password: "",
+      newPassword: "",
     });
     setEditError("");
     setShowEditPassword(false);
+    setShowPasswordSection(false);
   };
 
   const handleLogout = async () => {
@@ -880,7 +874,7 @@ export default function AdminUsersPage() {
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <h3 className="text-2xl font-heading font-bold text-white uppercase tracking-tight">Edit User</h3>
-                  <p className="text-gray-400 text-sm">Update details or reset password for {editTarget.name || editTarget.email}</p>
+                  <p className="text-gray-400 text-sm">Update details for {editTarget.name || editTarget.email}</p>
                 </div>
                 <button 
                   onClick={() => setEditTarget(null)} 
@@ -920,30 +914,50 @@ export default function AdminUsersPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 bg-brand/5 border border-brand/10 p-4 rounded-2xl">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs text-brand font-bold uppercase tracking-wider flex items-center gap-1.5">
-                        <Key className="w-3 h-3" /> Change Password
-                      </label>
-                      <span className="text-[10px] text-gray-500 uppercase font-medium">Leave blank to keep current</span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type={showEditPassword ? "text" : "password"}
-                        minLength={8}
-                        value={editFormData.password}
-                        onChange={(e) => setEditFormData((d) => ({ ...d, password: e.target.value }))}
-                        placeholder="New secure password"
-                        className="w-full bg-black/50 border border-brand/20 rounded-xl py-2.5 pl-4 pr-10 text-sm text-white focus:outline-none focus:border-brand transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowEditPassword((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
-                      >
-                        {showEditPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
+                  {/* Change Password Section */}
+                  <div className="border border-white/10 rounded-2xl overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswordSection(v => !v)}
+                      className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
+                    >
+                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                        <Key className="w-3.5 h-3.5" />
+                        Reset Password
+                      </span>
+                      <span className="text-[10px] text-gray-600 font-medium">
+                        {showPasswordSection ? "▲ Hide" : "▼ Set new password"}
+                      </span>
+                    </button>
+                    {showPasswordSection && (
+                      <div className="px-4 pb-4 pt-1 border-t border-white/10 space-y-2">
+                        <p className="text-[11px] text-gray-500">Leave blank to keep the current password. Min 8 characters.</p>
+                        <div className="relative">
+                          <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                          <input
+                            type={showEditPassword ? "text" : "password"}
+                            value={editFormData.newPassword}
+                            onChange={(e) => setEditFormData(d => ({ ...d, newPassword: e.target.value }))}
+                            placeholder="New password (min 8 characters)"
+                            minLength={8}
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-12 text-sm text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-all outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowEditPassword(v => !v)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                          >
+                            {showEditPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                        {editFormData.newPassword.length > 0 && editFormData.newPassword.length < 8 && (
+                          <p className="text-[11px] text-red-400">Password must be at least 8 characters.</p>
+                        )}
+                        {editFormData.newPassword.length >= 8 && (
+                          <p className="text-[11px] text-green-400">✓ Password will be updated on save.</p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="bg-brand/5 border border-brand/10 p-4 rounded-2xl flex flex-col gap-3">

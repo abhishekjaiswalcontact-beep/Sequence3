@@ -192,8 +192,12 @@ Rules:
                  bodyFat: resultData.bodyFat,
                  muscleMass: resultData.muscleMass,
                  postureScore: resultData.postureScore,
-                 workoutPlan: JSON.stringify(resultData.workoutPlan),
-                 dietPlan: resultData.dietPlan,
+                 workoutPlan: JSON.stringify(resultData.weeklyPlan),
+                 dietPlan: JSON.stringify({
+                    vegDiet: resultData.vegDiet,
+                    nonVegDiet: resultData.nonVegDiet,
+                    dietPlan: resultData.dietPlan
+                 }),
                  feedback: resultData.postureFeedback
               }
            });

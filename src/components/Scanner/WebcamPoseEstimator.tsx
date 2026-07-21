@@ -174,10 +174,13 @@ export default function WebcamPoseEstimator({ onScanComplete }: WebcamPoseEstima
         }
 
         try {
+          if (!isActive || !detectorRef.current) return;
           const poses = await detector.estimatePoses(video, {
             flipHorizontal: false 
           });
           
+          if (!isActive) return;
+
           const ctx = canvas.getContext("2d");
           if (ctx) {
             if (poses && poses.length > 0 && poses[0].keypoints.some(kp => (kp.score || 0) > 0.3)) {
@@ -194,7 +197,9 @@ export default function WebcamPoseEstimator({ onScanComplete }: WebcamPoseEstima
         }
       }
       
-      animationId = requestAnimationFrame(renderLoop);
+      if (isActive) {
+        animationId = requestAnimationFrame(renderLoop);
+      }
     };
 
     if (isLoaded) {

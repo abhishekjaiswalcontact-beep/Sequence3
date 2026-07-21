@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, LogIn, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -32,7 +33,8 @@ export default function LoginPage() {
 
       if (res.ok) {
         login(data.user); // update AuthContext with full user object
-        router.push('/dashboard');
+        const from = searchParams.get('from') || searchParams.get('redirect') || '/dashboard';
+        router.push(from);
       } else {
         setError(data.error || 'Login failed. Please check your credentials.');
       }
@@ -152,5 +154,17 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center text-white font-heading tracking-widest uppercase">
+        Initializing Neural Core...
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

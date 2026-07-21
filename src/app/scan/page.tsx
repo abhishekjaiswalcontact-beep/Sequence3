@@ -3,10 +3,22 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import WebcamPoseEstimator from '@/components/Scanner/WebcamPoseEstimator';
+import dynamic from 'next/dynamic';
 import { Activity, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+
+const WebcamPoseEstimator = dynamic(
+  () => import('@/components/Scanner/WebcamPoseEstimator'),
+  { ssr: false, loading: () => (
+    <div className="w-full max-w-lg mx-auto bg-black rounded-[2.5rem] border border-white/10 flex aspect-[3/4] justify-center items-center">
+       <div className="text-center text-white p-6">
+         <div className="w-10 h-10 border-2 border-brand border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+         <span className="font-heading tracking-[0.2em] text-xs uppercase text-brand/80">Loading Scanner Core</span>
+       </div>
+    </div>
+  )}
+);
 
 export default function ScanPage() {
   const router = useRouter();

@@ -129,7 +129,7 @@ export default function SupportFAQ() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
+    <div className="max-w-5xl mx-auto px-4">
       {/* Header & Search */}
       <div className="text-center mb-16">
         <motion.div

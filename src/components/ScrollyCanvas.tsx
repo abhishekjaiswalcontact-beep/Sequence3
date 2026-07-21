@@ -18,8 +18,6 @@ export default function ScrollyCanvas({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
-  // Cache ImageBitmap for fast GPU-accelerated drawImage
-  const bitmapsRef = useRef<(ImageBitmap | null)[]>(new Array(FRAME_COUNT).fill(null));
   const loadedImages = useRef(0);
   const loadingStarted = useRef(false);
   const lastFrameIndex = useRef(-1); // Skip rendering if same frame
@@ -36,15 +34,8 @@ export default function ScrollyCanvas({
       img.src = getFrameSrc(i);
       img.decoding = 'async'; // Non-blocking decode
 
-      img.onload = async () => {
+      img.onload = () => {
         loadedImages.current++;
-
-        // Cache as ImageBitmap for faster drawImage
-        try {
-          bitmapsRef.current[i] = await createImageBitmap(img);
-        } catch {
-          // ImageBitmap not supported — fall back to regular img
-        }
 
         // Emit progress event
         const progress = Math.min(100, (loadedImages.current / FRAME_COUNT) * 100);
@@ -66,12 +57,6 @@ export default function ScrollyCanvas({
     }
 
     imagesRef.current = images;
-
-    const currentBitmaps = bitmapsRef.current;
-    // Cleanup bitmaps on unmount to free GPU memory
-    return () => {
-      currentBitmaps.forEach(bm => bm?.close());
-    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,15 +71,14 @@ export default function ScrollyCanvas({
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Try ImageBitmap first (GPU-accelerated), fall back to img
-    const bitmap = bitmapsRef.current[index];
+    // Draw preloaded HTMLImageElement directly if complete
     const img = imagesRef.current[index];
-    const source: ImageBitmap | HTMLImageElement | null = bitmap ?? (img?.complete ? img : null);
+    const source: HTMLImageElement | null = img?.complete ? img : null;
 
     if (!source) return;
 
-    const srcWidth = 'width' in source ? source.width : (source as HTMLImageElement).naturalWidth;
-    const srcHeight = 'height' in source ? source.height : (source as HTMLImageElement).naturalHeight;
+    const srcWidth = source.naturalWidth;
+    const srcHeight = source.naturalHeight;
 
     if (!srcWidth || !srcHeight) return;
 
@@ -103,7 +87,7 @@ export default function ScrollyCanvas({
     const y = canvasHeight / 2 - (srcHeight / 2) * scale;
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(source as CanvasImageSource, x, y, srcWidth * scale, srcHeight * scale);
+    ctx.drawImage(source, x, y, srcWidth * scale, srcHeight * scale);
   };
 
   // 🌀 Scroll → frame mapping (with deduplication)

@@ -35,9 +35,31 @@ export async function GET() {
             console.error("Failed to parse workoutPlan for scan", scan.id);
          }
       }
+
+      let vegDiet = null;
+      let nonVegDiet = null;
+      let dietPlanText = scan.dietPlan;
+
+      if (scan.dietPlan) {
+         try {
+            if (scan.dietPlan.trim().startsWith('{')) {
+               const parsedDiet = JSON.parse(scan.dietPlan);
+               vegDiet = parsedDiet.vegDiet || null;
+               nonVegDiet = parsedDiet.nonVegDiet || null;
+               dietPlanText = parsedDiet.dietPlan || "";
+            }
+         } catch {
+            console.error("Failed to parse dietPlan for scan", scan.id);
+         }
+      }
+
       return {
         ...scan,
-        workoutPlan: parsedPlan
+        workoutPlan: parsedPlan,
+        weeklyPlan: parsedPlan,
+        vegDiet,
+        nonVegDiet,
+        dietPlan: dietPlanText
       };
     });
 

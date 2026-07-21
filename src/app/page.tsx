@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import SectionHeader from "@/components/SectionHeader";
 import Programs from "@/components/Programs";
 import Trainers from "@/components/Trainers";
 
@@ -48,28 +49,63 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black pointer-events-none" />
       </div>
 
-      {/* Content Layer */}
+      {/* Content Layer — consistent py-20 md:py-28 spacing on every section */}
       <div className="relative z-10 w-full">
-        {/* Programs, Trainers — critical above-fold content, eager loaded */}
-        <Programs />
-        <Trainers />
+        {/* Programs Section */}
+        <section className="py-20 md:py-28 px-6">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeader
+              subtitle="OUR SERVICES"
+              title="Programs"
+              description="Explore our curated training programs designed for every fitness level."
+            />
+            <Programs />
+          </div>
+        </section>
+
+        {/* Trainers Section */}
+        <section className="py-20 md:py-28 px-6">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeader
+              subtitle="MEET THE TEAM"
+              title="Our Trainers"
+              description="Professional coaches ready to guide you on every step of your fitness journey."
+            />
+            <Trainers />
+          </div>
+        </section>
 
         {/* Below-the-fold sections — lazy loaded */}
-        <Suspense fallback={<SectionSkeleton />}>
-          <Showcase />
-        </Suspense>
+        <section className="py-20 md:py-28">
+          <Suspense fallback={<SectionSkeleton />}>
+            <Showcase />
+          </Suspense>
+        </section>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          <Pricing />
-        </Suspense>
+        <section className="py-20 md:py-28 px-6">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeader
+              subtitle="PRICING"
+              title="Membership Plans"
+              description="Choose a plan that fits your goals and start your transformation today."
+            />
+            <Suspense fallback={<SectionSkeleton />}>
+              <Pricing />
+            </Suspense>
+          </div>
+        </section>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          <SupportFAQ />
-        </Suspense>
+        <section className="py-20 md:py-28">
+          <Suspense fallback={<SectionSkeleton />}>
+            <SupportFAQ />
+          </Suspense>
+        </section>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          <ContactUs />
-        </Suspense>
+        <section className="py-20 md:py-28">
+          <Suspense fallback={<SectionSkeleton />}>
+            <ContactUs />
+          </Suspense>
+        </section>
       </div>
 
       <Suspense fallback={null}>

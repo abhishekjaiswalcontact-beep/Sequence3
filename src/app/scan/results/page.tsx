@@ -169,7 +169,7 @@ export default function ResultsPage() {
     } else {
       router.push('/scan');
     }
-  }, [router]);
+  }, [isHydrated, isAuthenticated, router]);
 
   if (!data) return null;
 
@@ -219,7 +219,13 @@ export default function ResultsPage() {
     plugins: { legend: { display: false } },
   };
 
-  const activeDiet = dietTab === 'veg' ? data.vegDiet : data.nonVegDiet;
+  const activeDiet = (dietTab === 'veg' ? data.vegDiet : data.nonVegDiet) || {
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+    meals: []
+  };
   const dayPlan = data.weeklyPlan?.[activeDay];
 
   const bodyFatCategory =

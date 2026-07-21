@@ -16,7 +16,9 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import AICoach from "@/components/AICoach";
+import dynamic from 'next/dynamic';
+
+const AICoach = dynamic(() => import("@/components/AICoach"), { ssr: false });
 
 interface AICoachGateProps {
   autoOpen?: boolean;

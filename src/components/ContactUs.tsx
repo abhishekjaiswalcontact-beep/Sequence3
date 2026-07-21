@@ -109,7 +109,7 @@ export default function ContactUs() {
 
   return (
     <>
-      <div className="relative py-24 bg-black overflow-hidden" id="contact">
+      <div className="relative bg-black overflow-hidden" id="contact">
         {/* Abstract Background Elements */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand/20 blur-[120px] rounded-full pointer-events-none" />

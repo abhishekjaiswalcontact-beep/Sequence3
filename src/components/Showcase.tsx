@@ -125,19 +125,19 @@ export default function Showcase() {
     }
   }, [selectedImage, lenis]);
 
-  const nextImage = (e?: React.MouseEvent) => {
+  const nextImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (selectedImage !== null) {
       setSelectedImage((selectedImage + 1) % filteredItems.length);
     }
-  };
+  }, [selectedImage, filteredItems.length]);
 
-  const prevImage = (e?: React.MouseEvent) => {
+  const prevImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (selectedImage !== null) {
       setSelectedImage((selectedImage - 1 + filteredItems.length) % filteredItems.length);
     }
-  };
+  }, [selectedImage, filteredItems.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -149,10 +149,10 @@ export default function Showcase() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedImage, filteredItems]);
+  }, [selectedImage, nextImage, prevImage, closeLightbox]);
 
   return (
-    <section id="showcase" className="py-24 bg-[#050505] relative overflow-hidden">
+    <section id="showcase" className="bg-[#050505] relative overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 -z-1" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 -z-1" />

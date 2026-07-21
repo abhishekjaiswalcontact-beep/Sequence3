@@ -65,10 +65,13 @@ export async function PATCH(req: Request) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return apiError("User not found", 404);
 
-    // Protection: Admin cannot deactivate or demote themselves
+    // Protection: Admin cannot deactivate, demote, or change their own password
     if (userId === Number(session.sub)) {
       if (isActive === false || isAdmin === false) {
         return apiError('Permission denied: You cannot deactivate or demote your own account.', 400);
+      }
+      if (password !== undefined) {
+        return apiError('Permission denied: Admins cannot change their own password from the panel.', 403);
       }
     }
 
