@@ -104,13 +104,13 @@ export default function Footer() {
 
           {/* Column 1: Brand & Location (4 spans) */}
           <div className="lg:col-span-4 flex flex-col">
-            <Link href="/" className="mb-8 block h-14 w-auto relative">
+            <Link href="/" className="mb-8 block h-20 w-auto relative">
                 <Image
                   src="/logo0.png"
                   alt="Pinaka Fitness"
-                  width={120}
-                  height={56}
-                  className="h-14 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                  width={180}
+                  height={80}
+                  className="h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                   loading="lazy"
                 />
             </Link>

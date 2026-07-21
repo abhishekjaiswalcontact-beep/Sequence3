@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
-import { AudioProvider } from "@/context/AudioContext";
 import DisableRightClick from "@/components/DisableRightClick";
 
 const inter = Inter({
@@ -60,7 +59,6 @@ export const metadata: Metadata = {
 
 import Preloader from "@/components/Preloader";
 import SmoothScroll from "@/components/SmoothScroll";
-import SoundControl from "@/components/SoundControl";
 
 export default function RootLayout({
   children,
@@ -73,14 +71,11 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} font-sans antialiased`}
       >
         <AuthProvider>
-          <AudioProvider>
             <SmoothScroll>
               <Preloader />
               <DisableRightClick />
-              <SoundControl />
               {children}
             </SmoothScroll>
-          </AudioProvider>
         </AuthProvider>
       </body>
     </html>
