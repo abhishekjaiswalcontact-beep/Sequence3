@@ -175,7 +175,7 @@ export default function ContactUs() {
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2">Email Us</h5>
                 <p className="text-gray-400 text-xs font-mono mb-3">pinakafitnessnoidasec127@gmail.com</p>
-                <a href="mailto:support@pinakafitness.com" className="mt-auto text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 group-hover:text-brand-light w-max">
+                <a href="mailto:pinakafitnessnoidasec127@gmail.com" className="mt-auto text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 group-hover:text-brand-light w-max">
                   Send Email <Navigation className="w-3 h-3 rotate-90" />
                 </a>
               </motion.div>
@@ -209,7 +209,7 @@ export default function ContactUs() {
               
               {/* Optional: Tiny Google Map Preview visual */}
               <a 
-                href="https://maps.google.com/maps?vet=10CAAQoqAOahcKEwigkNuBpuuVAxUAAAAAHQAAAAAQCQ..i&rlz=1C5CHFA_enIN1071IN1071&pvq=Cg0vZy8xMXpkNDlnNDNjIhQKDnBpbmFrYSBmaXRuZXNzEAIYAw&lqi=Cg5waW5ha2EgZml0bmVzc0jroNzEsL6AgAhaIBAAEAEYABgBIg5waW5ha2EgZml0bmVzcyoGCAIQABABkgEOZml0bmVzc19jZW50ZXI&fvr=1&cs=0&um=1&ie=UTF-8&fb=1&gl=in&sa=X&ftid=0x390ce7d06cfc41ad:0x5136f01d684bb5c3"
+                href="https://www.google.com/maps/place/PINAKA+FITNESS/@28.5332574,77.3542702,851m/data=!3m2!1e3!4b1!4m6!3m5!1s0x390ce7d06cfc41ad:0x5136f01d684bb5c3!8m2!3d28.5332574!4d77.3542702!16s%2Fg%2F11zd49g43c?entry=ttu&g_ep=EgoyMDI2MDcyMS4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noreferrer"
                 className="ml-auto w-24 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative group hover:border-brand/50 transition-colors"
