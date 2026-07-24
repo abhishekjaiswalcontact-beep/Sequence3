@@ -3,6 +3,9 @@ const nextConfig = {
   // Enable gzip/brotli compression for all responses
   compress: true,
 
+  // 👇 Ye line add karo
+  productionBrowserSourceMaps: false,
+
   // Remove unnecessary X-Powered-By header
   poweredByHeader: false,
 
@@ -11,7 +14,7 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
@@ -20,7 +23,6 @@ const nextConfig = {
     ],
   },
 
-  // Experimental optimizations
   experimental: {
     optimizePackageImports: [
       "lucide-react",
