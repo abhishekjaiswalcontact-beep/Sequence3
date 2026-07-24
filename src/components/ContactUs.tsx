@@ -160,8 +160,8 @@ export default function ContactUs() {
                   <Phone className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2">Call Us</h5>
-                <a href="tel:+918004963569" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors mb-1">+91-800-GYM-FLOW</a>
-                <a href="tel:+911204567890" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors">+91-120-456-7890</a>
+                <a href="tel:+918004963569" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors mb-1">+91-783-587-0089</a>
+                <a href="tel:+911204567890" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors">+91-783-587-0082</a>
               </motion.div>
 
               {/* Email Card */}
@@ -174,7 +174,7 @@ export default function ContactUs() {
                   <Mail className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2">Email Us</h5>
-                <p className="text-gray-400 text-xs font-mono mb-3">support@pinakafitness.com</p>
+                <p className="text-gray-400 text-xs font-mono mb-3">pinakafitnessnoidasec127@gmail.com</p>
                 <a href="mailto:support@pinakafitness.com" className="mt-auto text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 group-hover:text-brand-light w-max">
                   Send Email <Navigation className="w-3 h-3 rotate-90" />
                 </a>
@@ -191,16 +191,16 @@ export default function ContactUs() {
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Hours</h5>
                 <p className="text-brand font-black text-sm uppercase tracking-widest mb-1">Open 24/7</p>
-                <p className="text-gray-500 text-[10px] italic">*Staff 6AM-10PM</p>
+                <p className="text-gray-500 text-[10px] italic">*Staff 5AM-10PM</p>
               </motion.div>
             </div>
 
             {/* Socials & Embed */}
             <motion.div variants={itemVariants} className="flex items-center gap-4 mt-2">
-              <a href="#" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
+              <a href="https://www.instagram.com/pinakafitnessnoida127/?hl=en" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
                 <InstagramIcon className="w-5 h-5" />
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
+              <a href="pinakafitnessnoidasec127@gmail.com" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
                 <MessageCircle className="w-5 h-5" /> {/* WhatsApp stand-in */}
               </a>
               <a href="#" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FF0000] hover:border-[#FF0000] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(255,0,0,0.4)]">
@@ -209,7 +209,7 @@ export default function ContactUs() {
               
               {/* Optional: Tiny Google Map Preview visual */}
               <a 
-                href="https://maps.google.com/?q=Sector+127,+Noida"
+                href="https://maps.google.com/maps?vet=10CAAQoqAOahcKEwigkNuBpuuVAxUAAAAAHQAAAAAQCQ..i&rlz=1C5CHFA_enIN1071IN1071&pvq=Cg0vZy8xMXpkNDlnNDNjIhQKDnBpbmFrYSBmaXRuZXNzEAIYAw&lqi=Cg5waW5ha2EgZml0bmVzc0jroNzEsL6AgAhaIBAAEAEYABgBIg5waW5ha2EgZml0bmVzcyoGCAIQABABkgEOZml0bmVzc19jZW50ZXI&fvr=1&cs=0&um=1&ie=UTF-8&fb=1&gl=in&sa=X&ftid=0x390ce7d06cfc41ad:0x5136f01d684bb5c3"
                 target="_blank"
                 rel="noreferrer"
                 className="ml-auto w-24 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative group hover:border-brand/50 transition-colors"

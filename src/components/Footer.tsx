@@ -149,7 +149,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <p className="text-gray-400 text-sm leading-relaxed hover:text-white transition-colors cursor-pointer">
-                            pinakafitnessnoida127@gmail.com
+                            pinakafitnessnoidasec127@gmail.com
                         </p>
                     </div>
                 </div>
