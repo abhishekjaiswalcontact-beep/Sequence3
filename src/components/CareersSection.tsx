@@ -9,28 +9,28 @@ const jobs = [
     title: "Senior Personal Trainer",
     location: "Mumbai, MH",
     type: "Full-Time",
-    salary: "₹6L - ₹10L PA",
+    salary: "",
     description: "Looking for an elite trainer with 5+ years experience in bodybuilding and functional training.",
   },
   {
     title: "Front Desk Associate",
     location: "Pune, MH",
     type: "Full-Time",
-    salary: "₹3L - ₹5L PA",
+    salary: "",
     description: "Provide exceptional customer service and manage gym memberships and guest relations.",
   },
   {
     title: "Gym Operations Manager",
     location: "Mumbai, MH",
     type: "Full-Time",
-    salary: "₹8L - ₹12L PA",
+    salary: "",
     description: "Oversee day-to-day operations, staff management, and facility maintenance for our flagship club.",
   },
   {
     title: "Sales Consultant",
     location: "Bangalore, KA",
     type: "Full-Time",
-    salary: "₹4L - ₹7L PA + Incentives",
+    salary: "",
     description: "Drive membership sales and corporate partnerships through proactive outreach and club tours.",
   },
 ];
@@ -76,7 +76,7 @@ export default function CareersSection() {
               </div>
 
               <div className="text-zinc-300 font-medium text-sm">
-                Expected Salary: <span className="text-white">{job.salary}</span>
+                Open to Opportunities <span className="text-white">{job.salary}</span>
               </div>
             </div>
 
