@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import DisableRightClick from "@/components/DisableRightClick";
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,6 +78,7 @@ export default function RootLayout({
               {children}
             </SmoothScroll>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
