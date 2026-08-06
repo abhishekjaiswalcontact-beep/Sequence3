@@ -25,6 +25,7 @@ const CreateUserSchema = z.object({
   name: z.string().min(2),
   email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8),
+  phone: z.string().optional(),
   isAdmin: z.boolean().optional(),
   assignMembership: z.boolean().optional(),
   membershipPlan: z.string().optional(),
@@ -227,7 +228,7 @@ if (action === "login") {
         return apiError("Invalid user data: " + parse.error.issues.map(i => i.message).join(", "), 400);
       }
 
-      const { name, email, password, isAdmin } = parse.data;
+      const { name, email, password, phone, isAdmin } = parse.data;
 
       const existing = await prisma.user.findUnique({
         where: {
@@ -295,6 +296,7 @@ if (action === "login") {
             name,
             email,
             password: hashedPassword,
+            phone: phone ?? "",
             isAdmin: isAdmin ?? false,
             isActive: true,
           },

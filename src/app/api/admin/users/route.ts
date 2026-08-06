@@ -9,6 +9,7 @@ const PatchUserSchema = z.object({
   name: z.string().optional(),
   email: z.string().email().optional(),
   password: z.string().min(8).optional(),
+  phone: z.string().optional(),
   isActive: z.boolean().optional(),
   isAdmin: z.boolean().optional(),
 });
@@ -25,6 +26,7 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
+        phone: true,
         isAdmin: true,
         isActive: true,
         createdAt: true,
@@ -59,7 +61,7 @@ export async function PATCH(req: Request) {
       return apiError("Invalid input parameters: " + parse.error.issues.map(i => i.message).join(", "), 400);
     }
     
-    const { userId, name, email, password, isActive, isAdmin } = parse.data;
+    const { userId, name, email, password, phone, isActive, isAdmin } = parse.data;
 
     // Check if user exists
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -78,6 +80,7 @@ export async function PATCH(req: Request) {
     // Prepare update data
     const updateData: Record<string, string | boolean | undefined> = {};
     if (name !== undefined) updateData.name = name;
+    if (phone !== undefined) updateData.phone = phone;
     if (isActive !== undefined) updateData.isActive = isActive;
     if (isAdmin !== undefined) updateData.isAdmin = isAdmin;
     

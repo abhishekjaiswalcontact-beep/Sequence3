@@ -32,6 +32,10 @@ model User {
   weightLogs  WeightLog[]
   mealLogs    MealLog[]
   chatLogs    DietChatLog[]
+  phone       String        @default("")
+  attendances Attendance[]
+  attendanceLogs AttendanceLog[]
+  reminderLogs ReminderLog[]
 
   currentSessionId String?
   lastLoginAt      DateTime?
@@ -223,4 +227,56 @@ model DietChatLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId])
   @@map("diet_chat_logs")
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      String   // YYYY-MM-DD
+  time      String   // HH:MM:SS
+  status    String   // "Present" | "Absent"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@map("attendances")
+}
+
+model AttendanceLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String   // "Marked Present (Self)", "Marked Present (Admin)", "Marked Absent (Auto)", "Deleted (Admin)", "Manually Marked Absent (Admin)"
+  details   String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("attendance_logs")
+}
+
+model ReminderLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  status       String   // "Sent", "Failed"
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("reminder_logs")
+}
+
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
 }

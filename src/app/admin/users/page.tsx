@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, UserPlus, Users, Eye, EyeOff, Trash2, Edit2,
   ToggleLeft, ToggleRight, LogOut, ArrowLeft, AlertCircle,
-  CheckCircle, Crown, X, Key, Mail, User as UserIcon, Apple
+  CheckCircle, Crown, X, Key, Mail, User as UserIcon, Apple, Phone
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -14,6 +14,7 @@ interface ManagedUser {
   id: number;
   name: string;
   email: string;
+  phone?: string;
   isAdmin: boolean;
   isActive: boolean;
   createdAt: string;
@@ -46,6 +47,7 @@ export default function AdminUsersPage() {
     name: "",
     email: "",
     password: "",
+    phone: "",
     isAdmin: false,
     // Membership fields
     assignMembership: false,
@@ -111,7 +113,7 @@ export default function AdminUsersPage() {
 
   // Edit user state
   const [editTarget, setEditTarget] = useState<ManagedUser | null>(null);
-  const [editFormData, setEditFormData] = useState({ name: "", email: "", newPassword: "" });
+  const [editFormData, setEditFormData] = useState({ name: "", email: "", phone: "", newPassword: "" });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
   const [showEditPassword, setShowEditPassword] = useState(false);
@@ -209,6 +211,7 @@ export default function AdminUsersPage() {
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      phone: formData.phone,
       isAdmin: formData.isAdmin,
       assignMembership: formData.assignMembership
     };
@@ -246,6 +249,7 @@ export default function AdminUsersPage() {
         name: "",
         email: "",
         password: "",
+        phone: "",
         isAdmin: false,
         assignMembership: false,
         membershipPlan: "Monthly",
@@ -282,6 +286,7 @@ export default function AdminUsersPage() {
       userId: editTarget.id,
       name: editFormData.name,
       email: editFormData.email,
+      phone: editFormData.phone,
     };
     if (editFormData.newPassword.trim().length >= 8) {
       updatePayload.password = editFormData.newPassword.trim();
@@ -310,6 +315,7 @@ export default function AdminUsersPage() {
     setEditFormData({
       name: u.name || "",
       email: u.email,
+      phone: u.phone || "",
       newPassword: "",
     });
     setEditError("");
@@ -463,6 +469,16 @@ export default function AdminUsersPage() {
                       value={formData.email}
                       onChange={(e) => setFormData((d) => ({ ...d, email: e.target.value }))}
                       placeholder="member@example.com"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-gray-400 font-medium">Phone Number</label>
+                    <input
+                      type="text"
+                      value={formData.phone}
+                      onChange={(e) => setFormData((d) => ({ ...d, phone: e.target.value }))}
+                      placeholder="e.g. +919876543210"
                       className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand transition-colors"
                     />
                   </div>
@@ -910,6 +926,20 @@ export default function AdminUsersPage() {
                         value={editFormData.email}
                         onChange={(e) => setEditFormData((d) => ({ ...d, email: e.target.value }))}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-all outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-gray-500 font-bold uppercase tracking-wider ml-1">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="text"
+                        value={editFormData.phone}
+                        onChange={(e) => setEditFormData((d) => ({ ...d, phone: e.target.value }))}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-all outline-none"
+                        placeholder="e.g. +919876543210"
                       />
                     </div>
                   </div>
