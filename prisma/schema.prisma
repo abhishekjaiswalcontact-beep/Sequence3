@@ -42,6 +42,13 @@ model User {
   lastLoginIp      String?
   lastLoginUA      String?
 
+  referralCode       ReferralCode?
+  referralsCreated   Referral[]         @relation("Referrer")
+  referralReceived   Referral?          @relation("Referred")
+  referralRewards    ReferralReward[]
+  referralActivities ReferralActivity[]
+  notifications      Notification[]
+
   @@map("users")
 }
 
@@ -279,4 +286,83 @@ model SystemSetting {
   updatedAt DateTime @updatedAt
 
   @@map("system_settings")
+}
+
+model ReferralCode {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("referral_codes")
+}
+
+model Referral {
+  id              Int              @id @default(autoincrement())
+  referrerId      Int
+  referrer        User             @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referredId      Int              @unique
+  referred        User             @relation("Referred", fields: [referredId], references: [id], onDelete: Cascade)
+  codeUsed        String
+  joinDate        DateTime         @default(now())
+  status          String           @default("Pending") // Pending, Joined, Membership Activated, Completed, Rejected, Cancelled, Expired
+  rewardStatus    String           @default("None") // None, Pending, Claimed, N/A
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  activities      ReferralActivity[]
+  rewards         ReferralReward[]
+
+  @@index([referrerId])
+  @@index([referredId])
+  @@map("referrals")
+}
+
+model ReferralReward {
+  id          Int      @id @default(autoincrement())
+  referralId  Int?
+  referral    Referral? @relation(fields: [referralId], references: [id], onDelete: SetNull)
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rewardName  String   // e.g. "Reward A"
+  rewardType  String   // Free Membership Days, Cash Reward, Discount, Gift, Coupon, Custom Reward
+  rewardValue String
+  status      String   @default("Pending") // Pending, Claimed, Cancelled, Sent
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([referralId])
+  @@map("referral_rewards")
+}
+
+model ReferralActivity {
+  id           Int      @id @default(autoincrement())
+  userId       Int?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  referralId   Int?
+  referral     Referral? @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  activityType String   // e.g., CODE_GENERATED, REFERRAL_JOINED, REWARD_EARNED, STATUS_UPDATED
+  details      String
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([referralId])
+  @@map("referral_activities")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("notifications")
 }

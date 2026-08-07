@@ -14,8 +14,8 @@ html.lenis body {
 
 body {
   overflow-x: hidden;
-  /* Eliminate 300ms tap delay on Android Chrome */
-  touch-action: pan-y;
+  /* Eliminate 300ms tap delay on mobile browsers while allowing all panning */
+  touch-action: manipulation;
   /* Faster font rendering on mobile */
   text-rendering: optimizeSpeed;
 }

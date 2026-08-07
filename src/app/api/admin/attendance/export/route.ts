@@ -20,19 +20,23 @@ export async function GET(req: Request) {
 
     if (search) {
       where.user = {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-          { phone: { contains: search, mode: 'insensitive' } },
-        ]
+        is: {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { phone: { contains: search, mode: 'insensitive' } },
+          ]
+        }
       };
     }
 
     if (plan) {
       where.user = {
-        ...where.user,
-        memberships: {
-          some: { plan }
+        is: {
+          ...where.user?.is,
+          memberships: {
+            some: { plan }
+          }
         }
       };
     }

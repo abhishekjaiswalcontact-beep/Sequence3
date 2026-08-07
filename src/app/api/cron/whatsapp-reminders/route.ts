@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getISTDateTime } from '@/app/api/attendance/mark/route';
+import { getISTDateTime } from '@/lib/date';
 import { sendWhatsAppReminder } from '@/lib/whatsapp';
 
 export const runtime = "nodejs";

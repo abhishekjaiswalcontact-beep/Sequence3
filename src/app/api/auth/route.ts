@@ -10,6 +10,7 @@ import {
   apiResponse,
   requireAdmin,
 } from "@/lib/auth";
+import { sendReferralNotifications } from "@/lib/referral";
 
 export const runtime = "nodejs";
 
@@ -27,6 +28,7 @@ const CreateUserSchema = z.object({
   password: z.string().min(8),
   phone: z.string().optional(),
   isAdmin: z.boolean().optional(),
+  referralCode: z.string().optional(),
   assignMembership: z.boolean().optional(),
   membershipPlan: z.string().optional(),
   membershipStartDate: z.string().optional(),
@@ -228,7 +230,7 @@ if (action === "login") {
         return apiError("Invalid user data: " + parse.error.issues.map(i => i.message).join(", "), 400);
       }
 
-      const { name, email, password, phone, isAdmin } = parse.data;
+      const { name, email, password, phone, isAdmin, referralCode } = parse.data;
 
       const existing = await prisma.user.findUnique({
         where: {
@@ -238,6 +240,24 @@ if (action === "login") {
 
       if (existing) {
         return apiError("Email already exists.", 409);
+      }
+
+      // If a referral code was passed, validate it first
+      let referrerCodeObj = null;
+      if (referralCode && referralCode.trim() !== "") {
+        referrerCodeObj = await prisma.referralCode.findFirst({
+          where: {
+            code: referralCode.trim(),
+            isActive: true,
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        if (!referrerCodeObj) {
+          return apiError("Invalid Referral Code", 400);
+        }
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -290,6 +310,9 @@ if (action === "login") {
         return "Active";
       };
 
+      let referrerIdToNotify: number | null = null;
+      let newUserId: number | null = null;
+
       const user = await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
@@ -301,6 +324,54 @@ if (action === "login") {
             isActive: true,
           },
         });
+
+        newUserId = newUser.id;
+
+        // Generate personal referral code for the new user
+        let personalCode = "";
+        let isCodeUnique = false;
+        while (!isCodeUnique) {
+          personalCode = "PINA-";
+          const chars = "0123456789";
+          for (let i = 0; i < 4; i++) {
+            personalCode += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          const exists = await tx.referralCode.findUnique({ where: { code: personalCode } });
+          if (!exists) isCodeUnique = true;
+        }
+
+        await tx.referralCode.create({
+          data: {
+            code: personalCode,
+            userId: newUser.id,
+          },
+        });
+
+        // If referred by someone, link them
+        if (referrerCodeObj) {
+          referrerIdToNotify = referrerCodeObj.userId;
+          const referralStatus = parse.data.assignMembership && parse.data.membershipStatus === "Active"
+            ? "Membership Activated"
+            : "Joined";
+
+          await tx.referral.create({
+            data: {
+              referrerId: referrerCodeObj.userId,
+              referredId: newUser.id,
+              codeUsed: referrerCodeObj.code,
+              status: referralStatus,
+              rewardStatus: "None",
+            },
+          });
+
+          await tx.referralActivity.create({
+            data: {
+              userId: referrerCodeObj.userId,
+              activityType: "REFERRAL_JOINED",
+              details: `${newUser.name} registered using code ${referrerCodeObj.code}`,
+            },
+          });
+        }
 
         if (parse.data.assignMembership && parse.data.membershipPlan) {
           const plan = parse.data.membershipPlan;
@@ -355,6 +426,13 @@ if (action === "login") {
 
         return newUser;
       });
+
+      // Async send notifications
+      if (referrerIdToNotify && newUserId) {
+        sendReferralNotifications(referrerIdToNotify, newUserId, referralCode!.trim()).catch(e => {
+          console.error("[Referral Notification Error]", e);
+        });
+      }
 
       return apiResponse({
         message: "User created successfully.",

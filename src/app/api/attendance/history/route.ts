@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { getSession, apiError, apiResponse } from '@/lib/auth';
-import { getISTDateTime } from '../mark/route';
+import { getISTDateTime } from '@/lib/date';
 
 export const runtime = "nodejs";
 

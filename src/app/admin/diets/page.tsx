@@ -446,7 +446,7 @@ function AdminDietsPageContent() {
         </div>
 
         {/* Right Columns: selected user's details controls */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 overflow-y-auto max-h-[calc(100vh-4rem)]">
           <AnimatePresence mode="wait">
             
             {detailsLoading ? (

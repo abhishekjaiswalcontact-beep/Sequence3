@@ -530,7 +530,7 @@ export default function AdminMembershipsPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8 overflow-y-auto max-h-[calc(100vh-4rem)]">
         {/* Stats bar */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
@@ -554,6 +554,12 @@ export default function AdminMembershipsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h2 className="text-2xl font-heading font-bold uppercase tracking-tight">Gym Memberships</h2>
           <div className="flex gap-3">
+            <button
+              onClick={() => router.push("/admin/referrals")}
+              className="px-4 py-2.5 border border-brand/40 text-brand rounded-xl text-xs font-bold uppercase hover:bg-brand/10 transition-colors shadow-neon"
+            >
+              Referral Management
+            </button>
             <button
               onClick={() => router.push("/admin/users")}
               className="px-4 py-2.5 border border-white/10 rounded-xl text-xs font-bold uppercase hover:bg-white/5 hover:text-white transition-colors"

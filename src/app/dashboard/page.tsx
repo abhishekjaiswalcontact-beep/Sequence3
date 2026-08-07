@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Activity, History, ArrowRight, LogOut, ShieldCheck, Apple, CreditCard, Calendar } from 'lucide-react';
+import { Activity, History, ArrowRight, LogOut, ShieldCheck, Apple, CreditCard, Calendar, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
@@ -214,6 +214,39 @@ export default function DashboardPage() {
                  </p>
                  <button className="self-start px-8 py-3.5 bg-white text-black font-bold uppercase tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2 text-xs">
                    Track Attendance <ArrowRight className="w-4 h-4" />
+                 </button>
+              </div>
+            </motion.div>
+
+            {/* Main Action Card: Referral Program */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="relative rounded-[2rem] overflow-hidden group cursor-pointer border border-brand/30 hover:border-brand/50 shadow-neon bg-brand/5"
+              onClick={() => router.push('/dashboard/referral')}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-700 opacity-35 pointer-events-none">
+                <Image 
+                   src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=70&w=800" 
+                   alt="" 
+                   fill
+                   sizes="(max-width: 768px) 100vw, 600px"
+                   className="object-cover"
+                   loading="lazy"
+                />
+              </div>
+              <div className="relative z-20 p-12 h-full flex flex-col justify-end min-h-[360px]">
+                 <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mb-6 shadow-neon">
+                   <Award className="w-8 h-8 text-white" />
+                 </div>
+                 <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 uppercase">Referral Program</h2>
+                 <p className="text-gray-300 max-w-md mb-8 text-sm">
+                   Invite your friends to join PINAKA FITNESS. Track your referral success, unlock premium milestones, and claim exclusive perks!
+                 </p>
+                 <button className="self-start px-8 py-3.5 bg-brand text-white font-bold uppercase tracking-widest rounded-full hover:bg-brand-light transition-colors flex items-center gap-2 text-xs shadow-lg shadow-brand/35">
+                   Open Invites <ArrowRight className="w-4 h-4" />
                  </button>
               </div>
             </motion.div>

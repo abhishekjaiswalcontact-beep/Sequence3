@@ -49,6 +49,7 @@ export default function AdminUsersPage() {
     password: "",
     phone: "",
     isAdmin: false,
+    referralCode: "",
     // Membership fields
     assignMembership: false,
     membershipPlan: "Monthly",
@@ -213,6 +214,7 @@ export default function AdminUsersPage() {
       password: formData.password,
       phone: formData.phone,
       isAdmin: formData.isAdmin,
+      referralCode: formData.referralCode,
       assignMembership: formData.assignMembership
     };
 
@@ -251,6 +253,7 @@ export default function AdminUsersPage() {
         password: "",
         phone: "",
         isAdmin: false,
+        referralCode: "",
         assignMembership: false,
         membershipPlan: "Monthly",
         membershipStartDate: new Date().toISOString().split("T")[0],
@@ -337,7 +340,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-y-auto">
       {/* Toast notifications */}
       <div className="fixed top-4 right-4 z-[100] space-y-2 pointer-events-none">
         <AnimatePresence>
@@ -362,7 +365,7 @@ export default function AdminUsersPage() {
 
       {/* Header */}
       <header className="border-b border-white/5 bg-black/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/dashboard")}
@@ -412,8 +415,14 @@ export default function AdminUsersPage() {
           <h2 className="text-2xl font-heading font-bold uppercase">All Users</h2>
           <div className="flex gap-3">
             <button
+              onClick={() => router.push("/admin/referrals")}
+              className="px-5 py-2.5 border border-brand/40 text-brand rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-brand/10 transition-colors shadow-neon"
+            >
+              Referral Management
+            </button>
+            <button
               onClick={() => router.push("/admin/diets")}
-              className="px-5 py-2.5 border border-brand/40 text-brand rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-brand/10 transition-colors"
+              className="px-5 py-2.5 border border-white/10 text-gray-300 rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors"
             >
               Manage Diets
             </button>
@@ -442,11 +451,11 @@ export default function AdminUsersPage() {
               initial={{ opacity: 0, y: -20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: -20, height: 0 }}
-              className="overflow-hidden"
+              className="overflow-auto"
             >
               <form
                 onSubmit={handleCreateUser}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4"
+                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 overflow-y-auto max-h-[80vh]"
               >
                 <h3 className="text-lg font-heading font-bold uppercase">New User</h3>
 
@@ -513,6 +522,16 @@ export default function AdminUsersPage() {
                       </div>
                       <span className="text-sm text-gray-300">Grant admin privileges</span>
                     </label>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-gray-400 font-medium">Referral Code (Optional)</label>
+                    <input
+                      type="text"
+                      value={formData.referralCode}
+                      onChange={(e) => setFormData((d) => ({ ...d, referralCode: e.target.value }))}
+                      placeholder="e.g. PINA-1234"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand transition-colors"
+                    />
                   </div>
                 </div>
 
@@ -883,7 +902,7 @@ export default function AdminUsersPage() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative overflow-hidden"
+              className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative max-h-[90vh] overflow-y-auto flex flex-col"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-50" />
               
