@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Copy, Share2, Users, CheckCircle, Clock,
   Gift, Award, Calendar, AlertCircle, Bell,
-  BellOff
+  BellOff, X
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
@@ -65,6 +65,26 @@ export default function MemberReferralPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [systemEnabled, setSystemEnabled] = useState(true);
+
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [showNotifications]);
 
   const addToast = (type: Toast["type"], message: string) => {
     const id = Math.random().toString(36).slice(2);
@@ -256,13 +276,13 @@ export default function MemberReferralPage() {
           </div>
 
           {/* Notifications Button */}
-          <div className="relative">
+          <div className="relative z-40" ref={notifRef}>
             <button
               onClick={() => {
                 setShowNotifications((v) => !v);
                 handleMarkNotificationsAsRead();
               }}
-              className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-colors relative flex items-center gap-2 text-sm"
+              className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-colors relative flex items-center gap-2 text-sm focus:outline-none cursor-pointer"
             >
               {unreadNotifications > 0 ? (
                 <>
@@ -281,21 +301,26 @@ export default function MemberReferralPage() {
             <AnimatePresence>
               {showNotifications && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-3 w-80 bg-[#0e0e0f] border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50 p-4 space-y-3"
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 sm:left-auto sm:right-0 mt-3 w-[calc(100vw-3rem)] max-w-sm sm:w-80 bg-[#0e0e0f]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-4 space-y-3 origin-top-left sm:origin-top-right"
                 >
-                  <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                    <span className="font-heading font-bold text-xs uppercase text-gray-400">Recent Alerts</span>
+                  <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                    <span className="font-heading font-bold text-xs uppercase tracking-wider text-gray-300">
+                      Recent Alerts
+                    </span>
                     <button
                       onClick={() => setShowNotifications(false)}
-                      className="text-[10px] text-gray-500 hover:text-white"
+                      className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors flex items-center gap-1 cursor-pointer"
+                      aria-label="Close alerts"
                     >
-                      Close
+                      <X className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-semibold">Close</span>
                     </button>
                   </div>
-                  <div className="max-h-60 overflow-y-auto space-y-2.5">
+                  <div className="max-h-[50vh] sm:max-h-72 overflow-y-auto space-y-2.5 pr-1">
                     {notifications.length > 0 ? (
                       notifications.map((notif) => (
                         <div
@@ -307,7 +332,7 @@ export default function MemberReferralPage() {
                           }`}
                         >
                           <div className="text-xs font-bold font-heading">{notif.title}</div>
-                          <div className="text-[10px] mt-0.5 leading-relaxed">{notif.message}</div>
+                          <div className="text-[10px] mt-0.5 leading-relaxed break-words">{notif.message}</div>
                           <div className="text-[8px] text-gray-500 mt-1.5">
                             {new Date(notif.createdAt).toLocaleDateString()}
                           </div>
