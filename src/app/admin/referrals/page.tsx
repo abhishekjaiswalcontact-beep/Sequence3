@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, ArrowLeft, LogOut, Users, CheckCircle,
-  Clock, X, Search, Filter, RefreshCw, Eye, Trash2, Edit2,
-  Settings, Award, Download, ToggleLeft, ToggleRight, Check, AlertCircle
+  Clock, X, Search, Filter, Eye, Trash2, Edit2,
+  Settings, Award, Download, ToggleLeft, ToggleRight, AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -90,17 +90,6 @@ interface Milestone {
   enabled: boolean;
 }
 
-interface ActivityLog {
-  id: number;
-  userId?: number;
-  activityType: string;
-  details: string;
-  createdAt: string;
-  user?: {
-    name: string;
-    email: string;
-  };
-}
 
 interface Toast {
   id: string;
@@ -114,7 +103,6 @@ export default function AdminReferralsPage() {
 
   const [loading, setLoading] = useState(true);
   const [referrals, setReferrals] = useState<ReferralData[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [analytics, setAnalytics] = useState({
     totalCodes: 0,
     activeCodes: 0,
@@ -125,7 +113,6 @@ export default function AdminReferralsPage() {
     conversionRate: 0,
   });
   const [topReferrers, setTopReferrers] = useState<TopReferrer[]>([]);
-  const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [systemEnabled, setSystemEnabled] = useState(true);
   const [rewardsConfig, setRewardsConfig] = useState<Milestone[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -142,7 +129,6 @@ export default function AdminReferralsPage() {
 
   // Modals / Details view target
   const [detailsTarget, setDetailsTarget] = useState<ReferralData | null>(null);
-  const [notesText, setNotesText] = useState("");
   const [editingReferral, setEditingReferral] = useState<ReferralData | null>(null);
   const [editForm, setEditForm] = useState({ status: "", rewardStatus: "", notes: "" });
 
@@ -172,10 +158,8 @@ export default function AdminReferralsPage() {
       if (res.ok) {
         const data = await res.json();
         setReferrals(data.referrals);
-        setTotalCount(data.totalReferrals);
         setAnalytics(data.analytics);
         setTopReferrers(data.topReferrers);
-        setActivities(data.activities);
         setSystemEnabled(data.systemEnabled);
         setRewardsConfig(data.rewardsConfig);
         setTotalPages(Math.ceil(data.totalReferrals / limit));

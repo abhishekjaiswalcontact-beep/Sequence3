@@ -27,14 +27,6 @@ interface ReferralHistoryItem {
   };
 }
 
-interface RewardItem {
-  id: number;
-  rewardName: string;
-  rewardType: string;
-  rewardValue: string;
-  status: string;
-  createdAt: string;
-}
 
 interface Milestone {
   referrals: number;
@@ -67,7 +59,6 @@ export default function MemberReferralPage() {
   const [codeActive, setCodeActive] = useState(true);
   const [stats, setStats] = useState({ totalReferrals: 0, successfulReferrals: 0, pendingReferrals: 0 });
   const [history, setHistory] = useState<ReferralHistoryItem[]>([]);
-  const [rewards, setRewards] = useState<RewardItem[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -90,7 +81,6 @@ export default function MemberReferralPage() {
         setCodeActive(data.referralCodeActive);
         setStats(data.stats);
         setHistory(data.history);
-        setRewards(data.rewards);
         setMilestones(data.milestones || []);
         setSystemEnabled(data.systemEnabled !== false);
       } else {
