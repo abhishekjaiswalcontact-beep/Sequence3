@@ -530,7 +530,7 @@ export default function AdminMembershipsPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8 overflow-y-auto max-h-[calc(100vh-4rem)]">
+      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
         {/* Stats bar */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
@@ -777,31 +777,32 @@ export default function AdminMembershipsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 overflow-y-auto p-4 sm:p-6"
             onClick={(e) => e.target === e.currentTarget && setShowAddModal(false)}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative my-8"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-60" />
-              
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-xl font-heading font-bold text-white uppercase tracking-wider">Assign Membership</h3>
-                  <p className="text-gray-400 text-xs mt-1">Assign subscription packages, trainers, and log payment records.</p>
+            <div className="min-h-full flex items-start justify-center py-6 sm:py-10">
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-6 sm:p-8 w-full max-w-2xl shadow-2xl relative my-auto"
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-60" />
+                
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="text-xl font-heading font-bold text-white uppercase tracking-wider">Assign Membership</h3>
+                    <p className="text-gray-400 text-xs mt-1">Assign subscription packages, trainers, and log payment records.</p>
+                  </div>
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              <form onSubmit={handleCreateMembership} className="space-y-6 text-xs">
+                <form onSubmit={handleCreateMembership} className="space-y-6 text-xs">
                 {formError && (
                   <div className="flex items-center gap-2 text-red-400 bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-2.5">
                     <AlertCircle className="w-4 h-4 shrink-0" /> {formError}
@@ -1042,7 +1043,8 @@ export default function AdminMembershipsPage() {
                 </div>
               </form>
             </motion.div>
-          </motion.div>
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
 
@@ -1053,34 +1055,35 @@ export default function AdminMembershipsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 overflow-y-auto p-4 sm:p-6"
             onClick={(e) => e.target === e.currentTarget && setShowEditModal(false)}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative my-8"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-60" />
-              
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-xl font-heading font-bold text-white uppercase tracking-wider">Manage Membership</h3>
-                  <p className="text-gray-400 text-xs mt-1">
-                    Card ID: <span className="font-mono text-brand-light font-bold">{selectedMembership.membershipId}</span> for {selectedMembership.user.name}
-                  </p>
+            <div className="min-h-full flex items-start justify-center py-6 sm:py-10">
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-6 sm:p-8 w-full max-w-2xl shadow-2xl relative my-auto"
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-60" />
+                
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="text-xl font-heading font-bold text-white uppercase tracking-wider">Manage Membership</h3>
+                    <p className="text-gray-400 text-xs mt-1">
+                      Card ID: <span className="font-mono text-brand-light font-bold">{selectedMembership.membershipId}</span> for {selectedMembership.user.name}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              {/* Status Action Buttons */}
-              <div className="bg-white/2 border border-white/5 p-4 rounded-2xl mb-6 flex flex-wrap gap-3 items-center justify-between text-xs">
+                {/* Status Action Buttons */}
+                <div className="bg-white/2 border border-white/5 p-4 rounded-2xl mb-6 flex flex-wrap gap-3 items-center justify-between text-xs">
                 <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Change Subscription Status:</span>
                 <div className="flex gap-2 flex-wrap">
                   {selectedMembership.status !== "Active" && (
@@ -1321,7 +1324,7 @@ export default function AdminMembershipsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4 border-t border-white/5">
+                <div className="flex gap-4 pt-4 border-t border-white/5 shrink-0 mt-auto">
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
@@ -1345,7 +1348,8 @@ export default function AdminMembershipsPage() {
                 </div>
               </form>
             </motion.div>
-          </motion.div>
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
 
@@ -1356,15 +1360,16 @@ export default function AdminMembershipsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 overflow-y-auto p-4 sm:p-6"
             onClick={(e) => e.target === e.currentTarget && setShowHistoryModal(false)}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0b0b0b] border border-white/10 rounded-2xl p-6 w-full max-w-2xl shadow-2xl max-h-[80vh] flex flex-col"
-            >
+            <div className="min-h-full flex items-start justify-center py-6 sm:py-10">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-[#0b0b0b] border border-white/10 rounded-2xl p-6 w-full max-w-2xl shadow-2xl my-auto"
+              >
               <div className="flex justify-between items-start mb-4 pb-3 border-b border-white/5">
                 <div>
                   <h3 className="text-base font-heading font-bold text-white uppercase tracking-tight">Membership History</h3>
@@ -1432,7 +1437,8 @@ export default function AdminMembershipsPage() {
                 </button>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
     </div>

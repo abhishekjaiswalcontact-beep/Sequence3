@@ -38,23 +38,25 @@ body {
   pointer-events: none;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
+/* Custom Scrollbar - Desktop only */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
 
-::-webkit-scrollbar-track {
-  background: #050505;
-}
+  ::-webkit-scrollbar-track {
+    background: #050505;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #252525;
-  border-radius: 5px;
-  border: 2px solid #050505;
-}
+  ::-webkit-scrollbar-thumb {
+    background: #252525;
+    border-radius: 5px;
+    border: 2px solid #050505;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #8b5cf6;
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8b5cf6;
+  }
 }
 
 @layer base {

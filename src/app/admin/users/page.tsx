@@ -340,7 +340,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-y-auto">
+    <div data-lenis-prevent className="min-h-screen bg-black text-white overflow-y-auto">
       {/* Toast notifications */}
       <div className="fixed top-4 right-4 z-[100] space-y-2 pointer-events-none">
         <AnimatePresence>
@@ -411,24 +411,24 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h2 className="text-2xl font-heading font-bold uppercase">All Users</h2>
-          <div className="flex gap-3">
+          <div className="grid grid-cols-2 gap-3 w-full md:flex md:flex-row md:w-auto md:items-center md:gap-3">
             <button
               onClick={() => router.push("/admin/referrals")}
-              className="px-5 py-2.5 border border-brand/40 text-brand rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-brand/10 transition-colors shadow-neon"
+              className="flex items-center justify-center text-center px-3 py-2 md:px-5 md:py-2.5 border border-brand/40 text-brand rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide hover:bg-brand/10 transition-colors shadow-neon h-16 md:h-auto whitespace-normal break-words"
             >
               Referral Management
             </button>
             <button
               onClick={() => router.push("/admin/diets")}
-              className="px-5 py-2.5 border border-white/10 text-gray-300 rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors"
+              className="flex items-center justify-center text-center px-3 py-2 md:px-5 md:py-2.5 border border-white/10 text-gray-300 rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors h-16 md:h-auto whitespace-normal break-words"
             >
               Manage Diets
             </button>
             <button
               onClick={() => router.push("/admin/memberships")}
-              className="px-5 py-2.5 border border-white/10 rounded-xl text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors"
+              className="flex items-center justify-center text-center px-3 py-2 md:px-5 md:py-2.5 border border-white/10 rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide hover:bg-white/5 hover:text-white transition-colors h-16 md:h-auto whitespace-normal break-words"
             >
               Memberships Directory
             </button>
@@ -436,9 +436,9 @@ export default function AdminUsersPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowForm((v) => !v)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-brand rounded-xl text-sm font-bold uppercase tracking-wide shadow-neon hover:bg-brand-light transition-colors"
+              className="flex items-center justify-center gap-1.5 md:gap-2 px-3 py-2 md:px-5 md:py-2.5 bg-brand rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide shadow-neon hover:bg-brand-light transition-colors h-16 md:h-auto whitespace-normal break-words"
             >
-              <UserPlus className="w-4 h-4" />
+              <UserPlus className="w-4 h-4 shrink-0" />
               Create User
             </motion.button>
           </div>
@@ -455,7 +455,7 @@ export default function AdminUsersPage() {
             >
               <form
                 onSubmit={handleCreateUser}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 overflow-y-auto max-h-[80vh]"
+                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4"
               >
                 <h3 className="text-lg font-heading font-bold uppercase">New User</h3>
 
@@ -895,31 +895,32 @@ export default function AdminUsersPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] overflow-y-auto p-4 sm:p-6"
             onClick={(e) => e.target === e.currentTarget && setEditTarget(null)}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative max-h-[90vh] overflow-y-auto flex flex-col"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-50" />
-              
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <h3 className="text-2xl font-heading font-bold text-white uppercase tracking-tight">Edit User</h3>
-                  <p className="text-gray-400 text-sm">Update details for {editTarget.name || editTarget.email}</p>
+            <div className="min-h-full flex items-start justify-center py-6 sm:py-10">
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl relative my-auto"
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-50" />
+                
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="text-2xl font-heading font-bold text-white uppercase tracking-tight">Edit User</h3>
+                    <p className="text-gray-400 text-sm">Update details for {editTarget.name || editTarget.email}</p>
+                  </div>
+                  <button 
+                    onClick={() => setEditTarget(null)} 
+                    className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-                <button 
-                  onClick={() => setEditTarget(null)} 
-                  className="p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              <form onSubmit={handleEditUser} className="space-y-6">
+                <form onSubmit={handleEditUser} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="text-xs text-gray-500 font-bold uppercase tracking-wider ml-1">Full Name</label>
@@ -1079,7 +1080,8 @@ export default function AdminUsersPage() {
                 </div>
               </form>
             </motion.div>
-          </motion.div>
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
 
