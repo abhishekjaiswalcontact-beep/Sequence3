@@ -147,7 +147,7 @@ export default function ContactUs() {
                   <MapPin className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">Our Location <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></h5>
-                <p className="text-gray-400 text-xs leading-relaxed">Pinaka Fitness, Sector 127<br />Noida, UP 201301</p>
+                <p className="text-gray-400 text-xs leading-relaxed">Pinaka Fitness, Sector 127 Near Shani Mandir<br />Noida, UP 201301</p>
               </motion.a>
 
               {/* Phone Card */}
@@ -190,7 +190,7 @@ export default function ContactUs() {
                   <Clock className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Hours</h5>
-                <p className="text-brand font-black text-sm uppercase tracking-widest mb-1">Open 24/7</p>
+                <p className="text-brand font-black text-sm uppercase tracking-widest mb-1">Open 18/7</p>
                 <p className="text-gray-500 text-[10px] italic">*Staff 5AM-10PM</p>
               </motion.div>
             </div>

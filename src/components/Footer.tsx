@@ -127,7 +127,7 @@ export default function Footer() {
                     <div>
                         <h4 className="text-white font-bold text-sm tracking-wide uppercase mb-1">Pinaka Fitness Noida</h4>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            Sector 127, Noida<br/>
+                            Sector 127, Noida Near Shani Mandir<br/>
                             Uttar Pradesh, India
                         </p>
                     </div>
