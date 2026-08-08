@@ -10,6 +10,8 @@ const PUBLIC_ROUTES = [
   '/',
   '/login',
   '/careers',
+  '/sitemap.xml',
+  '/robots.txt',
   '/api/contact',
   '/api/auth',
   '/api/auth/me',
@@ -19,6 +21,12 @@ const AUTH_ROUTES = ['/login'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Explicitly allow sitemap and robots routes without any authentication checks
+  if (pathname === '/sitemap.xml' || pathname === '/robots.txt') {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
@@ -55,13 +63,14 @@ export async function middleware(request: NextRequest) {
   // 3. Authorization Logic
 
   // Allow public routes and static assets
-  const isStaticAsset = /\.(png|jpg|jpeg|gif|svg|webp|ico|json|mp4|webm)$/.test(pathname);
+  const isStaticAsset = /\.(png|jpg|jpeg|gif|svg|webp|ico|json|mp4|webm|xml|txt)$/.test(pathname);
 
   if (
     PUBLIC_ROUTES.includes(pathname) || 
     pathname.startsWith('/_next') || 
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/trainer') ||
+    pathname.startsWith('/program') ||
     isStaticAsset
   ) {
     // If logged in, redirect away from /login
@@ -90,6 +99,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt).*)",
   ],
 };
