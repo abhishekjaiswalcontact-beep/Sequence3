@@ -1,0 +1,20 @@
+export const businessInfo = {
+  "@type": "Gym",
+  name: "Pinaka Fitness",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://pinakafitness.com",
+  telephone: "+91-783-587-0089",
+  alternateTelephone: "+91-783-587-0082",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Aleem Motors, Vill, near Shani Mandir",
+    addressLocality: "Bakhtawarpur",
+    addressRegion: "Uttar Pradesh",
+    postalCode: "201313",
+    addressCountry: "India",
+  },
+  openingHours: "Mo-Su 05:00-22:00",
+  logo: "/logo1.png",
+  image: ["/logo1.png"],
+  priceRange: "$$",
+  sameAs: ["https://www.instagram.com/pinakafitnessnoida127/"],
+};

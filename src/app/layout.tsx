@@ -26,28 +26,25 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Pinaka Fitness | Premium Gym & Fitness Experience",
+  title: {
+    default: "Pinaka Fitness",
+    template: "%s | PINAKA FITNESS",
+  },
   description: "Experience the next level of fitness at Pinaka Fitness. State-of-the-art equipment, expert trainers, and a premium atmosphere to transform your body and mind.",
   keywords: ["Gym", "Fitness", "Training", "Bodybuilding", "Pinaka Fitness", "Premium Gym"],
   authors: [{ name: "Pinaka Fitness" }],
   openGraph: {
-    title: "Pinaka Fitness | Premium Gym",
+    title: "Pinaka Fitness",
     description: "Transform Your Body. Train with the Best Equipment.",
-    url: "https://pinakafitness.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://pinakafitness.com",
     siteName: "Pinaka Fitness",
-    images: [
-      {
-        url: "/logo1.png",
-        width: 800,
-        height: 600,
-      },
-    ],
+    images: [{ url: "/logo1.png", width: 800, height: 600 }],
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pinaka Fitness | Premium Gym",
+    title: "Pinaka Fitness",
     description: "Transform Your Body. Train with the Best Equipment.",
     images: ["/logo1.png"],
   },
@@ -55,6 +52,7 @@ export const metadata: Metadata = {
     icon: "/logo1.png",
     apple: "/logo1.png",
   },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://pinakafitness.com"),
 };
 
 import Preloader from "@/components/Preloader";

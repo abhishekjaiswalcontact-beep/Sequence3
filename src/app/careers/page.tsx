@@ -102,7 +102,7 @@ export default function CareersPage() {
           <p className="text-white/80 text-xl max-w-2xl mx-auto mb-10">
             Tell us why you&apos;d be a great fit for Pinaka Fitness regardless. We&apos;re always looking for exceptional talent.
           </p>
-          <a href="mailto:careers@pinakafitness.com" className="px-12 py-5 bg-white text-black font-extrabold rounded-full hover:scale-105 transition-all text-lg tracking-tight">
+          <a href="mailto:pinakafitnessnoidasec127@gmail.com" className="px-12 py-5 bg-white text-black font-extrabold rounded-full hover:scale-105 transition-all text-lg tracking-tight">
             Send Your Resume
           </a>
         </div>

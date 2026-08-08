@@ -33,6 +33,64 @@ export default function Navbar() {
     { title: "Contact Us", hasDropdown: false }
   ];
 
+  const getHref = useCallback((title: string) => {
+    switch (title) {
+      case 'Careers':
+        return '/careers';
+      case 'Contact Us':
+        return '/#contact';
+      case 'Programs':
+        return '/#programs';
+      case 'Trainers':
+        return '/#trainers';
+      case 'Gallery':
+        return '/#showcase';
+      default:
+        return `/#${title.toLowerCase().replace(/\s+/g, '-')}`;
+    }
+  }, []);
+
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/#')) {
+      const targetId = href.replace('/#', '');
+      if (typeof window !== 'undefined' && window.location.pathname === '/') {
+        e.preventDefault();
+        const wasOpen = isOpen;
+        if (wasOpen) {
+          setIsOpen(false);
+          document.body.style.overflow = '';
+        }
+
+        const scrollToTarget = () => {
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            window.history.pushState(null, '', href);
+          }
+        };
+
+        if (wasOpen) {
+          setTimeout(scrollToTarget, 100);
+        } else {
+          scrollToTarget();
+        }
+      }
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const timer = setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const handleLogout = useCallback(async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
@@ -116,24 +174,23 @@ export default function Navbar() {
 
         {/* Central Desktop Menu */}
         <div className="hidden lg:flex items-center space-x-10">
-          {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              href={
-                  item.title === 'Careers' ? '/careers' :
-                    item.title === 'Contact Us' ? '/#contact' :
-                      item.title === 'Gallery' ? '/#showcase' :
-                        `/#${item.title.toLowerCase().replace(' ', '-')}`
-              }
-              className="text-sm font-heading font-semibold uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all duration-300 relative group text-white/80 hover:text-white hover:-translate-y-0.5"
-            >
-              {item.title}
-              {item.hasDropdown && (
-                <ChevronDown size={14} className="transition-colors text-white/50 group-hover:text-white" />
-              )}
-              <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full bg-brand shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const href = getHref(item.title);
+            return (
+              <Link
+                key={item.title}
+                href={href}
+                onClick={(e) => handleNavClick(e, href)}
+                className="text-sm font-heading font-semibold uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all duration-300 relative group text-white/80 hover:text-white hover:-translate-y-0.5"
+              >
+                {item.title}
+                {item.hasDropdown && (
+                  <ChevronDown size={14} className="transition-colors text-white/50 group-hover:text-white" />
+                )}
+                <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full bg-brand shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right Section: CTA & Auth */}
@@ -206,29 +263,32 @@ export default function Navbar() {
             data-lenis-prevent
           >
               <div className="space-y-6">
-                {menuItems.map((item, idx) => (
+                {menuItems.map((item, idx) => {
+                  const href = getHref(item.title);
+                  return (
                     <motion.div
-                        key={item.title}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 + idx * 0.05 }}
+                      key={item.title}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.05 }}
                     >
-                        <Link
-                        href={
-                            item.title === 'Careers' ? '/careers' :
-                                item.title === 'Contact Us' ? '/#contact' :
-                                item.title === 'Gallery' ? '/#showcase' :
-                                    `/#${item.title.toLowerCase().replace(' ', '-')}`
-                        }
-                        onClick={() => setIsOpen(false)}
+                      <Link
+                        href={href}
+                        onClick={(e) => {
+                          handleNavClick(e, href);
+                          if (!href.startsWith('/#')) {
+                            setIsOpen(false);
+                          }
+                        }}
                         className="text-3xl font-heading font-bold text-white/90 hover:text-brand flex items-center justify-between uppercase tracking-[0.1em] transition-all duration-300 hover:translate-x-2 group"
-                        >
+                      >
                         {item.title}
                         {item.hasDropdown && <ChevronDown size={28} className="text-white/20 group-hover:text-brand transition-colors duration-300" />}
-                        </Link>
+                      </Link>
                     </motion.div>
-                ))}
-            </div>
+                  );
+                })}
+              </div>
 
             <div className="mt-auto space-y-6">
                 {isLoggedIn ? (
