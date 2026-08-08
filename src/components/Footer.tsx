@@ -228,6 +228,7 @@ export default function Footer() {
                     />
                     <button 
                         type="submit"
+                        aria-label="Subscribe to newsletter"
                         className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center hover:bg-brand-light transition-colors shadow-[0_0_15px_rgba(139,92,246,0.3)] active:scale-95"
                         disabled={isSubscribed}
                     >
