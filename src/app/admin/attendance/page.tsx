@@ -276,7 +276,7 @@ export default function AdminAttendancePage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <button className="p-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+              <button aria-label="Back to dashboard" className="p-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                 <ArrowLeft className="w-5 h-5 text-gray-300" />
               </button>
             </Link>

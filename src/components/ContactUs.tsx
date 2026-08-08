@@ -197,13 +197,13 @@ export default function ContactUs() {
 
             {/* Socials & Embed */}
             <motion.div variants={itemVariants} className="flex items-center gap-4 mt-2">
-              <a href="https://www.instagram.com/pinakafitnessnoida127/?hl=en" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
+              <a href="https://www.instagram.com/pinakafitnessnoida127/?hl=en" aria-label="Pinaka Fitness on Instagram" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
                 <InstagramIcon className="w-5 h-5" />
               </a>
-              <a href="pinakafitnessnoidasec127@gmail.com" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
+              <a href="pinakafitnessnoidasec127@gmail.com" aria-label="Email Pinaka Fitness" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
                 <MessageCircle className="w-5 h-5" /> {/* WhatsApp stand-in */}
               </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FF0000] hover:border-[#FF0000] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(255,0,0,0.4)]">
+              <a href="#" aria-label="Pinaka Fitness on YouTube" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FF0000] hover:border-[#FF0000] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(255,0,0,0.4)]">
                 <YoutubeIcon className="w-5 h-5" />
               </a>
               
@@ -212,6 +212,7 @@ export default function ContactUs() {
                 href="https://www.google.com/maps/place/PINAKA+FITNESS/@28.5332574,77.3542702,851m/data=!3m2!1e3!4b1!4m6!3m5!1s0x390ce7d06cfc41ad:0x5136f01d684bb5c3!8m2!3d28.5332574!4d77.3542702!16s%2Fg%2F11zd49g43c?entry=ttu&g_ep=EgoyMDI2MDcyMS4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Open Pinaka Fitness location in Google Maps"
                 className="ml-auto w-24 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative group hover:border-brand/50 transition-colors"
                 title="Open in Maps"
               >

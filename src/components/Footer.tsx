@@ -56,10 +56,10 @@ export default function Footer() {
   ];
 
   const socialIcons = [
-    { Icon: FacebookIcon, href: '#' },
-    { Icon: TwitterIcon, href: '#' },
-    { Icon: YoutubeIcon, href: '#' },
-    { Icon: InstagramIcon, href: '#' },
+    { Icon: FacebookIcon, href: '#', label: 'Pinaka Fitness on Facebook' },
+    { Icon: TwitterIcon, href: '#', label: 'Pinaka Fitness on Twitter' },
+    { Icon: YoutubeIcon, href: '#', label: 'Pinaka Fitness on YouTube' },
+    { Icon: InstagramIcon, href: 'https://www.instagram.com/pinakafitnessnoida127/?hl=en', label: 'Pinaka Fitness on Instagram' },
   ];
 
   return (
@@ -246,8 +246,8 @@ export default function Footer() {
 
             {/* Social Icons */}
             <div className="flex gap-4 mt-8">
-                {socialIcons.map(({ Icon, href }, i) => (
-                    <Link key={i} href={href} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand hover:border-brand transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-[0_5px_20px_rgba(139,92,246,0.4)]">
+                {socialIcons.map(({ Icon, href, label }, i) => (
+                    <Link key={i} href={href} aria-label={label} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand hover:border-brand transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-[0_5px_20px_rgba(139,92,246,0.4)]">
                         <Icon />
                     </Link>
                 ))}

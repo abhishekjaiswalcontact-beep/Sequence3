@@ -140,6 +140,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 sm:gap-4 shrink-0 ml-2 z-10">
             <button 
               onClick={() => setIsScannerModalOpen(true)}
+              aria-label="About AI Scanner"
               className="relative px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-brand/10 hover:border-brand/50 transition-all text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 group/btn overflow-hidden active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand/0 via-brand/20 to-brand/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />

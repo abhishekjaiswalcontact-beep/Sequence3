@@ -277,6 +277,7 @@ export default function SupportFAQ() {
                                         e.stopPropagation();
                                         handleFeedback(faq.id, 'up');
                                       }}
+                                      aria-label="Thumbs up"
                                       className={`p-2 rounded-lg border transition-all ${
                                         feedback[faq.id] === 'up' ? 'border-brand bg-brand/10 text-brand' : 'border-white/5 text-gray-500 hover:text-white'
                                       }`}
@@ -288,6 +289,7 @@ export default function SupportFAQ() {
                                         e.stopPropagation();
                                         handleFeedback(faq.id, 'down');
                                       }}
+                                      aria-label="Thumbs down"
                                       className={`p-2 rounded-lg border transition-all ${
                                         feedback[faq.id] === 'down' ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/5 text-gray-500 hover:text-white'
                                       }`}
@@ -355,6 +357,7 @@ export default function SupportFAQ() {
             >
               <button 
                 onClick={() => setVideoUrl(null)}
+                aria-label="Close video explanation"
                 className="absolute top-4 right-4 z-10 p-3 bg-black/50 text-white/70 hover:text-white rounded-full transition-colors border border-white/10"
               >
                 <XCircle size={24} />

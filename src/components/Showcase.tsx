@@ -278,7 +278,7 @@ export default function Showcase() {
             <button 
               className="absolute top-6 right-6 md:top-8 md:right-8 text-white/70 hover:text-white transition-colors z-[210] p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/10"
               onClick={closeLightbox}
-              aria-label="Close"
+              aria-label="Close gallery lightbox"
             >
               <X size={24} />
             </button>
@@ -287,12 +287,14 @@ export default function Showcase() {
             <button 
               className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[210] p-3 bg-white/5 rounded-full"
               onClick={prevImage}
+              aria-label="Previous image"
             >
               <ChevronLeft size={32} />
             </button>
             <button 
               className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-[210] p-3 bg-white/5 rounded-full"
               onClick={nextImage}
+              aria-label="Next image"
             >
               <ChevronRight size={32} />
             </button>

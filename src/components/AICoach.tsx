@@ -256,6 +256,7 @@ export default function AICoach({ autoOpen = false, greeting }: AICoachProps) {
                   whileTap={{ scale: 0.92 }}
                   onClick={resetChat}
                   title="Reset conversation"
+                  aria-label="Reset conversation"
                   className="p-2 rounded-xl text-white/40 hover:text-white/80 hover:bg-white/8 transition-colors"
                 >
                   <RotateCcw size={15} />
@@ -264,6 +265,7 @@ export default function AICoach({ autoOpen = false, greeting }: AICoachProps) {
                   whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.92 }}
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close AI Coach"
                   className="p-2 rounded-xl text-white/40 hover:text-white/80 hover:bg-white/8 transition-colors"
                 >
                   <X size={17} />
