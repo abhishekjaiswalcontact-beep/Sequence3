@@ -24,7 +24,7 @@ export default function Preloader({
 
   useEffect(() => {
     const controls = animate(0, 100, {
-      duration: 4.5,
+      duration: 0.8,
       ease: "easeInOut",
       onUpdate(value) {
         setProgress(value);
@@ -33,7 +33,7 @@ export default function Preloader({
         setTimeout(() => {
           setLoading(false);
           onLoadingComplete?.();
-        }, 400);
+        }, 150);
       },
     });
 
@@ -43,7 +43,7 @@ export default function Preloader({
   useEffect(() => {
     const interval = setInterval(() => {
       setTextIndex((prev) => (prev + 1) % loadingTexts.length);
-    }, 1200);
+    }, 400);
 
     return () => clearInterval(interval);
   }, []);
@@ -56,7 +56,7 @@ export default function Preloader({
           exit={{
             opacity: 0,
             scale: 1.02,
-            transition: { duration: 0.6 },
+            transition: { duration: 0.4 },
           }}
           className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#07070B]"
         >
@@ -103,8 +103,8 @@ export default function Preloader({
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: .8 }}
-              className="mt-8text-2xlsm:text-3xlmd:text-5xlfont-blackuppercasetracking-[0.08em]md:tracking-[0.22em]text-centerpx-5leading-tighttext-transparentbg-clip-textbg-gradient-to-bfrom-whitevia-violet-200to-violet-500">
+              transition={{ duration: .4 }}
+              className="mt-8 text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-[0.08em] md:tracking-[0.22em] text-center px-5 leading-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-violet-200 to-violet-500">
               PINAKA FITNESS
             </motion.h1>
 

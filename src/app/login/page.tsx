@@ -48,7 +48,7 @@ function LoginForm() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
       {/* Gym background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48')] bg-cover opacity-20 bg-center" />
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=75&auto=format')] bg-cover opacity-20 bg-center" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
       <motion.div

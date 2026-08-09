@@ -1,6 +1,6 @@
 'use client';
 
-
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 import { Dumbbell, HeartPulse, Flame, PersonStanding, ArrowRight } from 'lucide-react';
@@ -11,7 +11,7 @@ const programs = [
     slug: 'strength',
     title: 'Strength',
     icon: Dumbbell,
-    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&auto=format',
     desc: 'Build muscle and power with our free weights and machines.',
     accentColor: '#f59e0b',
     glowColor: 'rgba(245,158,11,0.35)',
@@ -23,7 +23,7 @@ const programs = [
     slug: 'cardio',
     title: 'Cardio',
     icon: HeartPulse,
-    image: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&q=75&auto=format',
     desc: 'Improve endurance with top-tier treadmills and bikes.',
     accentColor: '#ef4444',
     glowColor: 'rgba(239,68,68,0.35)',
@@ -35,7 +35,7 @@ const programs = [
     slug: 'hiit',
     title: 'HIIT',
     icon: Flame,
-    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=75&auto=format',
     desc: 'High-intensity interval training to burn fat fast.',
     accentColor: '#f97316',
     glowColor: 'rgba(249,115,22,0.35)',
@@ -47,7 +47,7 @@ const programs = [
     slug: 'yoga',
     title: 'Yoga',
     icon: PersonStanding,
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=75&auto=format',
     desc: 'Enhance flexibility and mindfulness in our calm studio.',
     accentColor: '#a78bfa',
     glowColor: 'rgba(167,139,250,0.35)',
@@ -117,11 +117,13 @@ export default function Programs() {
               >
                 {/* Image Section */}
                 <div className="relative w-full h-48 overflow-hidden">
-                  <motion.img
+                  <Image
                     src={prog.image}
                     alt={prog.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    whileHover={{ scale: 1.1 }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    loading="lazy"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent" />
                   

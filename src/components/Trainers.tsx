@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { trainers } from "@/lib/trainerData";
@@ -22,11 +23,12 @@ export default function Trainers() {
             whileHover={{ y: -10 }}
             className="relative group rounded-3xl overflow-hidden aspect-[4/5] bg-surface cursor-pointer shadow-xl hover:shadow-brand/20 transition-shadow duration-500"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <motion.img 
-              layoutId={`trainer-img-${t.name}`}
+            <Image 
               src={t.img} 
               alt={t.name} 
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              loading="lazy"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-90 group-hover:opacity-80 transition-opacity"></div>

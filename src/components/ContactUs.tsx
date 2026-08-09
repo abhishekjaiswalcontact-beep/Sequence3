@@ -111,7 +111,7 @@ export default function ContactUs() {
     <>
       <div className="relative bg-black overflow-hidden" id="contact">
         {/* Abstract Background Elements */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=75&w=800')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand/20 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
 

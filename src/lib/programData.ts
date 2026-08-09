@@ -371,7 +371,7 @@ export const programs: Program[] = [
           'Check the seat and handlebar bolts are secure before each session.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800' },
+          { proper: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Quadriceps', 'Hamstrings', 'Glutes', 'Calves', 'Core (stabilizing)'],
         calories: '200–500 kcal',
@@ -406,7 +406,7 @@ export const programs: Program[] = [
           'Blister prevention: use fingerless grip gloves for long rows.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1599553236203-c32fbc987679?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1599553236203-c32fbc987679?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Legs', 'Back', 'Core', 'Shoulders', 'Arms — full body'],
         calories: '300–500 kcal',
@@ -441,7 +441,7 @@ export const programs: Program[] = [
           'Avoid jump rope on hard concrete for extended sessions.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1590556409324-aa1d726e5c3c?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Calves', 'Quadriceps', 'Shoulders', 'Core', 'Forearms'],
         calories: '200–300 kcal',
@@ -476,7 +476,7 @@ export const programs: Program[] = [
           'Great alternative for runners with knee pain — low impact option.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Glutes', 'Quadriceps', 'Hamstrings', 'Calves', 'Hip Flexors'],
         calories: '180–400 kcal',
@@ -547,7 +547,7 @@ export const programs: Program[] = [
           'Listen to your body — burpees are maximum effort. Stop if dizzy.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Full Body: Core, Chest, Quads, Glutes, Shoulders'],
         calories: '10–15 kcal/min',
@@ -582,7 +582,7 @@ export const programs: Program[] = [
           'Build explosive strength on regular squats before plyometric version.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Quadriceps', 'Glutes', 'Hamstrings', 'Calves', 'Core'],
         calories: '12–16 kcal/min',
@@ -617,7 +617,7 @@ export const programs: Program[] = [
           'Breathe! Holding your breath at HIIT intensity causes dizziness.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Core', 'Shoulders', 'Hip Flexors', 'Quads', 'Chest (stabilizing)'],
         calories: '11–15 kcal/min',
@@ -654,7 +654,7 @@ export const programs: Program[] = [
           'Have a bail plan: if you mis-jump, land and step back.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Quadriceps', 'Glutes', 'Calves', 'Hamstrings', 'Core'],
         calories: '8–12 kcal/set',
@@ -689,7 +689,7 @@ export const programs: Program[] = [
           'Lower back caution: maintain neutral spine during slams — brace hard.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Shoulders', 'Arms', 'Core', 'Back', 'Legs (stabilizing)'],
         calories: '10–15 kcal/min',
@@ -761,7 +761,7 @@ export const programs: Program[] = [
           'Downward Dog can cause light-headedness initially — rest in Child\'s Pose as needed.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Full Body: Hamstrings, Spine, Shoulders, Hip Flexors, Core'],
         calories: '100–200 kcal',
@@ -796,7 +796,7 @@ export const programs: Program[] = [
           'Avoid if you have ankle instability — work on ankle strength first.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Glutes', 'Hip Abductors', 'Ankles', 'Core', 'Mental Focus'],
         calories: '30–60 kcal',
@@ -831,7 +831,7 @@ export const programs: Program[] = [
           'Use a chair for balance support while learning the pose.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1508921310243-261a868f60da?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1508921310243-261a868f60da?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Quadriceps', 'Glutes', 'Hip Abductors', 'Shoulders', 'Core'],
         calories: '40–80 kcal',
@@ -866,7 +866,7 @@ export const programs: Program[] = [
           'Shoulder injuries: use Dolphin Pose (forearms on mat) as a safe alternative.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Hamstrings', 'Calves', 'Shoulders', 'Thoracic Spine', 'Core (stabilizing)'],
         calories: '60–100 kcal',
@@ -901,7 +901,7 @@ export const programs: Program[] = [
           'If you feel shin or knee pain, stop immediately — angle needs adjustment.',
         ],
         images: [
-          { proper: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=1000' },
+          { proper: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&q=75&auto=format' },
         ],
         musclesWorked: ['Hip External Rotators', 'Piriformis', 'Psoas', 'Groin', 'IT Band'],
         calories: '40–70 kcal',

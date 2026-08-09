@@ -26,70 +26,70 @@ const showcaseItems = [
     id: 3,
     category: 'Equipment',
     title: 'Precision Dumbbells',
-    src: 'https://images.unsplash.com/photo-1586401100295-7a8096fd231a?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1586401100295-7a8096fd231a?w=600&q=75&auto=format',
     caption: 'High-quality iron for consistent strength gains.'
   },
   {
     id: 4,
     category: 'Workout',
     title: 'Core Stability',
-    src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=75&auto=format',
     caption: 'Build a solid foundation with core-focused exercises.'
   },
   {
     id: 5,
     category: 'Trainers',
     title: 'Athlete Mentorship',
-    src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&auto=format',
     caption: 'Train like a pro with our elite coaching staff.'
   },
   {
     id: 6,
     category: 'Equipment',
     title: 'Cardio Elite',
-    src: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=600&q=75&auto=format',
     caption: 'State-of-the-art treadmills for endurance training.'
   },
   {
     id: 7,
     category: 'Workout',
     title: 'Heavy Deadlifts',
-    src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=75&auto=format',
     caption: 'Push your limits with our heavy lifting zones.'
   },
   {
     id: 8,
     category: 'Equipment',
     title: 'Functional Rig',
-    src: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=600&q=75&auto=format',
     caption: 'Versatile equipment for dynamic functional movements.'
   },
   {
     id: 9,
     category: 'Trainers',
     title: 'Nutrition Support',
-    src: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=600&q=75&auto=format',
     caption: 'Holistic wellness including dietary planning.'
   },
   {
     id: 10,
     category: 'Workout',
     title: 'Yoga & Mobility',
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=75&auto=format',
     caption: 'Balance your intensity with flexibility sessions.'
   },
   {
     id: 11,
     category: 'Equipment',
     title: 'Cable Machines',
-    src: 'https://images.unsplash.com/photo-1591940746466-3cbf5317770b?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1591940746466-3cbf5317770b?w=600&q=75&auto=format',
     caption: 'Smooth resistance for isolated muscle targeting.'
   },
   {
     id: 12,
     category: 'Workout',
     title: 'HIIT Sprints',
-    src: 'https://images.unsplash.com/photo-1434596954654-286b43d24269?w=800&q=80',
+    src: 'https://images.unsplash.com/photo-1434596954654-286b43d24269?w=600&q=75&auto=format',
     caption: 'Burn maximum calories in minimum time.'
   }
 ];
