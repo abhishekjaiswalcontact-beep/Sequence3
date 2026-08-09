@@ -58,6 +58,14 @@ export const metadata: Metadata = {
 import Preloader from "@/components/Preloader";
 import SmoothScroll from "@/components/SmoothScroll";
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Pinaka Fitness",
+  alternateName: "PINAKA FITNESS",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.pinakafitness.com",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,6 +76,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${outfit.variable} font-sans antialiased`}
       >
+        {/* WebSite structured data — tells Google the preferred site name is "Pinaka Fitness" */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <AuthProvider>
             <SmoothScroll>
               <Preloader />
