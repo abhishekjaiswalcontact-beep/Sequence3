@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import { getProgramBySlug, Exercise } from '@/lib/programData';
 import Navbar from '@/components/Navbar';
-import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 
 // ─── Difficulty Badge ───────────────────────────────────────────────────────
@@ -326,9 +325,7 @@ import { useLenis } from 'lenis/react';
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function ProgramPage() {
-  const { isAuthenticated, isHydrated } = useAuth();
   const params = useParams();
-  const router = useRouter();
   const slug = typeof params.slug === 'string' ? params.slug : '';
   const program = getProgramBySlug(slug);
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -342,15 +339,6 @@ export default function ProgramPage() {
       lenis?.start();
     }
   }, [showVideoModal, lenis]);
-
-  useEffect(() => {
-    if (isHydrated && !isAuthenticated) {
-      router.replace('/login?redirect=/program/' + slug);
-    }
-  }, [isHydrated, isAuthenticated, router, slug]);
-
-  if (!isHydrated) return null;
-  if (isHydrated && !isAuthenticated) return null;
 
   if (!program) {
     return (

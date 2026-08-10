@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 import { Dumbbell, HeartPulse, Flame, PersonStanding, ArrowRight } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 
 const programs = [
   {
@@ -72,14 +71,9 @@ const cardVariants: Variants = {
 };
 
 export default function Programs() {
-  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   const handleProgramClick = (slug: string) => {
-    if (!isAuthenticated) {
-      router.push('/login?redirect=/program/' + slug);
-      return;
-    }
     router.push(`/program/${slug}`);
   };
 
