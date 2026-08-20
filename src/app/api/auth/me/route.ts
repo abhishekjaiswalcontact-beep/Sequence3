@@ -14,7 +14,9 @@ export async function GET() {
       id: session.sub,
       email: session.email,
       name: session.name,
-      isAdmin: session.isAdmin,
+      isAdmin: session.isAdmin || session.isOwner || false,
+      isOwner: session.isOwner || false,
+      role: session.role || (session.isOwner ? "OWNER" : session.isAdmin ? "ADMIN" : "MEMBER"),
     },
   });
 }

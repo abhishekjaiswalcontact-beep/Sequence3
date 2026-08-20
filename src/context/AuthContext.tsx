@@ -16,6 +16,8 @@ interface AuthUser {
   email: string;
   name: string | null;
   isAdmin: boolean;
+  isOwner?: boolean;
+  role?: string;
 }
 
 interface AuthContextType {
@@ -43,8 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Guard: prevent multiple simultaneous logout calls
   const isLoggingOutRef = useRef(false);
 
-  // On mount, call /api/auth/me to restore session from httpOnly cookie
+  // Initialize user from cached session for instant rendering
   useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem("cached_auth_user");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.id) {
+          setUser(parsed);
+          setIsAuthenticated(true);
+          setIsHydrated(true);
+        }
+      }
+    } catch {}
+
     const hydrate = async () => {
       try {
         const res = await fetch("/api/auth/me");
@@ -53,10 +67,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (data.authenticated && data.user) {
             setIsAuthenticated(true);
             setUser(data.user);
+            try {
+              sessionStorage.setItem("cached_auth_user", JSON.stringify(data.user));
+            } catch {}
+          } else {
+            setIsAuthenticated(false);
+            setUser(null);
+            try {
+              sessionStorage.removeItem("cached_auth_user");
+            } catch {}
           }
         }
       } catch {
-        // Network error — remain unauthenticated
+        // Network error
       } finally {
         setIsHydrated(true);
       }
@@ -67,12 +90,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback((authUser: AuthUser) => {
     setIsAuthenticated(true);
     setUser(authUser);
+    setIsHydrated(true);
+    try {
+      sessionStorage.setItem("cached_auth_user", JSON.stringify(authUser));
+    } catch {}
   }, []);
 
   const logout = useCallback(async () => {
     // Prevent double-logout
     if (isLoggingOutRef.current) return;
     isLoggingOutRef.current = true;
+
+    try {
+      sessionStorage.removeItem("cached_auth_user");
+    } catch {}
 
     try {
       // MUST await — cookie is only cleared after this resolves
@@ -86,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn("[AuthContext] Logout API returned non-OK:", res.status);
       }
     } catch {
-      // Network error — still clear local state so UI reflects logged-out
       console.warn("[AuthContext] Logout API call failed — clearing local state anyway");
     }
 

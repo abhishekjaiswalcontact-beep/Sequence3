@@ -12,8 +12,17 @@ model ContactMessage {
   name      String
   email     String
   phone     String   @default("")
+  subject   String   @default("")
   message   String
+  isRead    Boolean  @default(false)
+  status    String   @default("Unread") // Unread, Read, Responded, Archived
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([isRead])
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_messages")
 }
 
 model User {
@@ -23,6 +32,8 @@ model User {
   name        String
   isActive    Boolean      @default(true)
   isAdmin     Boolean      @default(false)
+  isOwner     Boolean      @default(false)
+  role        String       @default("MEMBER") // OWNER, ADMIN, TRAINER, STAFF, MEMBER
   createdAt   DateTime     @default(now())
   scans       ScanResult[]
   dietPlans   DietPlan[]
@@ -48,6 +59,14 @@ model User {
   referralRewards    ReferralReward[]
   referralActivities ReferralActivity[]
   notifications      Notification[]
+
+  staff              Staff?
+  clientIncentives   Incentive[]        @relation("ClientIncentive")
+  assignedAsClient   TrainerClient[]    @relation("AssignedClient")
+
+  adminPermissions   AdminPermission[]
+  complaints         Complaint[]
+  workoutPlans       WorkoutPlan[]
 
   @@map("users")
 }
@@ -134,6 +153,10 @@ model Membership {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([status])
+  @@index([endDate])
+  @@index([createdAt])
+  @@index([remainingBalance])
   @@map("memberships")
 }
 
@@ -365,4 +388,264 @@ model Notification {
 
   @@index([userId])
   @@map("notifications")
+}
+
+model Staff {
+  id               Int            @id @default(autoincrement())
+  userId           Int?           @unique
+  user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name             String
+  email            String
+  phone            String         @default("")
+  photo            String?
+  designation      String         // Owner, Admin, Manager, Head Trainer, Personal Trainer, Receptionist, Sales Executive, Housekeeping, Other Staff
+  department       String         // Management, Fitness, Operations, Sales, Maintenance, Administrative
+  joiningDate      DateTime       @default(now())
+  employmentStatus String         @default("Active") // Active, Inactive, On Leave, Terminated
+  monthlySalary    Float          @default(0)
+  workingHours     String         @default("9:00 AM - 6:00 PM")
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  salaries         StaffSalary[]
+  incentives       Incentive[]
+  trainerClients   TrainerClient[] @relation("TrainerRel")
+
+  @@map("staff")
+}
+
+model StaffSalary {
+  id              Int      @id @default(autoincrement())
+  staffId         Int
+  staff           Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  month           String   // e.g. "August" or "2026-08"
+  year            Int
+  baseSalary      Float
+  incentiveAmount Float    @default(0)
+  otherPayment    Float    @default(0)
+  totalPayable    Float
+  paymentStatus   String   @default("Pending") // Paid, Pending
+  paymentDate     DateTime?
+  paymentMethod   String?  // Cash, Bank Transfer, UPI, Cheque
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([staffId])
+  @@index([year, month])
+  @@index([paymentStatus])
+  @@map("staff_salaries")
+}
+
+model Incentive {
+  id            Int      @id @default(autoincrement())
+  staffId       Int
+  staff         Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  incentiveType String   // Membership Conversion, Renewal, PT Session, Sales Performance, Manual Bonus
+  amount        Float
+  reason        String
+  clientId      Int?
+  client        User?    @relation("ClientIncentive", fields: [clientId], references: [id], onDelete: SetNull)
+  membershipId  Int?
+  month         String
+  year          Int
+  paymentStatus String   @default("Pending") // Paid, Pending
+  paymentDate   DateTime?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([staffId])
+  @@index([year, month])
+  @@index([paymentStatus])
+  @@map("incentives")
+}
+
+model TrainerClient {
+  id           Int       @id @default(autoincrement())
+  trainerId    Int
+  trainer      Staff     @relation("TrainerRel", fields: [trainerId], references: [id], onDelete: Cascade)
+  clientId     Int
+  client       User      @relation("AssignedClient", fields: [clientId], references: [id], onDelete: Cascade)
+  status       String    @default("Active") // Active, Expired, Completed, FollowUpRequired
+  assignedDate DateTime  @default(now())
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([trainerId])
+  @@index([clientId])
+  @@map("trainer_clients")
+}
+
+model Expense {
+  id            Int      @id @default(autoincrement())
+  category      String   // Rent, Electricity, Water, Internet, Staff Salary, Trainer Incentives, Equipment, Maintenance, Cleaning, Marketing, Advertising, Software Subscriptions, Repairs, Other Expenses
+  amount        Float
+  date          DateTime @default(now())
+  month         String   // YYYY-MM
+  year          Int
+  paymentStatus String   @default("Paid") // Paid, Pending
+  paymentMode   String   @default("Cash") // Cash, UPI, Card, Bank Transfer, Cheque
+  description   String
+  receiptUrl    String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([year, month])
+  @@index([paymentStatus])
+  @@index([date])
+  @@map("expenses")
+}
+
+model RentPayment {
+  id            Int      @id @default(autoincrement())
+  month         String   // YYYY-MM
+  year          Int
+  monthlyRent   Float
+  landlordInfo  String?  // Name, Contact, Property details
+  dueDate       DateTime
+  paymentDate   DateTime?
+  paymentStatus String   @default("Pending") // Paid, Pending, Partial
+  amountPaid    Float    @default(0)
+  pendingAmount Float    @default(0)
+  paymentMethod String   @default("Bank Transfer")
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([year, month])
+  @@index([paymentStatus])
+  @@map("rent_payments")
+}
+
+model ElectricityBill {
+  id            Int      @id @default(autoincrement())
+  month         String   // YYYY-MM
+  year          Int
+  billAmount    Float
+  dueDate       DateTime
+  paymentDate   DateTime?
+  paymentStatus String   @default("Pending") // Paid, Pending
+  meterReading  String?
+  provider      String?
+  billNumber    String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([year, month])
+  @@index([paymentStatus])
+  @@map("electricity_bills")
+}
+
+model GymRevenue {
+  id          Int      @id @default(autoincrement())
+  category    String   // Membership, Personal Training, Renewals, Referral Commission, Other
+  amount      Float
+  source      String?  // Client Name, Online, Direct
+  date        DateTime @default(now())
+  month       String   // YYYY-MM
+  year        Int
+  paymentMode String   @default("Cash")
+  referenceId String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([year, month])
+  @@index([date])
+  @@map("gym_revenues")
+}
+
+model AuditLog {
+  id               Int      @id @default(autoincrement())
+  action           String   // USER_DELETED, USER_EDITED, STAFF_ADDED, STAFF_REMOVED, SALARY_CHANGED, SALARY_PAID, INCENTIVE_ADDED, REFERRAL_TOGGLED, EXPENSE_ADDED, REVENUE_ADDED, MEMBERSHIP_MODIFIED, SETTINGS_CHANGED
+  performedByUserId Int?
+  performedByName  String
+  role             String
+  targetRecordId   String?
+  targetRecordType String?
+  description      String
+  ipAddress        String?
+  createdAt        DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model OwnerSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("owner_settings")
+}
+
+model AdminPermission {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission String   // e.g. "VIEW_MEMBERS", "ADD_MEMBER", etc.
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, permission])
+  @@index([userId])
+  @@map("admin_permissions")
+}
+
+model Enquiry {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String?
+  phone      String
+  source     String?  // Walk-in, Website, Referral, Social Media, Phone
+  status     String   @default("Pending") // Pending, FollowUp, Converted, Closed
+  notes      String?
+  assignedTo String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("enquiries")
+}
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  memberName  String
+  subject     String
+  description String
+  priority    String   @default("Medium") // Low, Medium, High, Urgent
+  status      String   @default("Open") // Open, In Progress, Resolved, Closed
+  resolution  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("complaints")
+}
+
+model WorkoutPlan {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  goal        String
+  level       String   @default("Beginner") // Beginner, Intermediate, Advanced
+  duration    String   @default("4 Weeks")
+  daysPerWeek Int      @default(4)
+  exercises   String   // JSON string storing exercise routine
+  isCustom    Boolean  @default(false)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("workout_plans")
 }

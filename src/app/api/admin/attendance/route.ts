@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { requireAdmin, apiError, apiResponse } from '@/lib/auth';
+import { requirePermission, apiError, apiResponse, NON_OWNER_USER_FILTER, isOwnerUser } from '@/lib/auth';
 import { getISTDateTime } from '@/lib/date';
 import { Prisma } from '@prisma/client';
 
@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 // GET - List users with membership info and attendance records
 export async function GET(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("VIEW_ATTENDANCE");
 
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
@@ -20,13 +20,19 @@ export async function GET(req: Request) {
     const targetDate = dateVal || todayStr;
 
     // Build query conditions
-    const where: Prisma.UserWhereInput = {};
+    const where: Prisma.UserWhereInput = {
+      ...NON_OWNER_USER_FILTER,
+    };
 
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { phone: { contains: search, mode: 'insensitive' } },
+      where.AND = [
+        {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { phone: { contains: search, mode: 'insensitive' } },
+          ],
+        },
       ];
     }
 
@@ -108,12 +114,17 @@ export async function GET(req: Request) {
 // POST - Manually mark attendance (Present / Absent) by admin
 export async function POST(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_ATTENDANCE");
     const body = await req.json();
     const { userId, date, status, time } = body;
 
     if (!userId || !date || !status) {
       return apiError("Missing required parameters: userId, date, status", 400);
+    }
+
+    const targetUser = await prisma.user.findUnique({ where: { id: Number(userId) } });
+    if (!targetUser || isOwnerUser(targetUser)) {
+      return apiError("User not found or access denied", 404);
     }
 
     if (status !== 'Present' && status !== 'Absent') {
@@ -168,7 +179,7 @@ export async function POST(req: Request) {
 // DELETE - Revert/delete wrong attendance entries
 export async function DELETE(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_ATTENDANCE");
     const { searchParams } = new URL(req.url);
     const userIdVal = searchParams.get('userId');
     const dateVal = searchParams.get('date');
@@ -176,6 +187,23 @@ export async function DELETE(req: Request) {
 
     if (!attendanceIdVal && (!userIdVal || !dateVal)) {
       return apiError("Specify 'id' or both 'userId' and 'date' to delete attendance", 400);
+    }
+
+    if (userIdVal) {
+      const targetUser = await prisma.user.findUnique({ where: { id: parseInt(userIdVal, 10) } });
+      if (!targetUser || isOwnerUser(targetUser)) {
+        return apiError("Record not found or access denied", 404);
+      }
+    }
+
+    if (attendanceIdVal) {
+      const existingAttendance = await prisma.attendance.findUnique({
+        where: { id: parseInt(attendanceIdVal, 10) },
+        include: { user: true },
+      });
+      if (!existingAttendance || isOwnerUser(existingAttendance.user)) {
+        return apiError("Record not found or access denied", 404);
+      }
     }
 
     const attendance = await prisma.$transaction(async (tx) => {
@@ -215,3 +243,4 @@ export async function DELETE(req: Request) {
     return apiError("Internal server error or record not found", 500);
   }
 }
+

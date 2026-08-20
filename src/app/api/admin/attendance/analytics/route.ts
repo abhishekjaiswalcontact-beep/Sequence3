@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { requireAdmin, apiError, apiResponse } from '@/lib/auth';
+import { requireAdmin, apiError, apiResponse, NON_OWNER_USER_FILTER } from '@/lib/auth';
 import { getISTDateTime } from '@/lib/date';
 
 export const runtime = "nodejs";
@@ -11,8 +11,11 @@ export async function GET() {
     const { dateStr: todayStr } = getISTDateTime();
     const today = new Date(todayStr);
 
-    // Fetch all attendance records
+    // Fetch all attendance records (excluding Owner)
     const records = await prisma.attendance.findMany({
+      where: {
+        user: NON_OWNER_USER_FILTER,
+      },
       include: {
         user: {
           select: {
@@ -24,6 +27,7 @@ export async function GET() {
         }
       }
     });
+
 
     const totalPresent = records.filter(r => r.status === 'Present').length;
     const totalAbsent = records.filter(r => r.status === 'Absent').length;

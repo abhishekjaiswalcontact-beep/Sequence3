@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShieldCheck, UserPlus, Users, Eye, EyeOff, Trash2, Edit2,
+  ShieldCheck, UserPlus, Users, Eye, EyeOff, Edit2,
   ToggleLeft, ToggleRight, LogOut, ArrowLeft, AlertCircle,
   CheckCircle, Crown, X, Key, Mail, User as UserIcon, Apple, Phone
 } from "lucide-react";
@@ -48,7 +48,6 @@ export default function AdminUsersPage() {
     email: "",
     password: "",
     phone: "",
-    isAdmin: false,
     referralCode: "",
     // Membership fields
     assignMembership: false,
@@ -171,21 +170,6 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleToggleAdmin = async (u: ManagedUser) => {
-    const res = await fetch("/api/admin/users", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: u.id, isAdmin: !u.isAdmin }),
-    });
-    if (res.ok) {
-      setUsers((prev) => prev.map((x) => x.id === u.id ? { ...x, isAdmin: !u.isAdmin } : x));
-      addToast("success", `${u.name || u.email} is now ${!u.isAdmin ? "an admin" : "a regular user"}.`);
-    } else {
-      const d = await res.json();
-      addToast("error", d.error || "Update failed.");
-    }
-  };
-
   const handleDelete = async (u: ManagedUser) => {
     const res = await fetch("/api/admin/users", {
       method: "DELETE",
@@ -213,7 +197,6 @@ export default function AdminUsersPage() {
       email: formData.email,
       password: formData.password,
       phone: formData.phone,
-      isAdmin: formData.isAdmin,
       referralCode: formData.referralCode,
       assignMembership: formData.assignMembership
     };
@@ -252,7 +235,6 @@ export default function AdminUsersPage() {
         email: "",
         password: "",
         phone: "",
-        isAdmin: false,
         referralCode: "",
         assignMembership: false,
         membershipPlan: "Monthly",
@@ -398,7 +380,7 @@ export default function AdminUsersPage() {
           {[
             { label: "Total Users", value: users.length, icon: Users },
             { label: "Active", value: users.filter((u) => u.isActive).length, icon: ToggleRight, color: "text-green-400" },
-            { label: "Admins", value: users.filter((u) => u.isAdmin).length, icon: Crown, color: "text-brand" },
+            { label: "Subscribed Members", value: users.filter((u) => u.memberships && u.memberships[0]?.status === "Active").length, icon: Crown, color: "text-brand" },
           ].map((stat) => (
             <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center gap-4">
               <stat.icon className={`w-6 h-6 ${stat.color || "text-gray-400"}`} />
@@ -511,17 +493,6 @@ export default function AdminUsersPage() {
                         {showFormPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                  </div>
-                  <div className="flex items-end pb-1">
-                    <label className="flex items-center gap-3 cursor-pointer w-fit">
-                      <div
-                        onClick={() => setFormData((d) => ({ ...d, isAdmin: !d.isAdmin }))}
-                        className={`w-11 h-6 rounded-full transition-colors relative ${formData.isAdmin ? "bg-brand" : "bg-white/20"}`}
-                      >
-                        <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${formData.isAdmin ? "translate-x-6" : "translate-x-1"}`} />
-                      </div>
-                      <span className="text-sm text-gray-300">Grant admin privileges</span>
-                    </label>
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-gray-400 font-medium">Referral Code (Optional)</label>
@@ -770,7 +741,6 @@ export default function AdminUsersPage() {
                   <tr className="border-b border-white/5">
                     <th className="text-left py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">User</th>
                     <th className="text-left py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider hidden md:table-cell">Joined</th>
-                    <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Admin</th>
                     <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Access</th>
                     <th className="text-center py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Membership</th>
                     <th className="text-right py-4 px-6 text-xs text-gray-500 font-medium uppercase tracking-wider">Actions</th>
@@ -801,21 +771,6 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="py-4 px-6 text-gray-500 hidden md:table-cell">
                         {new Date(u.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                      </td>
-                      <td className="py-4 px-6 text-center">
-                        <button
-                          onClick={() => u.id !== Number(user?.id) && handleToggleAdmin(u)}
-                          disabled={u.id === Number(user?.id)}
-                          title={u.id === Number(user?.id) ? "Cannot change your own admin status" : "Toggle admin"}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                            u.isAdmin
-                              ? "bg-brand/20 text-brand border border-brand/30 hover:bg-brand/30"
-                              : "bg-white/5 text-gray-500 border border-white/10 hover:bg-white/10 hover:text-white"
-                          } disabled:opacity-40 disabled:cursor-not-allowed`}
-                        >
-                          <Crown className="w-3 h-3" />
-                          {u.isAdmin ? "Admin" : "User"}
-                        </button>
                       </td>
                       <td className="py-4 px-6 text-center">
                         <button
@@ -868,14 +823,6 @@ export default function AdminUsersPage() {
                             className="p-2 rounded-lg text-gray-600 hover:text-white hover:bg-white/5 transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => setDeleteTarget(u)}
-                            disabled={u.id === Number(user?.id)}
-                            title="Delete user"
-                            className="p-2 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-900/20 transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
-                          >
-                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

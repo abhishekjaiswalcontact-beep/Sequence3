@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, message, botField } = body;
+    const { name, email, phone, subject, message, botField } = body;
 
     // Honeypot check for spam prevention
     if (botField) {
@@ -21,35 +21,41 @@ export async function POST(request: Request) {
     // Simple validation
     if (!name || !email || !message) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields (Name, Email, and Message are required)" },
         { status: 400 }
       );
     }
+
+    const cleanSubject = subject && subject.trim() ? subject.trim() : "General Inquiry";
 
     // Save to database
     let contact;
     try {
       contact = await prisma.contactMessage.create({
         data: {
-          name,
-          email,
-          phone: phone || "",
-          message,
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone ? phone.trim() : "",
+          subject: cleanSubject,
+          message: message.trim(),
+          isRead: false,
+          status: "Unread",
         },
       });
     } catch (dbError) {
       console.error("Error saving contact message to DB:", dbError);
-      // Even if DB fails, we should still try to send the email
     }
 
     // Check if email credentials are provided
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn("Email credentials not configured in environment variables. Skipping email send.");
-      // Fallback to just returning success if it was saved to DB, to not break frontend entirely if env is missing
       if (contact) {
-         return NextResponse.json({ message: "Message saved to DB, but email not sent (no config)", data: contact }, { status: 201 });
+        return NextResponse.json(
+          { message: "Message saved to DB, but email not sent (no config)", data: contact },
+          { status: 201 }
+        );
       } else {
-         throw new Error("Missing email credentials and DB save failed.");
+        throw new Error("Missing email credentials and DB save failed.");
       }
     }
 
@@ -67,11 +73,12 @@ export async function POST(request: Request) {
       await transporter.sendMail({
         from: `"Pinaka Fitness Contact" <${process.env.EMAIL_USER}>`,
         to: "abhishekjaiswal.contact@gmail.com",
-        subject: `New Contact Form Submission from ${name}`,
+        subject: `New Contact Form Submission: ${cleanSubject} (${name})`,
         text: `
 Name: ${name}
 Email: ${email}
 Phone: ${phone || "N/A"}
+Subject: ${cleanSubject}
 Message:
 ${message}
         `,
@@ -91,6 +98,10 @@ ${message}
               <tr>
                 <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Phone</td>
                 <td style="padding: 10px; border: 1px solid #ddd;">${phone || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Subject</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${cleanSubject}</td>
               </tr>
               <tr>
                 <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Message</td>

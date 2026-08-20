@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { requireAdmin, NON_OWNER_USER_FILTER } from '@/lib/auth';
 import { Prisma } from '@prisma/client';
 
 export const runtime = "nodejs";
@@ -16,36 +16,36 @@ export async function GET(req: Request) {
     const monthVal = searchParams.get('month') || '';
 
     // Build Prisma query condition
-    const where: Prisma.AttendanceWhereInput = {};
+    const userIsCondition: Prisma.UserWhereInput = {
+      ...NON_OWNER_USER_FILTER,
+    };
 
     if (search) {
-      where.user = {
-        is: {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-            { phone: { contains: search, mode: 'insensitive' } },
-          ]
-        }
-      };
+      userIsCondition.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+      ];
     }
 
     if (plan) {
-      where.user = {
-        is: {
-          ...where.user?.is,
-          memberships: {
-            some: { plan }
-          }
-        }
+      userIsCondition.memberships = {
+        some: { plan }
       };
     }
+
+    const where: Prisma.AttendanceWhereInput = {
+      user: {
+        is: userIsCondition,
+      },
+    };
 
     if (dateVal) {
       where.date = dateVal;
     } else if (monthVal) {
       where.date = { startsWith: monthVal };
     }
+
 
     const records = await prisma.attendance.findMany({
       where,

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, apiResponse, apiError } from "@/lib/auth";
+import { requirePermission, apiResponse, apiError, NON_OWNER_USER_FILTER, isOwnerUser } from "@/lib/auth";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
@@ -116,25 +116,41 @@ async function generateUniqueMembershipId() {
 // ----------------------------------------------------
 export async function GET(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_MEMBERSHIPS");
 
     const { searchParams } = new URL(req.url);
     const userIdParam = searchParams.get("userId");
     const query = searchParams.get("query") || "";
 
-    const whereClause: Prisma.MembershipWhereInput = {};
+    const userConditions: Prisma.UserWhereInput[] = [NON_OWNER_USER_FILTER];
 
     if (userIdParam) {
-      whereClause.userId = Number(userIdParam);
+      const targetUser = await prisma.user.findUnique({
+        where: { id: Number(userIdParam) },
+        select: { id: true, isOwner: true, role: true },
+      });
+      if (!targetUser || isOwnerUser(targetUser)) {
+        return apiResponse([]);
+      }
     }
 
     if (query) {
-      whereClause.user = {
+      userConditions.push({
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { email: { contains: query, mode: "insensitive" } },
         ],
-      };
+      });
+    }
+
+    const whereClause: Prisma.MembershipWhereInput = {
+      user: {
+        AND: userConditions,
+      },
+    };
+
+    if (userIdParam) {
+      whereClause.userId = Number(userIdParam);
     }
 
     // Auto-update expired memberships first
@@ -184,7 +200,7 @@ export async function GET(req: Request) {
 // ----------------------------------------------------
 export async function POST(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_MEMBERSHIPS");
     const body = await req.json();
     const parse = CreateMembershipSchema.safeParse(body);
 
@@ -194,9 +210,9 @@ export async function POST(req: Request) {
 
     const data = parse.data;
 
-    // Check user exists
+    // Check user exists and is not owner
     const user = await prisma.user.findUnique({ where: { id: data.userId } });
-    if (!user) return apiError("User not found", 404);
+    if (!user || isOwnerUser(user)) return apiError("User not found or access denied", 404);
 
     // Calculate dates & duration
     const dateCalcs = calculateMembershipDates(data.plan, data.startDate, data.customEndDate);
@@ -263,7 +279,7 @@ export async function POST(req: Request) {
 // ----------------------------------------------------
 export async function PATCH(req: Request) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_MEMBERSHIPS");
     const body = await req.json();
     const parse = UpdateMembershipSchema.safeParse(body);
 
@@ -274,8 +290,13 @@ export async function PATCH(req: Request) {
     const data = parse.data;
 
     // Fetch existing
-    const existing = await prisma.membership.findUnique({ where: { id: data.id } });
-    if (!existing) return apiError("Membership not found", 404);
+    const existing = await prisma.membership.findUnique({
+      where: { id: data.id },
+      include: { user: true },
+    });
+    if (!existing || isOwnerUser(existing.user)) {
+      return apiError("Membership not found or access denied", 404);
+    }
 
     // Merge date values
     const planVal = data.plan ?? existing.plan;
@@ -354,3 +375,4 @@ export async function PATCH(req: Request) {
     return apiError("Failed to update membership", 500);
   }
 }
+

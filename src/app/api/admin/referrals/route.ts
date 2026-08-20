@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { requireAdmin, apiError, apiResponse } from '@/lib/auth';
+import { requireAdmin, requireOwner, apiError, apiResponse, NON_OWNER_USER_FILTER, isOwnerUser } from '@/lib/auth';
 import { generateReferralCode, backfillReferralCodes } from '@/lib/referral';
 import { z } from 'zod';
 
@@ -64,8 +64,11 @@ export async function GET(req: Request) {
       dateCondition = { gte: start, lte: end };
     }
 
-    // Build overall query filters
-    const whereConditions: Record<string, unknown>[] = [];
+    // Build overall query filters - exclude Owner accounts
+    const whereConditions: Record<string, unknown>[] = [
+      { referrer: NON_OWNER_USER_FILTER },
+      { referred: NON_OWNER_USER_FILTER }
+    ];
 
     if (status) {
       whereConditions.push({ status });
@@ -78,6 +81,7 @@ export async function GET(req: Request) {
     if (membership) {
       whereConditions.push({
         referred: {
+          ...NON_OWNER_USER_FILTER,
           memberships: {
             some: {
               plan: membership
@@ -104,7 +108,7 @@ export async function GET(req: Request) {
       });
     }
 
-    const where = whereConditions.length > 0 ? { AND: whereConditions } : {};
+    const where = { AND: whereConditions };
 
     // Fetch Referral Records (with pagination if not exporting)
     const referrals = await prisma.referral.findMany({
@@ -139,12 +143,14 @@ export async function GET(req: Request) {
 
     const totalReferrals = await prisma.referral.count({ where });
 
-    // Fetch Analytics / Dashboard metrics
-    const totalCodes = await prisma.referralCode.count();
-    const activeCodes = await prisma.referralCode.count({ where: { isActive: true } });
+    // Fetch Analytics / Dashboard metrics (excluding Owner)
+    const totalCodes = await prisma.referralCode.count({ where: { user: NON_OWNER_USER_FILTER } });
+    const activeCodes = await prisma.referralCode.count({ where: { isActive: true, user: NON_OWNER_USER_FILTER } });
     const successfulReferrals = await prisma.referral.count({
       where: {
-        status: { in: ['Joined', 'Membership Activated', 'Completed'] }
+        status: { in: ['Joined', 'Membership Activated', 'Completed'] },
+        referrer: NON_OWNER_USER_FILTER,
+        referred: NON_OWNER_USER_FILTER,
       }
     });
 
@@ -153,9 +159,9 @@ export async function GET(req: Request) {
     const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const todayCount = await prisma.referral.count({ where: { joinDate: { gte: startOfToday } } });
-    const weekCount = await prisma.referral.count({ where: { joinDate: { gte: startOfWeek } } });
-    const monthCount = await prisma.referral.count({ where: { joinDate: { gte: startOfMonth } } });
+    const todayCount = await prisma.referral.count({ where: { joinDate: { gte: startOfToday }, referrer: NON_OWNER_USER_FILTER, referred: NON_OWNER_USER_FILTER } });
+    const weekCount = await prisma.referral.count({ where: { joinDate: { gte: startOfWeek }, referrer: NON_OWNER_USER_FILTER, referred: NON_OWNER_USER_FILTER } });
+    const monthCount = await prisma.referral.count({ where: { joinDate: { gte: startOfMonth }, referrer: NON_OWNER_USER_FILTER, referred: NON_OWNER_USER_FILTER } });
 
     // Top Referrers Leaderboard
     const rawTopReferrers = await prisma.referral.groupBy({
@@ -164,7 +170,9 @@ export async function GET(req: Request) {
         id: true
       },
       where: {
-        status: { in: ['Joined', 'Membership Activated', 'Completed'] }
+        status: { in: ['Joined', 'Membership Activated', 'Completed'] },
+        referrer: NON_OWNER_USER_FILTER,
+        referred: NON_OWNER_USER_FILTER,
       },
       orderBy: {
         _count: {
@@ -174,14 +182,16 @@ export async function GET(req: Request) {
       take: 10
     });
 
-    const topReferrers = await Promise.all(
+    const topReferrersList = await Promise.all(
       rawTopReferrers.map(async (item) => {
         const referrerUser = await prisma.user.findUnique({
           where: { id: item.referrerId },
-          select: { name: true, email: true }
+          select: { name: true, email: true, isOwner: true, role: true }
         });
+        if (!referrerUser || isOwnerUser(referrerUser)) return null;
+
         const totalCreated = await prisma.referral.count({
-          where: { referrerId: item.referrerId }
+          where: { referrerId: item.referrerId, referred: NON_OWNER_USER_FILTER }
         });
         const successfulCount = item._count.id;
         const conversionRate = totalCreated > 0 ? Math.round((successfulCount / totalCreated) * 100) : 0;
@@ -202,6 +212,8 @@ export async function GET(req: Request) {
       })
     );
 
+    const topReferrers = topReferrersList.filter(Boolean);
+
     // Global Settings
     const systemEnabledSetting = await prisma.systemSetting.findUnique({
       where: { key: 'REFERRAL_SYSTEM_ENABLED' }
@@ -219,8 +231,14 @@ export async function GET(req: Request) {
     ]);
     const rewardsConfig = rewardsConfigSetting ? rewardsConfigSetting.value : defaultRewardsConfig;
 
-    // Activity Logs
+    // Activity Logs (excluding Owner)
     const activities = await prisma.referralActivity.findMany({
+      where: {
+        OR: [
+          { userId: null },
+          { user: NON_OWNER_USER_FILTER }
+        ]
+      },
       include: {
         user: {
           select: { name: true, email: true }
@@ -254,6 +272,7 @@ export async function GET(req: Request) {
   }
 }
 
+
 export async function POST(req: Request) {
   try {
     await requireAdmin();
@@ -277,9 +296,14 @@ export async function POST(req: Request) {
     } = parse.data;
 
     // ---------------------------------
-    // Action 1: Toggle Referral System Enabled/Disabled
+    // Action 1: Toggle Referral System Enabled/Disabled (Owner only)
     // ---------------------------------
     if (action === 'toggle-system') {
+      try {
+        await requireOwner();
+      } catch {
+        return apiError("Permission denied: Only the Owner can enable or disable the referral system.", 403);
+      }
       if (systemEnabled === undefined) return apiError("Missing systemEnabled parameter", 400);
 
       await prisma.systemSetting.upsert({
@@ -299,9 +323,14 @@ export async function POST(req: Request) {
     }
 
     // ---------------------------------
-    // Action 2: Save Reward Milestones Config
+    // Action 2: Save Reward Milestones Config (Owner only)
     // ---------------------------------
     if (action === 'save-rewards-settings') {
+      try {
+        await requireOwner();
+      } catch {
+        return apiError("Permission denied: Only the Owner can modify reward configurations.", 403);
+      }
       if (!rewardsConfig) return apiError("Missing rewardsConfig parameter", 400);
 
       await prisma.systemSetting.upsert({
@@ -325,6 +354,11 @@ export async function POST(req: Request) {
     // ---------------------------------
     if (action === 'regenerate-code') {
       if (!userId) return apiError("Missing userId parameter", 400);
+
+      const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+      if (!targetUser || isOwnerUser(targetUser)) {
+        return apiError("User not found or access denied", 404);
+      }
 
       const newCode = await generateReferralCode();
 
@@ -352,10 +386,11 @@ export async function POST(req: Request) {
       if (!codeId) return apiError("Missing codeId parameter", 400);
 
       const codeRecord = await prisma.referralCode.findUnique({
-        where: { id: codeId }
+        where: { id: codeId },
+        include: { user: true }
       });
 
-      if (!codeRecord) return apiError("Referral code not found", 404);
+      if (!codeRecord || isOwnerUser(codeRecord.user)) return apiError("Referral code not found or access denied", 404);
 
       const updated = await prisma.referralCode.update({
         where: { id: codeId },
@@ -381,10 +416,10 @@ export async function POST(req: Request) {
 
       const referral = await prisma.referral.findUnique({
         where: { id: referralId },
-        include: { referred: true }
+        include: { referred: true, referrer: true }
       });
 
-      if (!referral) return apiError("Referral not found", 404);
+      if (!referral || isOwnerUser(referral.referred) || isOwnerUser(referral.referrer)) return apiError("Referral not found or access denied", 404);
 
       await prisma.referral.delete({
         where: { id: referralId }
@@ -411,7 +446,7 @@ export async function POST(req: Request) {
         include: { referred: true, referrer: true }
       });
 
-      if (!referral) return apiError("Referral not found", 404);
+      if (!referral || isOwnerUser(referral.referred) || isOwnerUser(referral.referrer)) return apiError("Referral not found or access denied", 404);
 
       const updateData: Record<string, unknown> = {};
       if (status !== undefined) updateData.status = status;
@@ -419,6 +454,7 @@ export async function POST(req: Request) {
       if (notes !== undefined) updateData.notes = notes;
 
       const updatedReferral = await prisma.referral.update({
+
         where: { id: referralId },
         data: updateData
       });

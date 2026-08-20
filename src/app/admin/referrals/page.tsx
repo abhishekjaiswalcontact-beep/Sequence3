@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck, ArrowLeft, LogOut, Users, CheckCircle,
   Clock, X, Search, Filter, Eye, Trash2, Edit2,
-  Settings, Award, Download, ToggleLeft, ToggleRight, AlertCircle
+  Award, Download, AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Line, Doughnut } from "react-chartjs-2";
@@ -114,6 +114,7 @@ export default function AdminReferralsPage() {
   });
   const [topReferrers, setTopReferrers] = useState<TopReferrer[]>([]);
   const [systemEnabled, setSystemEnabled] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rewardsConfig, setRewardsConfig] = useState<Milestone[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -187,6 +188,7 @@ export default function AdminReferralsPage() {
     router.push("/");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleToggleSystem = async () => {
     try {
       const nextState = !systemEnabled;
@@ -206,6 +208,7 @@ export default function AdminReferralsPage() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSaveMilestones = async (newMilestones: Milestone[]) => {
     try {
       const res = await fetch("/api/admin/referrals", {
@@ -391,23 +394,6 @@ export default function AdminReferralsPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleToggleSystem}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm border border-white/10 hover:bg-white/5 transition-colors"
-            >
-              {systemEnabled ? (
-                <>
-                  <ToggleRight className="w-5 h-5 text-green-400" />
-                  System Enabled
-                </>
-              ) : (
-                <>
-                  <ToggleLeft className="w-5 h-5 text-gray-500" />
-                  System Disabled
-                </>
-              )}
-            </button>
-
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
@@ -732,132 +718,46 @@ export default function AdminReferralsPage() {
           )}
         </div>
 
-        {/* Leaderboard & Settings grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Leaderboard */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-              <Award className="w-5 h-5 text-brand" />
-              <h3 className="text-sm font-heading font-bold uppercase tracking-wider">Top Referrer Leaderboard</h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="text-gray-500 border-b border-white/5 pb-2">
-                    <th className="py-2.5 font-bold uppercase">Rank</th>
-                    <th className="py-2.5 font-bold uppercase">Referrer Name</th>
-                    <th className="py-2.5 font-bold uppercase text-center">Invited</th>
-                    <th className="py-2.5 font-bold uppercase text-center">Conversion</th>
-                    <th className="py-2.5 font-bold uppercase">Reward Claimed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topReferrers.length > 0 ? (
-                    topReferrers.map((item, index) => (
-                      <tr key={item.referrerId} className="border-b border-white/5 hover:bg-white/[0.01]">
-                        <td className="py-3 font-mono font-bold text-gray-400">
-                          {index === 0 ? "🥇 1st" : index === 1 ? "🥈 2nd" : index === 2 ? "🥉 3rd" : `#${index + 1}`}
-                        </td>
-                        <td className="py-3 font-bold">{item.name}</td>
-                        <td className="py-3 text-center font-bold">{item.successfulJoins}</td>
-                        <td className="py-3 text-center text-gray-400">{item.conversionRate}%</td>
-                        <td className="py-3 text-gray-400 truncate max-w-[120px]">{item.rewardEarned}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={5} className="text-center py-6 text-gray-500">
-                        No referrers active yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+        {/* Leaderboard */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+            <Award className="w-5 h-5 text-brand" />
+            <h3 className="text-sm font-heading font-bold uppercase tracking-wider">Top Referrer Leaderboard</h3>
           </div>
 
-          {/* Reward thresholds config */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-              <Settings className="w-5 h-5 text-brand" />
-              <h3 className="text-sm font-heading font-bold uppercase tracking-wider">Reward Milestone Settings</h3>
-            </div>
-
-            <div className="space-y-4">
-              {rewardsConfig.map((milestone, idx) => (
-                <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-black/40 border border-white/5 rounded-xl p-3">
-                  <div className="text-xs font-bold text-gray-400 uppercase sm:col-span-1">
-                    {milestone.referrals} Referrals
-                  </div>
-                  <div className="space-y-1 sm:col-span-2">
-                    <input
-                      type="text"
-                      value={milestone.rewardName}
-                      onChange={(e) => {
-                        const copy = [...rewardsConfig];
-                        copy[idx].rewardName = e.target.value;
-                        setRewardsConfig(copy);
-                      }}
-                      className="w-full bg-black border border-white/10 rounded-lg px-2 py-1 text-xs focus:border-brand focus:outline-none"
-                      placeholder="Milestone Name"
-                    />
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <select
-                        value={milestone.rewardType}
-                        onChange={(e) => {
-                          const copy = [...rewardsConfig];
-                          copy[idx].rewardType = e.target.value;
-                          setRewardsConfig(copy);
-                        }}
-                        className="bg-black border border-white/10 rounded-lg px-1 py-1 text-[10px] text-gray-300 focus:outline-none"
-                      >
-                        <option value="Free Membership Days">Free Days</option>
-                        <option value="Cash Reward">Cash Reward</option>
-                        <option value="Discount">Discount</option>
-                        <option value="Gift">Gift</option>
-                        <option value="Coupon">Coupon</option>
-                        <option value="Custom Reward">Custom</option>
-                      </select>
-                      <input
-                        type="text"
-                        value={milestone.rewardValue}
-                        onChange={(e) => {
-                          const copy = [...rewardsConfig];
-                          copy[idx].rewardValue = e.target.value;
-                          setRewardsConfig(copy);
-                        }}
-                        className="bg-black border border-white/10 rounded-lg px-2 py-1 text-[10px] focus:outline-none"
-                        placeholder="Value"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end sm:col-span-1">
-                    <button
-                      onClick={() => {
-                        const copy = [...rewardsConfig];
-                        copy[idx].enabled = !copy[idx].enabled;
-                        setRewardsConfig(copy);
-                      }}
-                      className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-colors ${
-                        milestone.enabled
-                          ? "bg-green-500/10 border border-green-500/30 text-green-400"
-                          : "bg-red-500/10 border border-red-500/30 text-red-400"
-                      }`}
-                    >
-                      {milestone.enabled ? "Active" : "Disabled"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              <button
-                onClick={() => handleSaveMilestones(rewardsConfig)}
-                className="w-full py-2.5 bg-brand hover:bg-brand-light text-white font-bold rounded-xl uppercase text-xs transition-colors shadow-neon"
-              >
-                Save Milestone Settings
-              </button>
-            </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="text-gray-500 border-b border-white/5 pb-2">
+                  <th className="py-2.5 font-bold uppercase">Rank</th>
+                  <th className="py-2.5 font-bold uppercase">Referrer Name</th>
+                  <th className="py-2.5 font-bold uppercase text-center">Invited</th>
+                  <th className="py-2.5 font-bold uppercase text-center">Conversion</th>
+                  <th className="py-2.5 font-bold uppercase">Reward Claimed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topReferrers.length > 0 ? (
+                  topReferrers.map((item, index) => (
+                    <tr key={item.referrerId} className="border-b border-white/5 hover:bg-white/[0.01]">
+                      <td className="py-3 font-mono font-bold text-gray-400">
+                        {index === 0 ? "🥇 1st" : index === 1 ? "🥈 2nd" : index === 2 ? "🥉 3rd" : `#${index + 1}`}
+                      </td>
+                      <td className="py-3 font-bold">{item.name}</td>
+                      <td className="py-3 text-center font-bold">{item.successfulJoins}</td>
+                      <td className="py-3 text-center text-gray-400">{item.conversionRate}%</td>
+                      <td className="py-3 text-gray-400 truncate max-w-[120px]">{item.rewardEarned}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="text-center py-6 text-gray-500">
+                      No referrers active yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </main>

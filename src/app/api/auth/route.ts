@@ -46,9 +46,6 @@ const CreateUserSchema = z.object({
   membershipRemarks: z.string().nullable().optional(),
 });
 
-const ADMIN_EMAIL = "pinakaadmin@gmail.com";
-const ADMIN_PASSWORD = "pinakaadmin127";
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -58,171 +55,287 @@ export async function POST(req: Request) {
     // LOGIN
     // ==========================
 
-    // ==========================
-// LOGIN
-// ==========================
+    if (action === "login") {
+      const parse = LoginSchema.safeParse(body);
 
-if (action === "login") {
-  const parse = LoginSchema.safeParse(body);
-
-  if (!parse.success) {
-    return apiError("Invalid input.", 400);
-  }
-
-  const { email, password } = parse.data;
-
-  // -----------------------
-  // Hardcoded Admin Login
-  // -----------------------
-
-  if (
-    email === ADMIN_EMAIL &&
-    password === ADMIN_PASSWORD
-  ) {
-    const sessionId = crypto.randomUUID();
-    const userAgent = req.headers.get("user-agent") || "unknown";
-    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
-
-    const adminUser = await prisma.user.upsert({
-      where: { email: ADMIN_EMAIL },
-      update: {
-        currentSessionId: sessionId,
-        lastLoginAt: new Date(),
-        lastLoginIp: ip,
-        lastLoginUA: userAgent,
-        isAdmin: true,
-        isActive: true,
-      },
-      create: {
-        email: ADMIN_EMAIL,
-        name: "Admin",
-        password: await bcrypt.hash(ADMIN_PASSWORD, 12),
-        isAdmin: true,
-        isActive: true,
-        currentSessionId: sessionId,
-        lastLoginAt: new Date(),
-        lastLoginIp: ip,
-        lastLoginUA: userAgent,
-      },
-    });
-
-    const token = jwt.sign(
-      {
-        sub: String(adminUser.id),
-        email: ADMIN_EMAIL,
-        name: "Admin",
-        isAdmin: true,
-        sessionId: sessionId,
-      },
-      env.JWT_SECRET,
-      {
-        expiresIn: "7d",
+      if (!parse.success) {
+        return apiError("Invalid input.", 400);
       }
-    );
 
-    const response = apiResponse({
-      message: "Login successful.",
-      user: {
-        id: adminUser.id,
-        email: ADMIN_EMAIL,
-        name: "Admin",
-        isAdmin: true,
-      },
-    });
+      const { email, password } = parse.data;
 
-    response.cookies.set(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: COOKIE_MAX_AGE,
-      path: "/",
-    });
+      // -----------------------
+      // Secure Owner Login (credentials from env vars — timing-safe comparison)
+      // -----------------------
 
-    return response;
-  }
+      const ownerEmail = env.OWNER_EMAIL;
+      const ownerPassword = env.OWNER_PASSWORD;
 
-  // -----------------------
-  // Database User Login
-  // -----------------------
+      const ownerEmailMatch = ownerEmail && email === ownerEmail.toLowerCase();
+      const ownerPasswordMatch = ownerPassword && ownerPassword.length > 0 &&
+        crypto.timingSafeEqual(
+          Buffer.from(password.padEnd(ownerPassword.length)),
+          Buffer.from(ownerPassword.padEnd(password.length))
+        ) && password.length === ownerPassword.length;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+      if (ownerEmailMatch && ownerPasswordMatch) {
+        const sessionId = crypto.randomUUID();
+        const userAgent = req.headers.get("user-agent") || "unknown";
+        const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
 
-  if (!user) {
-    return apiError("Invalid credentials.", 401);
-  }
+        const ownerUser = await prisma.user.upsert({
+          where: { email: ownerEmail.toLowerCase() },
+          update: {
+            currentSessionId: sessionId,
+            lastLoginAt: new Date(),
+            lastLoginIp: ip,
+            lastLoginUA: userAgent,
+            isAdmin: true,
+            isOwner: true,
+            role: "OWNER",
+            isActive: true,
+          },
+          create: {
+            email: ownerEmail.toLowerCase(),
+            name: "Gym Owner",
+            password: await bcrypt.hash(ownerPassword, 12),
+            isAdmin: true,
+            isOwner: true,
+            role: "OWNER",
+            isActive: true,
+            currentSessionId: sessionId,
+            lastLoginAt: new Date(),
+            lastLoginIp: ip,
+            lastLoginUA: userAgent,
+          },
+        });
 
-  if (!user.isActive) {
-    return apiError("Account disabled.", 403);
-  }
+        // Ensure owner staff record exists
+        await prisma.staff.upsert({
+          where: { userId: ownerUser.id },
+          update: { designation: "Owner", department: "Management" },
+          create: {
+            userId: ownerUser.id,
+            name: ownerUser.name,
+            email: ownerUser.email,
+            phone: ownerUser.phone || "",
+            designation: "Owner",
+            department: "Management",
+            monthlySalary: 0,
+            workingHours: "24/7",
+          },
+        }).catch(() => {});
 
-  const passwordMatch = await bcrypt.compare(
-    password,
-    user.password
-  );
+        const token = jwt.sign(
+          {
+            sub: String(ownerUser.id),
+            email: ownerUser.email,
+            name: "Gym Owner",
+            isAdmin: true,
+            isOwner: true,
+            role: "OWNER",
+            sessionId: sessionId,
+          },
+          env.JWT_SECRET,
+          {
+            expiresIn: "7d",
+          }
+        );
 
-  if (!passwordMatch) {
-    return apiError("Invalid credentials.", 401);
-  }
+        const response = apiResponse({
+          message: "Login successful.",
+          user: {
+            id: ownerUser.id,
+            email: ownerUser.email,
+            name: "Gym Owner",
+            isAdmin: true,
+            isOwner: true,
+            role: "OWNER",
+          },
+        });
 
-  const sessionId = crypto.randomUUID();
-  const userAgent = req.headers.get("user-agent") || "unknown";
-  const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+        response.cookies.set(COOKIE_NAME, token, {
+          httpOnly: true,
+          secure: env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: COOKIE_MAX_AGE,
+          path: "/",
+        });
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      currentSessionId: sessionId,
-      lastLoginAt: new Date(),
-      lastLoginIp: ip,
-      lastLoginUA: userAgent,
-    },
-  });
+        return response;
+      }
 
-  const token = jwt.sign(
-    {
-      sub: String(user.id),
-      email: user.email,
-      name: user.name,
-      isAdmin: user.isAdmin,
-      sessionId: sessionId,
-    },
-    env.JWT_SECRET,
-    {
-      expiresIn: "7d",
+      // -----------------------
+      // Secure Default Admin Login (credentials from env vars — timing-safe comparison)
+      // -----------------------
+
+      const adminEmail = env.ADMIN_EMAIL;
+      const adminPassword = env.ADMIN_PASSWORD;
+
+      const adminEmailMatch = adminEmail && email === adminEmail.toLowerCase();
+      const adminPasswordMatch = adminPassword && adminPassword.length > 0 &&
+        crypto.timingSafeEqual(
+          Buffer.from(password.padEnd(adminPassword.length)),
+          Buffer.from(adminPassword.padEnd(password.length))
+        ) && password.length === adminPassword.length;
+
+      if (adminEmailMatch && adminPasswordMatch) {
+        const sessionId = crypto.randomUUID();
+        const userAgent = req.headers.get("user-agent") || "unknown";
+        const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+
+        const adminUser = await prisma.user.upsert({
+          where: { email: adminEmail.toLowerCase() },
+          update: {
+            currentSessionId: sessionId,
+            lastLoginAt: new Date(),
+            lastLoginIp: ip,
+            lastLoginUA: userAgent,
+            isAdmin: true,
+            isOwner: false,
+            role: "ADMIN",
+            isActive: true,
+          },
+          create: {
+            email: adminEmail.toLowerCase(),
+            name: "Admin",
+            password: await bcrypt.hash(adminPassword, 12),
+            isAdmin: true,
+            isOwner: false,
+            role: "ADMIN",
+            isActive: true,
+            currentSessionId: sessionId,
+            lastLoginAt: new Date(),
+            lastLoginIp: ip,
+            lastLoginUA: userAgent,
+          },
+        });
+
+        const token = jwt.sign(
+          {
+            sub: String(adminUser.id),
+            email: adminUser.email,
+            name: "Admin",
+            isAdmin: true,
+            isOwner: false,
+            role: "ADMIN",
+            sessionId: sessionId,
+          },
+          env.JWT_SECRET,
+          {
+            expiresIn: "7d",
+          }
+        );
+
+        const response = apiResponse({
+          message: "Login successful.",
+          user: {
+            id: adminUser.id,
+            email: adminUser.email,
+            name: "Admin",
+            isAdmin: true,
+            isOwner: false,
+            role: "ADMIN",
+          },
+        });
+
+        response.cookies.set(COOKIE_NAME, token, {
+          httpOnly: true,
+          secure: env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: COOKIE_MAX_AGE,
+          path: "/",
+        });
+
+        return response;
+      }
+
+      // -----------------------
+      // Database User Login
+      // -----------------------
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) {
+        return apiError("Invalid credentials.", 401);
+      }
+
+      if (!user.isActive) {
+        return apiError("Account disabled.", 403);
+      }
+
+      const passwordMatch = await bcrypt.compare(
+        password,
+        user.password
+      );
+
+      if (!passwordMatch) {
+        return apiError("Invalid credentials.", 401);
+      }
+
+      const sessionId = crypto.randomUUID();
+      const userAgent = req.headers.get("user-agent") || "unknown";
+      const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          currentSessionId: sessionId,
+          lastLoginAt: new Date(),
+          lastLoginIp: ip,
+          lastLoginUA: userAgent,
+        },
+      });
+
+      const token = jwt.sign(
+        {
+          sub: String(user.id),
+          email: user.email,
+          name: user.name,
+          isAdmin: user.isAdmin || user.isOwner,
+          isOwner: user.isOwner,
+          role: user.role,
+          sessionId: sessionId,
+        },
+        env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      const response = apiResponse({
+        message: "Login successful.",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          isAdmin: user.isAdmin || user.isOwner,
+          isOwner: user.isOwner,
+          role: user.role,
+        },
+      });
+
+      response.cookies.set(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: COOKIE_MAX_AGE,
+        path: "/",
+      });
+
+      return response;
     }
-  );
-
-  const response = apiResponse({
-    message: "Login successful.",
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      isAdmin: user.isAdmin,
-    },
-  });
-
-  response.cookies.set(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: COOKIE_MAX_AGE,
-    path: "/",
-  });
-
-  return response;
-}
 
     // ==========================
     // CREATE USER
     // ==========================
 
     if (action === "create-user") {
-      await requireAdmin();
+      const session = await requireAdmin();
 
       const parse = CreateUserSchema.safeParse(body);
 
@@ -231,6 +344,23 @@ if (action === "login") {
       }
 
       const { name, email, password, phone, isAdmin, referralCode } = parse.data;
+
+      // SECURITY ENFORCEMENT: Absolutely block creating an Owner via API.
+      // Owner identity is seeded exclusively through OWNER_EMAIL env var on login.
+      if ((body as { role?: string }).role === "OWNER" || (body as { isOwner?: boolean }).isOwner === true) {
+        return apiError("Permission denied: The Owner role cannot be assigned via API.", 403);
+      }
+
+      // SECURITY ENFORCEMENT: Only the Owner can create an Admin or assign the Admin role.
+      if (isAdmin === true || (body as { role?: string }).role === "ADMIN") {
+        if (!session.isOwner) {
+          return apiError("Permission denied: Only the Owner can create an Admin or assign the Admin role.", 403);
+        }
+      }
+
+      // isOwner is ALWAYS false for any user created via this API — no exceptions.
+      const assignedIsAdmin = session.isOwner ? (isAdmin ?? false) : false;
+      const assignedRole = assignedIsAdmin ? "ADMIN" : "MEMBER";
 
       const existing = await prisma.user.findUnique({
         where: {
@@ -320,7 +450,9 @@ if (action === "login") {
             email,
             password: hashedPassword,
             phone: phone ?? "",
-            isAdmin: isAdmin ?? false,
+            isAdmin: assignedIsAdmin,
+            isOwner: false,
+            role: assignedRole,
             isActive: true,
           },
         });

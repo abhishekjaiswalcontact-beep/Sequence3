@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin, apiError, apiResponse } from '@/lib/auth';
+import { requirePermission, apiError, apiResponse, NON_OWNER_USER_FILTER, isOwnerUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     // Authenticate admin
-    await requireAdmin();
+    await requirePermission("MANAGE_DIET_PLANS");
 
     const { searchParams } = new URL(req.url);
     const userIdStr = searchParams.get('userId');
@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     if (!userIdStr) {
       // List all users with active diet plan status
       const users = await prisma.user.findMany({
+        where: NON_OWNER_USER_FILTER,
         select: {
           id: true,
           name: true,
@@ -46,11 +47,11 @@ export async function GET(req: NextRequest) {
     // Fetch details for a specific user
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true },
+      select: { id: true, name: true, email: true, isOwner: true, role: true },
     });
 
-    if (!user) {
-      return apiError('User not found', 404);
+    if (!user || isOwnerUser(user)) {
+      return apiError('User not found or access denied', 404);
     }
 
     const profile = await prisma.userProfile.findUnique({
@@ -91,7 +92,7 @@ export async function GET(req: NextRequest) {
     });
 
     return apiResponse({
-      user,
+      user: { id: user.id, name: user.name, email: user.email },
       profile,
       activeDiet: activeDiet ? {
         ...activeDiet,
@@ -125,7 +126,7 @@ function activePlanMeals(mealsStr: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_DIET_PLANS");
 
     const body = await req.json();
     const {
@@ -146,6 +147,11 @@ export async function POST(req: NextRequest) {
     }
 
     const targetUserId = parseInt(userId);
+
+    const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
+    if (!targetUser || isOwnerUser(targetUser)) {
+      return apiError('Permission denied: Cannot manage diet for Owner account.', 403);
+    }
 
     // Create the manual plan
     const newPlan = await prisma.dietPlan.create({
@@ -177,7 +183,7 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    await requireAdmin();
+    await requirePermission("MANAGE_DIET_PLANS");
 
     const body = await req.json();
     const {
@@ -199,10 +205,11 @@ export async function PATCH(req: NextRequest) {
 
     const existingPlan = await prisma.dietPlan.findUnique({
       where: { id: planId },
+      include: { user: true },
     });
 
-    if (!existingPlan) {
-      return apiError('Diet plan not found.', 404);
+    if (!existingPlan || isOwnerUser(existingPlan.user)) {
+      return apiError('Diet plan not found or access denied.', 404);
     }
 
     const updateData: Record<string, string | number | boolean> = {};
@@ -229,3 +236,4 @@ export async function PATCH(req: NextRequest) {
     return apiError('Failed to update plan.', 500);
   }
 }
+

@@ -38,12 +38,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Validate Token if exists
-  let payload: { sub: string; isAdmin?: boolean } | null = null;
+  let payload: { sub: string; isAdmin?: boolean; isOwner?: boolean } | null = null;
   if (token) {
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
       const { payload: p } = await jwtVerify(token, secret);
-      payload = p as { sub: string; isAdmin?: boolean };
+      payload = p as { sub: string; isAdmin?: boolean; isOwner?: boolean };
     } catch {
       // Invalid/expired token -> clear it
       payload = null;
@@ -58,7 +58,8 @@ export async function middleware(request: NextRequest) {
   }
 
   const isAuthenticated = !!payload;
-  const isAdmin = !!(payload?.isAdmin);
+  const isOwner = !!(payload?.isOwner);
+  const isAdmin = !!(payload?.isAdmin) || isOwner;
 
   // 3. Authorization Logic
 
@@ -75,8 +76,17 @@ export async function middleware(request: NextRequest) {
   ) {
     // If logged in, redirect away from /login
     if (AUTH_ROUTES.includes(pathname) && isAuthenticated) {
+      if (isOwner) return NextResponse.redirect(new URL('/owner', request.url));
+      if (isAdmin) return NextResponse.redirect(new URL('/admin/users', request.url));
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
+    return NextResponse.next();
+  }
+
+  // Protect Owner Dashboard
+  if (pathname.startsWith('/owner')) {
+    if (!isAuthenticated) return NextResponse.redirect(new URL('/login', request.url));
+    if (!isOwner) return NextResponse.redirect(new URL('/dashboard', request.url));
     return NextResponse.next();
   }
 

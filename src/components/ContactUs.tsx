@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { Mail, User, MessageSquare, Send, CheckCircle2, MapPin, Phone, Clock, AlertCircle, MessageCircle, ExternalLink, Navigation } from 'lucide-react';
+import { Mail, User, MessageSquare, Send, CheckCircle2, MapPin, Phone, Clock, AlertCircle, MessageCircle, ExternalLink, Navigation, Bookmark } from 'lucide-react';
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -24,6 +24,7 @@ export default function ContactUs() {
     name: '',
     email: '',
     phone: '',
+    subject: '',
     message: '',
     botField: '',
   });
@@ -65,7 +66,7 @@ export default function ContactUs() {
       }
 
       setStatus('success');
-      setFormData({ name: '', email: '', phone: '', message: '', botField: '' });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '', botField: '' });
 
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
@@ -334,6 +335,23 @@ export default function ContactUs() {
                         </label>
                         <Mail className="absolute right-5 top-4 w-4 h-4 text-gray-600 peer-focus:text-brand transition-colors" />
                         {errors.email && <p className="text-red-500 text-xs mt-1 absolute -bottom-5 left-1">{errors.email}</p>}
+                      </div>
+
+                      {/* Subject Field */}
+                      <div className="group relative mt-8">
+                        <input
+                          type="text"
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleChange}
+                          disabled={status === 'submitting'}
+                          className="peer w-full bg-black/40 border border-white/10 focus:border-brand rounded-xl px-5 py-4 text-white text-sm focus:outline-none focus:bg-white/5 transition-all duration-300 placeholder-transparent disabled:opacity-50"
+                          placeholder="Subject"
+                        />
+                        <label className="absolute left-5 -top-2.5 bg-[#050505] px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 peer-focus:text-brand peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:uppercase peer-placeholder-shown:tracking-normal peer-focus:-top-2.5 peer-focus:text-xs peer-focus:tracking-widest transition-all">
+                          Subject / Inquiry Type
+                        </label>
+                        <Bookmark className="absolute right-5 top-4 w-4 h-4 text-gray-600 peer-focus:text-brand transition-colors" />
                       </div>
 
                       {/* Message Field */}

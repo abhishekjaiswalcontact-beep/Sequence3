@@ -33,7 +33,8 @@ function LoginForm() {
 
       if (res.ok) {
         login(data.user); // update AuthContext with full user object
-        const from = searchParams.get('from') || searchParams.get('redirect') || '/dashboard';
+        const defaultTarget = data.user?.isOwner ? '/owner' : data.user?.isAdmin ? '/admin' : '/dashboard';
+        const from = searchParams.get('from') || searchParams.get('redirect') || defaultTarget;
         router.push(from);
       } else {
         setError(data.error || 'Login failed. Please check your credentials.');

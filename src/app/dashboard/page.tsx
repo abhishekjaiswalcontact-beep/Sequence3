@@ -17,9 +17,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Redirect if not logged in — middleware handles this too, but belt-and-suspenders
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-     if (typeof document !== 'undefined') {
+    if (user?.isOwner) {
+      router.replace('/owner');
+      return;
+    }
+    if (typeof document !== 'undefined') {
          
          // Fetch history
          const fetchHistory = async () => {
