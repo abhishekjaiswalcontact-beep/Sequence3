@@ -37,7 +37,7 @@ export default function ScanPage() {
 
 
 
-  const handleScanComplete = useCallback(async (result: { image: string, pose: unknown, height: string, weight: string, goal: string }) => {
+  const handleScanComplete = useCallback(async (result: { image: string, pose: unknown, height: string, weight: string, goal: string, gender?: string }) => {
     setScanState('ANALYZING');
     
     try {
@@ -50,7 +50,8 @@ export default function ScanPage() {
           image: result.image,
           height: result.height,
           weight: result.weight,
-          goal: result.goal
+          goal: result.goal,
+          gender: result.gender
         }),
       });
       
@@ -68,6 +69,7 @@ export default function ScanPage() {
       setScanState('IDLE');
     }
   }, [router]);
+
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-brand/30 pb-20">

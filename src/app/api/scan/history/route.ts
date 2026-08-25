@@ -53,8 +53,25 @@ export async function GET() {
          }
       }
 
+      // Parse rich feedback metadata if formatted as JSON
+      let feedbackText = scan.feedback || "";
+      let richData: Record<string, unknown> = {};
+      if (scan.feedback && scan.feedback.trim().startsWith('{')) {
+        try {
+          richData = JSON.parse(scan.feedback);
+          if (richData.postureFeedback) {
+            feedbackText = String(richData.postureFeedback);
+          }
+        } catch {
+          // Plain text feedback
+        }
+      }
+
       return {
         ...scan,
+        ...richData,
+        postureFeedback: feedbackText,
+        feedback: feedbackText,
         workoutPlan: parsedPlan,
         weeklyPlan: parsedPlan,
         vegDiet,
@@ -70,3 +87,4 @@ export async function GET() {
     return NextResponse.json([]);
   }
 }
+

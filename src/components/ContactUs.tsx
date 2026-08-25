@@ -419,18 +419,6 @@ export default function ContactUs() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Floating Live Chat Button */}
-      <motion.button 
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 1, type: "spring", bounce: 0.5 }}
-        className="fixed bottom-6 right-6 z-[100] w-14 h-14 rounded-full bg-gradient-to-tr from-brand to-blue-500 shadow-[0_0_25px_rgba(139,92,246,0.5)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all group"
-        aria-label="Live Chat"
-      >
-        <div className="absolute inset-0 rounded-full animate-ping bg-brand/40 opacity-75"></div>
-        <MessageSquare className="w-6 h-6 relative z-10 group-hover:animate-bounce" />
-      </motion.button>
     </>
   );
 }
