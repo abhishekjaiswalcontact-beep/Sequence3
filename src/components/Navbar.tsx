@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, ChevronDown, ArrowRight, Info, Camera, Target, Activity, Scan } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight, Info, Camera, Target, Activity, Scan, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 
@@ -96,9 +96,10 @@ export default function Navbar() {
     setIsLoggingOut(true);
     try {
       await logout();
+    } catch (err) {
+      console.error("Logout failed:", err);
     } finally {
-      // Hard navigation clears all JS state and ensures browser sends no stale cookies
-      window.location.replace("/login");
+      setIsLoggingOut(false);
     }
   }, [logout, isLoggingOut]);
 
@@ -148,10 +149,22 @@ export default function Navbar() {
               <span className="hidden sm:inline text-gray-300 group-hover/btn:text-white transition-colors">About</span>
             </button>
 
-            {!isLoggedIn && (
+            {isLoggedIn ? (
+              <div className="hover:scale-105 active:scale-95 transition-transform">
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  aria-label="Logout"
+                  className="px-3 sm:px-4 py-1.5 rounded-lg bg-gradient-to-r from-brand to-blue-600 hover:from-brand-light hover:to-blue-500 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.4)] transition-all group/logout disabled:opacity-50 disabled:cursor-wait cursor-pointer"
+                >
+                  <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+                  <LogOut size={14} className="group-hover/logout:translate-x-0.5 transition-transform" />
+                </button>
+              </div>
+            ) : (
               <div className="hover:scale-105 active:scale-95 transition-transform">
                 <Link href="/login" className="px-3 sm:px-4 py-1.5 rounded-lg bg-gradient-to-r from-brand to-blue-600 hover:from-brand-light hover:to-blue-500 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.4)] transition-all group/login">
-                  Login
+                  <span>Login</span>
                   <ArrowRight size={14} className="group-hover/login:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
@@ -230,7 +243,7 @@ export default function Navbar() {
                 disabled={isLoggingOut}
                 className="text-sm font-heading font-semibold uppercase tracking-[0.15em] text-white/40 hover:text-red-500 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-wait"
               >
-                {isLoggingOut ? "Exiting..." : "Exit"}
+                {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>
           ) : (
