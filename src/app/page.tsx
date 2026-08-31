@@ -87,7 +87,7 @@ export default function Home() {
         {/* Content Layer */}
         <div className="relative z-10 w-full">
           {/* Programs Section */}
-          <section id="programs" className="scroll-mt-24 md:scroll-mt-28 py-20 md:py-28 px-6">
+          <section id="programs" className="scroll-mt-24 md:scroll-mt-28 pt-8 sm:pt-12 md:pt-14 pb-20 md:pb-28 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
               <SectionHeader
                 subtitle="OUR SERVICES"

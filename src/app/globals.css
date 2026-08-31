@@ -2,9 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Lenis */
+/* Lenis & Responsive Base */
 html {
   scroll-behavior: auto !important;
+  max-width: 100vw;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 html.lenis,
@@ -13,6 +16,8 @@ html.lenis body {
 }
 
 body {
+  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   /* Eliminate 300ms tap delay on mobile browsers while allowing all panning */
   touch-action: manipulation;
