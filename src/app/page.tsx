@@ -90,9 +90,14 @@ export default function Home() {
           <section id="programs" className="scroll-mt-24 md:scroll-mt-28 pt-8 sm:pt-12 md:pt-14 pb-20 md:pb-28 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
               <SectionHeader
+                eyebrowStyle="pill"
                 subtitle="OUR SERVICES"
-                title="Programs"
-                description="Explore our curated training programs designed for every fitness level."
+                title={
+                  <>
+                    TRAINING <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-indigo-300">PROTOCOLS</span>
+                  </>
+                }
+                description="Explore our scientifically engineered training systems built for raw strength, metabolic endurance, and aesthetic conditioning."
               />
               <Suspense fallback={<SectionSkeleton />}>
                 <Programs />
@@ -103,9 +108,14 @@ export default function Home() {
           <section id="trainers" className="scroll-mt-24 md:scroll-mt-28 py-20 md:py-28 px-6">
             <div className="max-w-7xl mx-auto">
               <SectionHeader
+                eyebrowStyle="glow-line"
                 subtitle="MEET THE TEAM"
-                title="Our Trainers"
-                description="Professional coaches ready to guide you on every step of your fitness journey."
+                title={
+                  <>
+                    MASTER <span className="italic font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">COACHES</span>
+                  </>
+                }
+                description="World-class certified specialists and sports scientists dedicated to guiding every single milestone of your physical journey."
               />
               <Suspense fallback={<SectionSkeleton />}>
                 <Trainers />
@@ -121,9 +131,14 @@ export default function Home() {
           <section className="py-20 md:py-28 px-6">
             <div className="max-w-7xl mx-auto">
               <SectionHeader
-                subtitle="PRICING"
-                title="Membership Plans"
-                description="Choose a plan that fits your goals and start your transformation today."
+                eyebrowStyle="pill"
+                subtitle="PRICING & TIERS"
+                title={
+                  <>
+                    MEMBERSHIP <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-blue-400">PLANS</span>
+                  </>
+                }
+                description="Transparent, all-inclusive access designed to fuel your ambition with world-class facilities, recovery, and coaching."
               />
               <Suspense fallback={<SectionSkeleton />}>
                 <Pricing />

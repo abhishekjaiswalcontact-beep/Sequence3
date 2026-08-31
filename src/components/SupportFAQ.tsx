@@ -131,29 +131,44 @@ export default function SupportFAQ() {
   return (
     <div className="max-w-5xl mx-auto px-4">
       {/* Header & Search */}
-      <div className="text-center mb-16">
+      <div className="text-center mb-10 sm:mb-12">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 text-brand text-xs font-bold uppercase tracking-widest mb-6"
+          className="flex flex-col items-center"
         >
-          <HelpCircle size={14} />
-          Help Center
+          {/* Level 1: Eyebrow */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#120e24]/90 border border-brand/35 backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.15)] mb-2.5">
+            <HelpCircle size={13} className="text-brand-light" />
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
+              HELP &amp; INTEL
+            </span>
+          </div>
+
+          {/* Level 2: Main Heading */}
+          <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-heading font-extrabold text-white uppercase tracking-tight leading-tight mb-2.5 max-w-2xl">
+            GOT QUESTIONS? <br />
+            <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-indigo-200 drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+              WE&apos;VE GOT ANSWERS.
+            </span>
+          </h2>
+
+          {/* Level 3: Supporting Description */}
+          <p className="text-xs sm:text-sm text-gray-400 font-normal max-w-lg mx-auto leading-relaxed mb-6">
+            Everything you need to know about our memberships, elite training methodology, 24/7 facility access, and AI bio-analytics.
+          </p>
         </motion.div>
-        <h2 className="text-4xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter mb-8 shadow-neon/10">
-          Got Questions? <br /><span className="text-brand">We&apos;ve Got Answers.</span>
-        </h2>
         
         {/* Search Bar */}
-        <div className="relative max-w-2xl mx-auto group">
-          <div className="absolute inset-0 bg-brand/20 blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
-          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl p-2 focus-within:border-brand/50 transition-all backdrop-blur-md">
-            <Search className="ml-4 text-gray-500" size={24} />
+        <div className="relative max-w-xl mx-auto group">
+          <div className="absolute inset-0 bg-brand/15 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
+          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl p-1.5 focus-within:border-brand/50 transition-all backdrop-blur-md">
+            <Search className="ml-3.5 text-gray-500" size={20} />
             <input
               type="text"
-              placeholder="Search for questions (e.g. membership, price, trainer...)"
-              className="w-full bg-transparent border-none focus:ring-0 text-white p-4 placeholder:text-gray-600 font-medium"
+              placeholder="Search questions (e.g. membership, price, trainer...)"
+              className="w-full bg-transparent border-none focus:ring-0 text-white py-3 px-3 placeholder:text-gray-600 text-xs sm:text-sm font-normal"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

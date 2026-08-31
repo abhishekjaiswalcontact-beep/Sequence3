@@ -158,20 +158,37 @@ export default function Showcase() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 -z-1" />
 
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-6">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="max-w-xl"
           >
-            <h2 className="text-lg md:text-xl uppercase tracking-[0.5em] text-brand font-black mb-6">Our Gallery</h2>
-            <h3 className="text-4xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter">
-              Experience the <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">Pinaka Standard</span>
-            </h3>
+            {/* Level 1: Eyebrow */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#120e24]/90 border border-brand/35 backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.15)] mb-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-light animate-pulse" />
+              <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
+                OUR GALLERY
+              </span>
+            </div>
+
+            {/* Level 2: Main Heading */}
+            <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-heading font-extrabold text-white uppercase tracking-tight leading-tight mb-2.5">
+              EXPERIENCE THE <br />
+              <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-indigo-200 drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+                PINAKA STANDARD
+              </span>
+            </h2>
+
+            {/* Level 3: Supporting Description */}
+            <p className="text-xs sm:text-sm text-gray-400 font-normal leading-relaxed">
+              Step inside Noida&apos;s premier sanctuary of strength, engineered with Olympic-grade machinery, functional rigs, and restorative luxury.
+            </p>
           </motion.div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 shrink-0">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -179,10 +196,10 @@ export default function Showcase() {
                   setActiveFilter(cat);
                   setVisibleCount(6);
                 }}
-                className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                   activeFilter === cat 
-                    ? 'bg-brand text-white shadow-neon scale-105' 
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5'
+                    ? 'bg-gradient-to-r from-brand to-purple-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] scale-105 border border-brand/60' 
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
                 }`}
               >
                 {cat}

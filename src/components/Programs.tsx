@@ -117,7 +117,8 @@ export default function Programs() {
                     fill
                     sizes="(max-width: 768px) 100vw, 25vw"
                     loading="lazy"
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    style={{ filter: 'none', WebkitFilter: 'none' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent" />
                   
@@ -159,31 +160,31 @@ export default function Programs() {
 
                   {/* Title */}
                   <h3
-                    className="text-2xl font-heading font-extrabold uppercase tracking-wider mb-1 relative z-10 transition-colors duration-200"
+                    className="text-xl sm:text-2xl font-heading font-black uppercase tracking-tight mb-1 relative z-10 transition-colors duration-200"
                     style={{ color: 'white' }}
                   >
                     {prog.title}
                   </h3>
 
                   {/* Tag */}
-                  <p className="text-[11px] font-semibold uppercase tracking-widest mb-3 relative z-10" style={{ color: prog.accentColor }}>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] mb-2.5 relative z-10" style={{ color: prog.accentColor }}>
                     {prog.tag}
                   </p>
 
                   {/* Description */}
-                  <p className="text-gray-400 text-sm leading-relaxed relative z-10 flex-1">
+                  <p className="text-gray-300/80 text-xs sm:text-sm font-medium leading-relaxed relative z-10 flex-1">
                     {prog.desc}
                   </p>
 
                   {/* CTA Row */}
                   <motion.div
-                    className="flex items-center gap-1.5 mt-5 text-sm font-bold relative z-10"
+                    className="flex items-center gap-1.5 mt-5 text-xs font-bold uppercase tracking-[0.14em] relative z-10"
                     style={{ color: prog.accentColor }}
-                    initial={{ opacity: 0.6, x: 0 }}
+                    initial={{ opacity: 0.7, x: 0 }}
                     whileHover={{ opacity: 1, x: 4 }}
                   >
                     <span>View Program</span>
-                    <ArrowRight size={15} />
+                    <ArrowRight size={14} />
                   </motion.div>
                 </div>
 

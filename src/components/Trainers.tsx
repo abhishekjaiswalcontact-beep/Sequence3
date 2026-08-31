@@ -35,13 +35,13 @@ export default function Trainers() {
             <div className="absolute inset-0 flex flex-col justify-end p-8">
               <motion.h3 
                 layoutId={`trainer-name-${t.name}`} 
-                className="text-3xl font-heading font-bold text-white mb-2 uppercase tracking-wider translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
+                className="text-2xl sm:text-3xl font-heading font-black text-white mb-1.5 uppercase tracking-tight translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
               >
                 {t.name}
               </motion.h3>
               <motion.p 
                 layoutId={`trainer-role-${t.name}`} 
-                className="text-brand font-bold uppercase tracking-widest text-sm translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-75"
+                className="text-brand-light font-bold uppercase tracking-[0.2em] text-xs sm:text-sm translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-75 drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]"
               >
                 {t.role}
               </motion.p>

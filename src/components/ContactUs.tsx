@@ -126,11 +126,22 @@ export default function ContactUs() {
           {/* Left Column: Info & Cards */}
           <div className="lg:col-span-5 flex flex-col gap-8">
             <motion.div variants={itemVariants}>
-              <h2 className="text-4xl md:text-5xl font-heading font-black text-white mb-3 uppercase tracking-tighter">
-                Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-purple-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.3)]">Touch</span>
+              {/* Level 1: Eyebrow */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#120e24]/90 border border-brand/35 backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.15)] mb-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-light animate-pulse" />
+                <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
+                  DIRECT CONCIERGE
+                </span>
+              </div>
+
+              {/* Level 2: Main Heading */}
+              <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-heading font-extrabold text-white uppercase tracking-tight leading-tight mb-2.5">
+                GET IN <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-indigo-200 drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]">TOUCH</span>
               </h2>
-              <p className="text-gray-400 max-w-sm text-balance leading-relaxed">
-                Start your elite transformation. Reach out to our team or visit our flagship facility today.
+
+              {/* Level 3: Supporting Description */}
+              <p className="text-xs sm:text-sm text-gray-400 font-normal max-w-sm leading-relaxed">
+                Start your elite transformation. Reach out to our dedicated concierge team or visit our flagship facility today.
               </p>
             </motion.div>
 

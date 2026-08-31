@@ -53,37 +53,37 @@ export default function CareersSection() {
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex-1 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 bg-brand/10 text-brand text-[10px] font-bold uppercase tracking-widest rounded-full border border-brand/20">
+                <span className="px-3 py-1 bg-brand/10 text-brand-light text-[10px] font-bold uppercase tracking-[0.2em] rounded-full border border-brand/30">
                   {job.type}
                 </span>
-                <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                  <MapPin size={14} />
+                <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                  <MapPin size={14} className="text-brand-light" />
                   {job.location}
                 </div>
-                <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                  <Clock size={14} />
+                <div className="flex items-center gap-1.5 text-gray-400 text-xs">
+                  <Clock size={14} className="text-brand-light" />
                   Recently Posted
                 </div>
               </div>
               
               <div>
-                <h3 className="text-2xl md:text-3xl font-heading font-bold text-white group-hover:text-brand transition-colors duration-300">
+                <h3 className="text-2xl sm:text-3xl font-heading font-black text-white group-hover:text-brand-light transition-colors duration-300 uppercase tracking-tight">
                   {job.title}
                 </h3>
-                <p className="text-zinc-400 mt-2 max-w-2xl text-sm leading-relaxed">
+                <p className="text-gray-300/80 mt-2 max-w-2xl text-sm leading-relaxed font-medium">
                   {job.description}
                 </p>
               </div>
 
-              <div className="text-zinc-300 font-medium text-sm">
-                Open to Opportunities <span className="text-white">{job.salary}</span>
+              <div className="text-gray-300 font-medium text-sm">
+                Open to Opportunities <span className="text-white font-bold">{job.salary}</span>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <a href="#resume" className="px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-brand hover:text-white transition-all duration-300 flex items-center gap-2 group/btn">
+              <a href="#resume" className="px-8 py-3.5 bg-white text-black font-heading font-bold uppercase tracking-[0.16em] text-xs rounded-full hover:bg-brand hover:text-white transition-all duration-300 flex items-center gap-2 group/btn shadow-md hover:shadow-neon">
                 Apply Now
-                <ArrowUpRight size={18} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
               </a>
             </div>
           </div>

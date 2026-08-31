@@ -84,18 +84,18 @@ export default function Overlay() {
 
       {/* Central Dominant Hero Content */}
       <div className="flex flex-col items-center justify-center text-center my-auto w-full max-w-4xl px-2 sm:px-4 pointer-events-auto">
-        {/* Futuristic Kicker Badge */}
+        {/* Modern Kicker Badge */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#120e24]/80 border border-brand/40 backdrop-blur-xl shadow-[0_0_20px_rgba(139,92,246,0.25)] mb-3 sm:mb-4 group hover:border-brand/70 transition-all cursor-default"
+          className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-[#120e24]/80 border border-brand/35 backdrop-blur-xl shadow-[0_0_15px_rgba(139,92,246,0.2)] mb-3 group hover:border-brand/60 transition-all cursor-default"
         >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-light opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
           </span>
-          <span className="text-[10px] sm:text-xs font-heading font-extrabold uppercase tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
+          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
             ✦ NEXT-GEN AI FITNESS PLATFORM
           </span>
         </motion.div>
@@ -105,11 +105,11 @@ export default function Overlay() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[2.15rem] xs:text-[2.65rem] sm:text-5xl md:text-6xl lg:text-[4.75rem] xl:text-[5.4rem] font-heading font-black tracking-tight uppercase leading-[0.94] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] max-w-full"
+          className="text-3xl xs:text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-[4.25rem] font-heading font-extrabold tracking-tight uppercase leading-[1.04] text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)] max-w-full"
         >
           YOUR FITNESS.
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light drop-shadow-[0_0_35px_rgba(139,92,246,0.45)]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light drop-shadow-[0_0_25px_rgba(139,92,246,0.35)]">
             POWERED BY AI.
           </span>
         </motion.h1>
@@ -119,7 +119,7 @@ export default function Overlay() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-2.5 sm:mt-4 md:mt-4 text-xs sm:text-sm md:text-base lg:text-lg text-gray-300/90 font-medium max-w-xl sm:max-w-2xl leading-relaxed text-balance drop-shadow-md"
+          className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-gray-300 font-normal max-w-lg sm:max-w-xl leading-relaxed text-balance"
         >
           Where elite biomechanical coaching meets real-time AI computer vision. 
           Experience dynamic adaptive workouts, instant posture correction, and precision nutrition.
@@ -130,25 +130,25 @@ export default function Overlay() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 mt-4 sm:mt-6 md:mt-7 w-full sm:w-auto"
+          className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5 mt-4 sm:mt-6 w-full sm:w-auto"
         >
           {/* Primary CTA */}
           <Link
             href="#contact"
-            className="group relative w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-brand via-purple-600 to-blue-600 hover:from-brand-light hover:via-purple-500 hover:to-blue-500 text-white font-heading font-black tracking-[0.14em] uppercase text-xs sm:text-sm shadow-[0_0_25px_rgba(139,92,246,0.45)] hover:shadow-[0_0_40px_rgba(139,92,246,0.7)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2.5 overflow-hidden cursor-pointer border border-white/20"
+            className="group relative w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-brand via-purple-600 to-blue-600 hover:from-brand-light hover:via-purple-500 hover:to-blue-500 text-white font-heading font-bold tracking-[0.12em] uppercase text-xs sm:text-xs shadow-[0_0_20px_rgba(139,92,246,0.35)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 overflow-hidden cursor-pointer border border-white/20"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
             <span className="relative z-10">START YOUR JOURNEY</span>
-            <ArrowRight className="w-4 h-4 sm:w-4.5 sm:h-4.5 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
           </Link>
 
           {/* Secondary CTA */}
           <Link
             href="#programs"
-            className="group relative w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/20 hover:border-brand/50 text-white/90 hover:text-white font-heading font-bold tracking-[0.14em] uppercase text-xs sm:text-sm backdrop-blur-xl shadow-sm hover:shadow-[0_0_25px_rgba(139,92,246,0.25)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+            className="group relative w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 hover:border-brand/40 text-white/90 hover:text-white font-heading font-semibold tracking-[0.12em] uppercase text-xs sm:text-xs backdrop-blur-xl shadow-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>EXPLORE PINAKA</span>
-            <ChevronRight className="w-4 h-4 text-white/50 group-hover:text-brand-light group-hover:translate-x-0.5 transition-all shrink-0" />
+            <ChevronRight className="w-3.5 h-3.5 text-white/50 group-hover:text-brand-light group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
         </motion.div>
 

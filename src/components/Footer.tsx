@@ -70,30 +70,30 @@ export default function Footer() {
 
       {/* Top Elite Banner (CTA) */}
       <div className="border-b border-white/5 relative z-10 w-full bg-gradient-to-r from-black via-brand/5 to-black">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-16 lg:py-20 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-12 lg:py-16 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-black uppercase tracking-tighter mb-4">
-                    Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-blue-500 drop-shadow-[0_0_15px_rgba(139,92,246,0.3)]">The Elite.</span>
+                <h2 className="text-2xl xs:text-3xl sm:text-3xl md:text-4xl font-heading font-extrabold uppercase tracking-tight mb-2.5">
+                    ENGINEERED FOR <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-light via-purple-300 to-indigo-200 drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]">THE ELITE.</span>
                 </h2>
-                <p className="text-gray-400 text-lg max-w-xl text-balance">
-                    Join Pinaka Fitness today and experience the pinnacle of discipline, strength, and transformation.
+                <p className="text-xs sm:text-sm text-gray-400 max-w-xl text-balance leading-relaxed">
+                    Join Pinaka Fitness today and experience the pinnacle of biomechanical precision, strength, and transformation.
                 </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+            <div className="flex flex-col sm:flex-row items-center gap-3.5 shrink-0">
                 <Link 
                     href="/login" 
-                    className="px-8 py-5 rounded-full font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-white/20 hover:border-white/50 hover:bg-white/5 text-white"
+                    className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-heading font-semibold uppercase tracking-wider text-xs flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-white/20 hover:border-white/50 hover:bg-white/5 text-white"
                 >
                     Member Portal
                 </Link>
                 <Link 
                     href="/#contact" 
-                    className="group relative px-8 py-5 rounded-full font-black uppercase tracking-[0.2em] text-sm overflow-hidden flex items-center gap-3 transition-transform hover:scale-105 active:scale-95"
+                    className="group relative px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-heading font-semibold uppercase tracking-wider text-xs overflow-hidden flex items-center gap-2.5 transition-transform hover:scale-105 active:scale-95"
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-brand to-blue-600 opacity-90 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
                     <span className="relative z-10 text-white">Join Pinaka Elite</span>
-                    <ArrowRight className="w-5 h-5 relative z-10 text-white group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 relative z-10 text-white group-hover:translate-x-1 transition-transform" />
                 </Link>
             </div>
         </div>

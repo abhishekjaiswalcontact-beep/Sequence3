@@ -23,8 +23,9 @@ const config: Config = {
         surfaceBorder: "rgba(255, 255, 255, 0.1)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        heading: ["var(--font-outfit)", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
+        heading: ["var(--font-heading)", "sans-serif"],
+        display: ["var(--font-heading)", "sans-serif"],
       },
       boxShadow: {
         neon: "0 0 10px rgba(139, 92, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.1)",
