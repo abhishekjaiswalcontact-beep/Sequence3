@@ -134,7 +134,7 @@ export default function Overlay() {
         >
           {/* Primary CTA */}
           <Link
-            href="#pricing"
+            href="#contact"
             className="group relative w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-brand via-purple-600 to-blue-600 hover:from-brand-light hover:via-purple-500 hover:to-blue-500 text-white font-heading font-black tracking-[0.14em] uppercase text-xs sm:text-sm shadow-[0_0_25px_rgba(139,92,246,0.45)] hover:shadow-[0_0_40px_rgba(139,92,246,0.7)] transition-all duration-300 hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2.5 overflow-hidden cursor-pointer border border-white/20"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />

@@ -197,9 +197,9 @@ export default function Navbar() {
               <Image
                 src="/logo0.png"
                 alt="Pinaka Fitness"
-                width={120}
-                height={50}
-                className="h-8 sm:h-9 md:h-10 w-auto max-w-[120px] sm:max-w-[140px] object-contain transition-transform duration-300 group-hover:scale-105"
+                width={240}
+                height={80}
+                className="h-11 xs:h-12 sm:h-[3.25rem] md:h-14 lg:h-[3.5rem] w-auto max-w-[155px] xs:max-w-[175px] sm:max-w-[195px] md:max-w-[215px] lg:max-w-[230px] object-contain transition-transform duration-300 group-hover:scale-105"
                 priority
               />
             </Link>

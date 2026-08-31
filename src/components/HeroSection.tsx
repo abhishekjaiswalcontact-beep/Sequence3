@@ -10,13 +10,13 @@ export default function HeroSection() {
       className="
         relative
         bg-[#040408]
-        pt-[84px]
-        sm:pt-[96px]
-        md:pt-[104px]
+        pt-[106px]
+        xs:pt-[112px]
+        sm:pt-[118px]
+        md:pt-[128px]
         pb-8
         sm:pb-12
-        min-h-[calc(100svh-80px)]
-        lg:min-h-[calc(100vh-80px)]
+        min-h-[100svh]
         w-full
         max-w-full
         flex
