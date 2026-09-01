@@ -95,17 +95,17 @@ export default function ContactUs() {
   };
 
   const containerVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, staggerChildren: 0.15, ease: 'easeOut' }
+      transition: { duration: 0.35, staggerChildren: 0.05, ease: [0.22, 1, 0.36, 1] }
     }
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }
   };
 
   return (
@@ -119,9 +119,9 @@ export default function ContactUs() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "150px 0px 150px 0px" }}
           variants={containerVariants}
-          className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10"
+          className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10 transform-gpu"
         >
           {/* Left Column: Info & Cards */}
           <div className="lg:col-span-5 flex flex-col gap-8">

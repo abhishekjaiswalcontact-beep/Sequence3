@@ -6,27 +6,16 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import SectionHeader from "@/components/SectionHeader";
 
-// Dynamically import below-the-fold heavy components (code‑splitting)
-const Programs = dynamic(() => import("@/components/Programs"), { ssr: false });
-const Trainers = dynamic(() => import("@/components/Trainers"), { ssr: false });
-const Showcase = dynamic(() => import("@/components/Showcase"), { ssr: false });
-const Pricing = dynamic(() => import("@/components/Pricing"), { ssr: false });
-const SupportFAQ = dynamic(() => import("@/components/SupportFAQ"), { ssr: false });
-const ContactUs = dynamic(() => import("@/components/ContactUs"), { ssr: false });
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
-const Chatbot = dynamic(() => import("@/components/Chatbot"), { ssr: false });
+import Programs from "@/components/Programs";
+import Trainers from "@/components/Trainers";
+import Showcase from "@/components/Showcase";
+import Pricing from "@/components/Pricing";
+import SupportFAQ from "@/components/SupportFAQ";
+import ContactUs from "@/components/ContactUs";
+import Footer from "@/components/Footer";
 
-// Lightweight skeleton fallback for lazy sections
-const SectionSkeleton = () => (
-  <div className="py-24 px-6 container mx-auto animate-pulse">
-    <div className="h-8 bg-white/5 rounded-lg w-48 mx-auto mb-6" />
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="h-48 bg-white/5 rounded-2xl" />
-      ))}
-    </div>
-  </div>
-);
+// Lazy-load floating Chatbot widget so it does not block initial load
+const Chatbot = dynamic(() => import("@/components/Chatbot"), { ssr: false });
 
 export const metadata = {
   title: "PINAKA FITNESS - Gym & Fitness Center in Noida",
@@ -99,9 +88,7 @@ export default function Home() {
                 }
                 description="Explore our scientifically engineered training systems built for raw strength, metabolic endurance, and aesthetic conditioning."
               />
-              <Suspense fallback={<SectionSkeleton />}>
-                <Programs />
-              </Suspense>
+              <Programs />
             </div>
           </section>
           {/* Trainers Section */}
@@ -117,16 +104,12 @@ export default function Home() {
                 }
                 description="World-class certified specialists and sports scientists dedicated to guiding every single milestone of your physical journey."
               />
-              <Suspense fallback={<SectionSkeleton />}>
-                <Trainers />
-              </Suspense>
+              <Trainers />
             </div>
           </section>
           {/* Below‑the‑fold sections */}
           <section className="py-20 md:py-28">
-            <Suspense fallback={<SectionSkeleton />}>
-              <Showcase />
-            </Suspense>
+            <Showcase />
           </section>
           <section className="py-20 md:py-28 px-6">
             <div className="max-w-7xl mx-auto">
@@ -140,25 +123,17 @@ export default function Home() {
                 }
                 description="Transparent, all-inclusive access designed to fuel your ambition with world-class facilities, recovery, and coaching."
               />
-              <Suspense fallback={<SectionSkeleton />}>
-                <Pricing />
-              </Suspense>
+              <Pricing />
             </div>
           </section>
           <section className="py-20 md:py-28">
-            <Suspense fallback={<SectionSkeleton />}>
-              <SupportFAQ />
-            </Suspense>
+            <SupportFAQ />
           </section>
           <section className="py-20 md:py-28">
-            <Suspense fallback={<SectionSkeleton />}>
-              <ContactUs />
-            </Suspense>
+            <ContactUs />
           </section>
         </div>
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
+        <Footer />
         <Suspense fallback={null}>
           <Chatbot />
         </Suspense>

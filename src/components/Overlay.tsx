@@ -83,7 +83,7 @@ export default function Overlay() {
       </div>
 
       {/* Central Dominant Hero Content */}
-      <div className="flex flex-col items-center justify-center text-center my-auto w-full max-w-4xl px-2 sm:px-4 pointer-events-auto">
+      <div className="flex flex-col items-center justify-center text-center my-auto mx-auto w-full max-w-4xl px-2 sm:px-4 pointer-events-auto">
         {/* Modern Kicker Badge */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}

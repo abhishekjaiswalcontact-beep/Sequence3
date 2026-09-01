@@ -133,10 +133,11 @@ export default function SupportFAQ() {
       {/* Header & Search */}
       <div className="text-center mb-10 sm:mb-12">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col items-center"
+          viewport={{ once: true, margin: "150px 0px 150px 0px" }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center transform-gpu"
         >
           {/* Level 1: Eyebrow */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#120e24]/90 border border-brand/35 backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.15)] mb-2.5">

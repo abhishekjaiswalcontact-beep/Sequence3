@@ -66,12 +66,12 @@ export default function Pricing() {
         {plans.map((plan, idx) => (
           <motion.div
             key={plan.id}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            viewport={{ once: true, margin: "150px 0px 150px 0px" }}
+            transition={{ duration: 0.35, delay: idx * 0.05, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -10, scale: 1.02 }}
-            className={`relative group rounded-3xl p-[1px] bg-gradient-to-b ${plan.popular ? plan.gradient : 'from-white/10 to-transparent'}`}
+            className={`relative group rounded-3xl p-[1px] bg-gradient-to-b transform-gpu ${plan.popular ? plan.gradient : 'from-white/10 to-transparent'}`}
           >
             {/* Badge - Positioned relative to outer container for full visibility */}
             {plan.badge && (
@@ -119,11 +119,11 @@ export default function Pricing() {
 
       {/* Shared Features Section */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7 }}
-        className="w-full max-w-5xl mx-auto rounded-[2rem] bg-[#050505] border border-white/10 relative overflow-hidden p-6 sm:p-8 lg:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] group hover:border-brand/30 transition-colors duration-500"
+        viewport={{ once: true, margin: "150px 0px 150px 0px" }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-5xl mx-auto rounded-[2rem] bg-[#050505] border border-white/10 relative overflow-hidden p-6 sm:p-8 lg:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] group hover:border-brand/30 transition-colors duration-500 transform-gpu"
       >
         <div className="absolute top-0 right-1/4 w-[300px] h-[300px] bg-brand/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-brand/20 transition-colors" />
         <div className="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-blue-600/20 transition-colors" />

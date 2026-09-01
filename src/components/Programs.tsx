@@ -60,14 +60,14 @@ const containerVariants: Variants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.04,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } },
 };
 
 export default function Programs() {
@@ -79,11 +79,11 @@ export default function Programs() {
 
   return (
     <motion.div
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transform-gpu"
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={{ once: true, margin: '150px 0px 150px 0px' }}
     >
       {programs.map((prog) => {
         const Icon = prog.icon;

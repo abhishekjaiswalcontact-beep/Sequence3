@@ -162,7 +162,8 @@ export default function Showcase() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "150px 0px 150px 0px" }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-xl"
           >
             {/* Level 1: Eyebrow */}
@@ -211,19 +212,19 @@ export default function Showcase() {
         {/* Grid */}
         <motion.div 
           layout
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6 transform-gpu"
         >
           <AnimatePresence mode='popLayout'>
             {filteredItems.slice(0, visibleCount).map((item, idx) => (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ duration: 0.3, delay: Math.min(idx * 0.03, 0.12), ease: [0.22, 1, 0.36, 1] }}
                 onClick={() => openLightbox(idx)}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl md:rounded-3xl bg-surface border border-white/5 aspect-[4/5] md:aspect-square"
+                className="group relative cursor-pointer overflow-hidden rounded-2xl md:rounded-3xl bg-surface border border-white/5 aspect-[4/5] md:aspect-square transform-gpu"
               >
                 {/* Image — Next.js Image for lazy loading + WebP */}
                 <div className="absolute inset-0">
@@ -324,11 +325,16 @@ export default function Showcase() {
               className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center"
               onClick={e => e.stopPropagation()}
             >
-              <img 
-                src={filteredItems[selectedImage].src} 
-                alt={filteredItems[selectedImage].title}
-                className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl border border-white/5"
-              />
+              <div className="relative max-w-full w-full h-[65vh] flex items-center justify-center">
+                <Image 
+                  src={filteredItems[selectedImage].src} 
+                  alt={filteredItems[selectedImage].title}
+                  fill
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  className="object-contain rounded-xl shadow-2xl border border-white/5"
+                  priority
+                />
+              </div>
               
               <div className="mt-8 text-center max-w-2xl px-4">
                 <span className="text-brand uppercase tracking-[0.3em] text-xs font-black mb-4 block">

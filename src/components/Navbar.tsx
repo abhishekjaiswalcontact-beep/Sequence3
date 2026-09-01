@@ -7,11 +7,14 @@ import { Menu, X, ChevronDown, ArrowRight, Info, Camera, Target, Activity, Scan,
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 
+import { useLenis } from 'lenis/react';
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScannerModalOpen, setIsScannerModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { isAuthenticated: isLoggedIn, logout, user } = useAuth();
+  const lenis = useLenis();
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -64,19 +67,23 @@ export default function Navbar() {
         const scrollToTarget = () => {
           const element = document.getElementById(targetId);
           if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            if (lenis) {
+              lenis.scrollTo(element, { offset: -70, duration: 0.9 });
+            } else {
+              element.scrollIntoView({ behavior: 'smooth' });
+            }
             window.history.pushState(null, '', href);
           }
         };
 
         if (wasOpen) {
-          setTimeout(scrollToTarget, 100);
+          setTimeout(scrollToTarget, 80);
         } else {
           scrollToTarget();
         }
       }
     }
-  }, [isOpen]);
+  }, [isOpen, lenis]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hash) {

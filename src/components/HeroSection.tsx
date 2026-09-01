@@ -1,6 +1,5 @@
 'use client';
 
-import ScrollyCanvas from '@/components/ScrollyCanvas';
 import Overlay from '@/components/Overlay';
 
 export default function HeroSection() {
@@ -40,7 +39,6 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_40%,black_30%,transparent_100%)] pointer-events-none" />
       </div>
 
-      <ScrollyCanvas />
       <Overlay />
 
       {/* ── Seamless Visual Transition into Programs Section ── */}

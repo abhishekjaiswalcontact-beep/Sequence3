@@ -8,33 +8,32 @@ export default function SmoothScroll({
 }: {
   children: React.ReactNode;
 }) {
-  const [isMobile, setIsMobile] = useState(true); // Default to true for SSR safety
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
 
-  if (isMobile) {
-    return <>{children}</>;
-  }
+    const handleChange = (e: MediaQueryListEvent) => {
+      setReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   return (
     <ReactLenis
       root
       options={{
-        lerp: 0.1,             // Slightly reduced — smoother on low-end devices
-        duration: 1.2,
-        smoothWheel: true,
-        syncTouch: false,      // Disable smooth scroll interception on touch / mobile
-        touchMultiplier: 1.5,  // Natural touch feel
-        wheelMultiplier: 0.8,  // Less aggressive on desktop trackpads
+        lerp: 0.12,            // Responsive linear interpolation for instant response
+        duration: 0.9,         // Snappy duration without floaty drag
+        smoothWheel: !reducedMotion,
+        syncTouch: false,      // Native momentum scroll on touch devices (mobile & tablet)
+        touchMultiplier: 1.0,  // 1:1 natural touch tracking
+        wheelMultiplier: 1.0,  // 1:1 responsive desktop trackpad & mouse wheel tracking
         infinite: false,
-        autoRaf: true,         // Lenis manages its own RAF loop
+        autoRaf: true,         // Managed internal RAF loop
       }}
     >
       {children}

@@ -110,17 +110,17 @@ body {
     will-change: transform;
   }
 
-  /* content-visibility: auto — tells the browser to skip rendering off-screen sections */
-  .section-optimized {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 600px; /* estimated height to prevent CLS */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
   }
 }
 
 /* ─────────────────────────────────────────────
    Respect prefers-reduced-motion — accessibility
    + performance on devices with this preference
-───────────────────────────────────────────── */
+   ───────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

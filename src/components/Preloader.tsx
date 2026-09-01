@@ -24,8 +24,8 @@ export default function Preloader({
 
   useEffect(() => {
     const controls = animate(0, 100, {
-      duration: 0.8,
-      ease: "easeInOut",
+      duration: 0.45,
+      ease: "easeOut",
       onUpdate(value) {
         setProgress(value);
       },
@@ -33,7 +33,7 @@ export default function Preloader({
         setTimeout(() => {
           setLoading(false);
           onLoadingComplete?.();
-        }, 150);
+        }, 50);
       },
     });
 
@@ -43,7 +43,7 @@ export default function Preloader({
   useEffect(() => {
     const interval = setInterval(() => {
       setTextIndex((prev) => (prev + 1) % loadingTexts.length);
-    }, 400);
+    }, 250);
 
     return () => clearInterval(interval);
   }, []);
@@ -55,10 +55,9 @@ export default function Preloader({
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.02,
-            transition: { duration: 0.4 },
+            transition: { duration: 0.25, ease: "easeOut" },
           }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#07070B]"
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#07070B] pointer-events-none"
         >
           {/* Background */}
 

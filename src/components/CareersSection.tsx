@@ -41,11 +41,11 @@ export default function CareersSection() {
       {jobs.map((job, idx) => (
         <motion.div
           key={idx}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: idx * 0.1 }}
-          viewport={{ once: true }}
-          className="group relative bg-[#0c0c0c] border border-white/5 rounded-[2rem] p-8 hover:border-brand/30 transition-all duration-500 overflow-hidden"
+          transition={{ duration: 0.35, delay: idx * 0.05, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "150px 0px 150px 0px" }}
+          className="group relative bg-[#0c0c0c] border border-white/5 rounded-[2rem] p-8 hover:border-brand/30 transition-all duration-500 overflow-hidden transform-gpu"
         >
           {/* Subtle Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-brand/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
