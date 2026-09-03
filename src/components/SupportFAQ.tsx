@@ -17,9 +17,16 @@ import {
 import Link from 'next/link';
 import { useLenis } from 'lenis/react';
 
-const CATEGORIES = ['All', 'Membership', 'Pricing', 'Trainers', 'Workout', 'General'];
+interface FAQItem {
+  id: number | string;
+  category: string;
+  popular?: boolean;
+  question: string;
+  answer: string;
+  videoUrl?: string;
+}
 
-const faqData = [
+const DEFAULT_FAQS: FAQItem[] = [
   {
     id: 1,
     category: 'General',
@@ -96,12 +103,39 @@ const faqData = [
 ];
 
 export default function SupportFAQ() {
+  const [faqs, setFaqs] = useState<FAQItem[]>(DEFAULT_FAQS);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [openId, setOpenId] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<Record<number, 'up' | 'down'>>({});
+  const [openId, setOpenId] = useState<number | string | null>(null);
+  const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const lenis = useLenis();
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/faqs')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0 && isMounted) {
+          setFaqs(data);
+        }
+      })
+      .catch((err) => console.error('FAQ dynamic fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Dynamic Categories from FAQ list
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    set.add('All');
+    faqs.forEach((f) => {
+      if (f.category) set.add(f.category);
+    });
+    return Array.from(set);
+  }, [faqs]);
 
   // Scroll lock when video is open
   useEffect(() => {
@@ -114,18 +148,18 @@ export default function SupportFAQ() {
 
   // Filtering Logic
   const filteredFaqs = useMemo(() => {
-    return faqData.filter(faq => {
+    return faqs.filter(faq => {
       const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = activeCategory === 'All' || faq.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, activeCategory]);
+  }, [faqs, searchTerm, activeCategory]);
 
-  const mostAsked = useMemo(() => faqData.filter(f => f.popular).slice(0, 4), []);
+  const mostAsked = useMemo(() => faqs.filter(f => f.popular).slice(0, 4), [faqs]);
 
-  const handleFeedback = (id: number, type: 'up' | 'down') => {
-    setFeedback(prev => ({ ...prev, [id]: type }));
+  const handleFeedback = (id: number | string, type: 'up' | 'down') => {
+    setFeedback(prev => ({ ...prev, [String(id)]: type }));
   };
 
   return (
@@ -159,135 +193,172 @@ export default function SupportFAQ() {
           <p className="text-xs sm:text-sm text-gray-400 font-normal max-w-lg mx-auto leading-relaxed mb-6">
             Everything you need to know about our memberships, elite training methodology, 24/7 facility access, and AI bio-analytics.
           </p>
-        </motion.div>
-        
-        {/* Search Bar */}
-        <div className="relative max-w-xl mx-auto group">
-          <div className="absolute inset-0 bg-brand/15 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
-          <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl p-1.5 focus-within:border-brand/50 transition-all backdrop-blur-md">
-            <Search className="ml-3.5 text-gray-500" size={20} />
-            <input
+
+          {/* Search Box */}
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+            <input 
               type="text"
-              placeholder="Search questions (e.g. membership, price, trainer...)"
-              className="w-full bg-transparent border-none focus:ring-0 text-white py-3 px-3 placeholder:text-gray-600 text-xs sm:text-sm font-normal"
+              placeholder="Search by topic, e.g., 'parking', 'refund', 'guest'..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-brand transition-all text-xs sm:text-sm backdrop-blur-md"
             />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-white uppercase font-bold"
+              >
+                Clear
+              </button>
+            )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Sidebar Categories */}
-        <div className="lg:col-span-3 space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4 px-4">Categories</p>
-          <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 no-scrollbar">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap flex-shrink-0 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all text-left ${
-                  activeCategory === cat ? 'bg-brand text-white shadow-neon' : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+      {/* Main Content Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Categories */}
+        <div className="lg:col-span-4 space-y-3">
+          <div className="p-2 bg-white/[0.02] border border-white/5 rounded-2xl backdrop-blur-md">
+            <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest px-4 py-2">Categories</p>
+            <div className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-none">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap lg:whitespace-normal cursor-pointer ${
+                    activeCategory === cat 
+                      ? 'bg-brand text-white shadow-lg shadow-brand/20' 
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span>{cat}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeCategory === cat ? 'bg-white/20 text-white' : 'bg-white/5 text-gray-500'}`}>
+                    {cat === 'All' ? faqs.length : faqs.filter(f => f.category === cat).length}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Support Badge */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-900/20 to-transparent border border-brand/20 text-center lg:text-left">
+            <h4 className="text-white font-bold text-sm mb-1 uppercase">Need Human Help?</h4>
+            <p className="text-gray-400 text-xs mb-4">Our front desk team is online 24/7 to solve custom queries.</p>
+            <Link 
+              href="#contact" 
+              className="inline-block w-full py-2.5 rounded-xl bg-white/5 hover:bg-brand text-white border border-white/10 hover:border-transparent text-[10px] font-black uppercase tracking-widest text-center transition-all"
+            >
+              Direct Chat
+            </Link>
           </div>
         </div>
 
-        {/* FAQ Content */}
-        <div className="lg:col-span-9 space-y-12">
-          {/* Most Asked Grid */}
-          {searchTerm === '' && activeCategory === 'All' && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <TrendingUp size={20} className="text-brand" />
-                <h3 className="text-xl font-heading font-black text-white uppercase tracking-tight">Most Asked Questions</h3>
+        {/* Right Column: FAQ Items */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Most Asked Preview Grid (Only if on 'All' and no search) */}
+          {!searchTerm && activeCategory === 'All' && mostAsked.length > 0 && (
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4 text-brand-light">
+                <TrendingUp size={16} />
+                <span className="text-xs font-black uppercase tracking-widest">Most Asked Questions</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mostAsked.map(faq => (
-                  <button
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {mostAsked.map((faq) => (
+                  <div 
                     key={faq.id}
-                    onClick={() => setOpenId(faq.id)}
-                    className="p-6 rounded-2xl bg-white/5 border border-white/10 text-left hover:border-brand/50 transition-all hover:bg-white/[0.08] group"
+                    onClick={() => {
+                      setOpenId(faq.id);
+                      document.getElementById(`faq-${faq.id}`)?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-brand/40 transition-all cursor-pointer group"
                   >
-                    <p className="text-[10px] uppercase font-black tracking-widest text-brand mb-2">{faq.category}</p>
-                    <h4 className="text-white font-bold group-hover:text-white mb-2">{faq.question}</h4>
-                    <span className="text-xs text-brand/60 font-bold uppercase tracking-widest flex items-center gap-1">
-                      View Answer <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </button>
+                    <p className="text-white text-xs font-bold uppercase tracking-tight group-hover:text-brand-light transition-colors line-clamp-1 mb-1">
+                      {faq.question}
+                    </p>
+                    <p className="text-gray-500 text-[11px] line-clamp-2 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* FAQ Accordions */}
-          <div className="space-y-4">
-            <AnimatePresence mode="popLayout">
+          {/* Accordion FAQ List */}
+          <div className="space-y-3">
+            <AnimatePresence>
               {filteredFaqs.length > 0 ? (
-                filteredFaqs.map((faq) => {
+                filteredFaqs.map((faq, idx) => {
                   const isOpen = openId === faq.id;
+
                   return (
                     <motion.div
                       key={faq.id}
-                      layout
+                      id={`faq-${faq.id}`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="group"
+                      transition={{ duration: 0.2, delay: idx * 0.02 }}
+                      className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                        isOpen 
+                          ? 'bg-gradient-to-b from-white/[0.07] to-white/[0.02] border-brand/40 shadow-xl shadow-brand/5' 
+                          : 'bg-white/[0.02] border-white/5 hover:border-white/10'
+                      }`}
                     >
-                      <div className={`bg-[#121212]/80 border transition-all duration-300 rounded-3xl overflow-hidden ${
-                         isOpen ? 'border-brand/50 shadow-neon-strong' : 'border-white/5 hover:border-white/20'
-                      }`}>
-                        <button
-                          onClick={() => setOpenId(isOpen ? null : faq.id)}
-                          className="w-full px-8 py-7 flex justify-between items-center text-left"
-                        >
-                          <div className="flex-1 pr-8">
-                            <span className="text-[10px] font-black text-brand uppercase tracking-[0.3em] mb-2 block">{faq.category}</span>
-                            <h3 className="text-lg md:text-xl font-heading font-bold text-white tracking-wide">{faq.question}</h3>
-                          </div>
-                          <div className={`p-2 rounded-full transition-all duration-300 ${isOpen ? 'bg-brand text-white rotate-180' : 'bg-white/5 text-gray-500'}`}>
-                            {isOpen ? <Minus size={20} /> : <Plus size={20} />}
-                          </div>
-                        </button>
+                      <button
+                        onClick={() => setOpenId(isOpen ? null : faq.id)}
+                        className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left cursor-pointer"
+                        aria-expanded={isOpen}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-brand text-xs font-mono font-bold">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-white text-sm sm:text-base font-bold tracking-tight">
+                            {faq.question}
+                          </span>
+                        </div>
+                        <div className={`p-1.5 rounded-full border border-white/10 transition-transform duration-300 ${isOpen ? 'rotate-180 bg-brand text-white border-brand' : 'text-gray-400'}`}>
+                          {isOpen ? <Minus size={14} /> : <Plus size={14} />}
+                        </div>
+                      </button>
 
+                      {/* Content expansion */}
+                      <div 
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                      >
                         <AnimatePresence>
                           {isOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="px-6 pb-6 pt-2 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-white/5"
                             >
-                              <div className="px-8 pb-8 pt-2">
-                                <div className="h-px w-full bg-white/5 mb-6" />
-                                <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                                  {faq.answer}
-                                </p>
-                                
-                                <div className="flex flex-wrap items-center justify-between gap-6 pt-4">
-                                  {/* Video CTA */}
-                                  {faq.videoUrl && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setVideoUrl(faq.videoUrl!);
-                                      }}
-                                      className="flex items-center gap-2 text-sm font-bold text-brand uppercase tracking-widest hover:text-brand-light transition-colors group"
-                                    >
-                                      <div className="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <Video size={14} />
-                                      </div>
-                                      Watch Video Explanation
-                                    </button>
-                                  )}
+                              <p className="mb-4">{faq.answer}</p>
+                              
+                              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
+                                {/* Video Help Button */}
+                                {faq.videoUrl ? (
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setVideoUrl(faq.videoUrl || null);
+                                    }}
+                                    className="flex items-center gap-2 text-brand-light hover:text-white transition-colors text-xs font-bold uppercase tracking-wider"
+                                  >
+                                    <Video size={14} /> Watch 1-Min Video Guide
+                                  </button>
+                                ) : <div />}
 
-                                  {/* Feedback */}
-                                  <div className="flex items-center gap-4">
-                                    <span className="text-xs text-gray-600 font-bold uppercase tracking-widest">Was this helpful?</span>
+                                {/* Helpful Feedback */}
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[10px] uppercase font-mono text-gray-500">Helpful?</span>
+                                  <div className="flex items-center gap-1">
                                     <button 
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -295,7 +366,7 @@ export default function SupportFAQ() {
                                       }}
                                       aria-label="Thumbs up"
                                       className={`p-2 rounded-lg border transition-all ${
-                                        feedback[faq.id] === 'up' ? 'border-brand bg-brand/10 text-brand' : 'border-white/5 text-gray-500 hover:text-white'
+                                        feedback[String(faq.id)] === 'up' ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500' : 'border-white/5 text-gray-500 hover:text-white'
                                       }`}
                                     >
                                       <ThumbsUp size={16} />
@@ -307,7 +378,7 @@ export default function SupportFAQ() {
                                       }}
                                       aria-label="Thumbs down"
                                       className={`p-2 rounded-lg border transition-all ${
-                                        feedback[faq.id] === 'down' ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/5 text-gray-500 hover:text-white'
+                                        feedback[String(faq.id)] === 'down' ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/5 text-gray-500 hover:text-white'
                                       }`}
                                     >
                                       <ThumbsDown size={16} />

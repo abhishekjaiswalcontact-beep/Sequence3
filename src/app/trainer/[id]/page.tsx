@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { notFound, useRouter, useParams } from "next/navigation";
-import { trainers } from "@/lib/trainerData";
+import { trainers as defaultTrainers, Trainer } from "@/lib/trainerData";
 import { motion } from "framer-motion";
 import { Award, BookOpen, Clock, Mail } from "lucide-react";
 import Image from "next/image";
@@ -9,7 +10,40 @@ import Image from "next/image";
 export default function TrainerProfile() {
   const router = useRouter();
   const params = useParams();
-  const trainer = trainers.find((t) => t.id === params.id);
+  const trainerId = params?.id as string;
+
+  const defaultMatch = defaultTrainers.find((t) => t.id === trainerId);
+  const [trainer, setTrainer] = useState<Trainer | null>(defaultMatch || null);
+  const [loading, setLoading] = useState(!defaultMatch);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!trainerId) return;
+
+    fetch(`/api/public/trainers/${trainerId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && isMounted) {
+          setTrainer(data);
+        }
+      })
+      .catch((err) => console.error("Error fetching dynamic trainer", err))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [trainerId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!trainer) {
     notFound();
@@ -93,7 +127,7 @@ export default function TrainerProfile() {
                     <Award size={14} className="text-brand" /> Specialization
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {trainer.skills.map((skill, i) => (
+                    {(trainer.skills || []).map((skill, i) => (
                       <span key={i} className="px-4 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-400 text-xs font-bold tracking-widest uppercase">
                         {skill}
                       </span>
@@ -108,7 +142,7 @@ export default function TrainerProfile() {
                     <BookOpen size={14} className="text-brand" /> Certifications
                   </h4>
                   <ul className="space-y-3">
-                    {trainer.certifications.map((cert, i) => (
+                    {(trainer.certifications || []).map((cert, i) => (
                       <li key={i} className="text-zinc-400 text-xs font-bold flex items-start gap-3 group">
                         <span className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 group-hover:scale-150 transition-transform"></span> {cert}
                       </li>

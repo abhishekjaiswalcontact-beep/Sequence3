@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
@@ -13,58 +14,105 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+const DEFAULT_AI_FEATURES = [
+  {
+    id: 'scan',
+    title: 'AI BODY SCAN',
+    metric: '99.4% Biomechanical Accuracy',
+    desc: 'Real-time posture & joint angle tracking',
+    icon: Scan,
+    badge: 'LIVE COMPUTER VISION',
+    color: 'from-purple-500/20 to-brand/10',
+    borderColor: 'border-purple-500/30 group-hover:border-purple-400/60',
+    iconBg: 'bg-purple-500/20 text-purple-300',
+    dotColor: 'bg-purple-400',
+  },
+  {
+    id: 'diet',
+    title: 'AI DIET PLANNER',
+    metric: 'Macro-Calibrated Metabolic Protocols',
+    desc: 'Dynamic daily nutrient adaptation',
+    icon: Sparkles,
+    badge: 'ADAPTIVE SCIENCE',
+    color: 'from-blue-500/20 to-cyan-500/10',
+    borderColor: 'border-blue-500/30 group-hover:border-blue-400/60',
+    iconBg: 'bg-blue-500/20 text-blue-300',
+    dotColor: 'bg-blue-400',
+  },
+  {
+    id: 'workouts',
+    title: 'SMART WORKOUTS',
+    metric: 'Adaptive Load & Cadence Sync',
+    desc: 'Intelligent progressive overload engine',
+    icon: Cpu,
+    badge: 'REAL-TIME OPTIMIZED',
+    color: 'from-indigo-500/20 to-purple-500/10',
+    borderColor: 'border-indigo-500/30 group-hover:border-indigo-400/60',
+    iconBg: 'bg-indigo-500/20 text-indigo-300',
+    dotColor: 'bg-indigo-400',
+  },
+  {
+    id: 'personalized',
+    title: 'PERSONALIZED FITNESS',
+    metric: '100% Customized Biometric Path',
+    desc: 'Tailored to DNA, composition & goals',
+    icon: Target,
+    badge: 'INDIVIDUALIZED',
+    color: 'from-cyan-500/20 to-blue-500/10',
+    borderColor: 'border-cyan-500/30 group-hover:border-cyan-400/60',
+    iconBg: 'bg-cyan-500/20 text-cyan-300',
+    dotColor: 'bg-cyan-400',
+  }
+];
+
+interface HeroContent {
+  telemetryStatus: string;
+  telemetryAccuracy: string;
+  kickerBadge: string;
+  mainHeadlineLine1: string;
+  mainHeadlineLine2: string;
+  subheadline: string;
+  primaryCtaText: string;
+  primaryCtaLink: string;
+  secondaryCtaText: string;
+  secondaryCtaLink: string;
+  ratingText: string;
+  ratingCount: string;
+}
+
 export default function Overlay() {
-  // AI Feature Differentiator Cards
-  const aiFeatures = [
-    {
-      id: 'scan',
-      title: 'AI BODY SCAN',
-      metric: '99.4% Biomechanical Accuracy',
-      desc: 'Real-time posture & joint angle tracking',
-      icon: Scan,
-      badge: 'LIVE COMPUTER VISION',
-      color: 'from-purple-500/20 to-brand/10',
-      borderColor: 'border-purple-500/30 group-hover:border-purple-400/60',
-      iconBg: 'bg-purple-500/20 text-purple-300',
-      dotColor: 'bg-purple-400',
-    },
-    {
-      id: 'diet',
-      title: 'AI DIET PLANNER',
-      metric: 'Macro-Calibrated Metabolic Protocols',
-      desc: 'Dynamic daily nutrient adaptation',
-      icon: Sparkles,
-      badge: 'ADAPTIVE SCIENCE',
-      color: 'from-blue-500/20 to-cyan-500/10',
-      borderColor: 'border-blue-500/30 group-hover:border-blue-400/60',
-      iconBg: 'bg-blue-500/20 text-blue-300',
-      dotColor: 'bg-blue-400',
-    },
-    {
-      id: 'workouts',
-      title: 'SMART WORKOUTS',
-      metric: 'Adaptive Load & Cadence Sync',
-      desc: 'Intelligent progressive overload engine',
-      icon: Cpu,
-      badge: 'REAL-TIME OPTIMIZED',
-      color: 'from-indigo-500/20 to-purple-500/10',
-      borderColor: 'border-indigo-500/30 group-hover:border-indigo-400/60',
-      iconBg: 'bg-indigo-500/20 text-indigo-300',
-      dotColor: 'bg-indigo-400',
-    },
-    {
-      id: 'personalized',
-      title: 'PERSONALIZED FITNESS',
-      metric: '100% Customized Biometric Path',
-      desc: 'Tailored to DNA, composition & goals',
-      icon: Target,
-      badge: 'INDIVIDUALIZED',
-      color: 'from-cyan-500/20 to-blue-500/10',
-      borderColor: 'border-cyan-500/30 group-hover:border-cyan-400/60',
-      iconBg: 'bg-cyan-500/20 text-cyan-300',
-      dotColor: 'bg-cyan-400',
-    }
-  ];
+  const [content, setContent] = useState<HeroContent>({
+    telemetryStatus: 'AI CORE V3.8 ACTIVE',
+    telemetryAccuracy: '99.4% BIO-CALIBRATION',
+    kickerBadge: '✦ NEXT-GEN AI FITNESS PLATFORM',
+    mainHeadlineLine1: 'YOUR FITNESS.',
+    mainHeadlineLine2: 'POWERED BY AI.',
+    subheadline: 'Where elite biomechanical coaching meets real-time AI computer vision. Experience dynamic adaptive workouts, instant posture correction, and precision nutrition.',
+    primaryCtaText: 'START YOUR JOURNEY',
+    primaryCtaLink: '#contact',
+    secondaryCtaText: 'EXPLORE PINAKA',
+    secondaryCtaLink: '#programs',
+    ratingText: '4.9/5 Rating',
+    ratingCount: '30,000+ FITNESS JOURNEYS',
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/content?section=hero')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Partial<HeroContent> | null) => {
+        if (data && isMounted) {
+          setContent((prev) => ({ ...prev, ...data }));
+        }
+      })
+      .catch((err) => console.error('Hero content fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const aiFeatures = DEFAULT_AI_FEATURES;
 
   return (
     <div className="relative z-10 w-full flex-1 flex flex-col justify-between px-3.5 sm:px-6 md:px-10 py-2 sm:py-4 md:py-6 max-w-7xl mx-auto select-none">
@@ -73,12 +121,12 @@ export default function Overlay() {
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
           <span className="hidden min-[400px]:inline text-white/60">SYS.STATUS:</span>
-          <span className="text-brand-light font-bold">AI CORE V3.8 ACTIVE</span>
+          <span className="text-brand-light font-bold">{content.telemetryStatus}</span>
         </div>
         <div className="flex items-center gap-2 text-white/50">
           <span className="hidden sm:inline">PRECISION TELEMETRY</span>
           <span className="text-white/20 hidden sm:inline">•</span>
-          <span className="text-blue-400/90 font-medium">99.4% BIO-CALIBRATION</span>
+          <span className="text-blue-400/90 font-medium">{content.telemetryAccuracy}</span>
         </div>
       </div>
 
@@ -96,7 +144,7 @@ export default function Overlay() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
           </span>
           <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light">
-            ✦ NEXT-GEN AI FITNESS PLATFORM
+            {content.kickerBadge}
           </span>
         </motion.div>
 
@@ -107,10 +155,10 @@ export default function Overlay() {
           transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
           className="text-3xl xs:text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-[4.25rem] font-heading font-extrabold tracking-tight uppercase leading-[1.04] text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)] max-w-full"
         >
-          YOUR FITNESS.
+          {content.mainHeadlineLine1}
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-brand-light drop-shadow-[0_0_25px_rgba(139,92,246,0.35)]">
-            POWERED BY AI.
+            {content.mainHeadlineLine2}
           </span>
         </motion.h1>
 
@@ -121,8 +169,7 @@ export default function Overlay() {
           transition={{ duration: 0.7, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
           className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-gray-300 font-normal max-w-lg sm:max-w-xl leading-relaxed text-balance"
         >
-          Where elite biomechanical coaching meets real-time AI computer vision. 
-          Experience dynamic adaptive workouts, instant posture correction, and precision nutrition.
+          {content.subheadline}
         </motion.p>
 
         {/* Dual CTAs */}
@@ -134,20 +181,20 @@ export default function Overlay() {
         >
           {/* Primary CTA */}
           <Link
-            href="#contact"
+            href={content.primaryCtaLink || "#contact"}
             className="group relative w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-brand via-purple-600 to-blue-600 hover:from-brand-light hover:via-purple-500 hover:to-blue-500 text-white font-heading font-bold tracking-[0.12em] uppercase text-xs sm:text-xs shadow-[0_0_20px_rgba(139,92,246,0.35)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 overflow-hidden cursor-pointer border border-white/20"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
-            <span className="relative z-10">START YOUR JOURNEY</span>
+            <span className="relative z-10">{content.primaryCtaText}</span>
             <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover:translate-x-1 transition-transform shrink-0" />
           </Link>
 
           {/* Secondary CTA */}
           <Link
-            href="#programs"
+            href={content.secondaryCtaLink || "#programs"}
             className="group relative w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 hover:border-brand/40 text-white/90 hover:text-white font-heading font-semibold tracking-[0.12em] uppercase text-xs sm:text-xs backdrop-blur-xl shadow-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span>EXPLORE PINAKA</span>
+            <span>{content.secondaryCtaText}</span>
             <ChevronRight className="w-3.5 h-3.5 text-white/50 group-hover:text-brand-light group-hover:translate-x-0.5 transition-all shrink-0" />
           </Link>
         </motion.div>
@@ -164,9 +211,9 @@ export default function Overlay() {
               <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
             ))}
           </div>
-          <span className="font-semibold text-white">4.9/5 Rating</span>
+          <span className="font-semibold text-white">{content.ratingText}</span>
           <span className="text-white/30">•</span>
-          <span className="font-bold text-brand-light">30,000+ FITNESS JOURNEYS</span>
+          <span className="font-bold text-brand-light">{content.ratingCount}</span>
           <span className="text-white/30 hidden sm:inline">•</span>
           <span className="text-white/50 hidden sm:inline tracking-wider font-mono uppercase text-[9px]">RESULTS-DRIVEN</span>
         </motion.div>
@@ -364,5 +411,3 @@ export default function Overlay() {
     </div>
   );
 }
-
-

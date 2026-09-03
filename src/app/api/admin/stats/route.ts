@@ -1,19 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, apiError, apiResponse, NON_ADMIN_MEMBER_FILTER } from "@/lib/auth";
+import { seedWebsiteDataIfEmpty } from "@/lib/seedWebsiteData";
 
 export const runtime = "nodejs";
 
-// In-memory cache with 15s TTL
+// In-memory cache with 10s TTL
 interface CacheEntry {
   data: unknown;
   timestamp: number;
 }
 let adminStatsCache: CacheEntry | null = null;
-const CACHE_TTL_MS = 15000;
+const CACHE_TTL_MS = 10000;
 
 export async function GET() {
   try {
     await requireAdmin();
+    await seedWebsiteDataIfEmpty();
 
     const now = new Date();
 
@@ -23,7 +25,7 @@ export async function GET() {
 
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-    // Execute 6 light count queries concurrently
+    // Execute concurrent count queries
     const [
       totalMembers,
       activeMembers,
@@ -31,6 +33,12 @@ export async function GET() {
       pendingEnquiries,
       unreadContactMessages,
       openComplaints,
+      totalTrainers,
+      activeTrainers,
+      totalGalleryImages,
+      totalPricingPlans,
+      totalFAQs,
+      totalMediaUploads,
     ] = await Promise.all([
       prisma.user.count({ where: NON_ADMIN_MEMBER_FILTER }),
       prisma.user.count({ where: { ...NON_ADMIN_MEMBER_FILTER, isActive: true } }),
@@ -38,6 +46,12 @@ export async function GET() {
       prisma.enquiry.count({ where: { status: "Pending" } }),
       prisma.contactMessage.count({ where: { isRead: false } }),
       prisma.complaint.count({ where: { status: "Open" } }),
+      prisma.websiteTrainer.count(),
+      prisma.websiteTrainer.count({ where: { isActive: true } }),
+      prisma.websiteGalleryItem.count(),
+      prisma.websitePricingPlan.count(),
+      prisma.websiteFAQ.count(),
+      prisma.mediaUpload.count(),
     ]);
 
     const payload = {
@@ -48,6 +62,20 @@ export async function GET() {
       pendingWalkins: pendingEnquiries,
       unreadContactMessages,
       openComplaints,
+      totalTrainers,
+      activeTrainers,
+      totalGalleryImages,
+      totalPricingPlans,
+      totalFAQs,
+      totalMediaUploads,
+      websiteStats: {
+        trainers: totalTrainers,
+        gallery: totalGalleryImages,
+        pricing: totalPricingPlans,
+        faqs: totalFAQs,
+        media: totalMediaUploads,
+        messages: unreadContactMessages,
+      },
     };
 
     adminStatsCache = {

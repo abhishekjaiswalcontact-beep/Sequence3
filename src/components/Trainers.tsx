@@ -1,19 +1,37 @@
 'use client';
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { trainers } from "@/lib/trainerData";
+import { trainers as defaultTrainers, Trainer } from "@/lib/trainerData";
 
 export default function Trainers() {
   const router = useRouter();
+  const [trainerList, setTrainerList] = useState<Trainer[]>(defaultTrainers);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/public/trainers")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0 && isMounted) {
+          setTrainerList(data);
+        }
+      })
+      .catch((err) => console.error("Trainers fetch error", err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto">
-        {trainers.map((t, idx) => (
+        {trainerList.map((t, idx) => (
           <motion.div 
-            key={idx} 
+            key={t.id || idx} 
             layoutId={`trainer-${t.name}`}
             onClick={() => router.push(`/trainer/${t.id}`)}
             initial={{ opacity: 0, y: 20 }}

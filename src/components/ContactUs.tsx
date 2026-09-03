@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Mail, User, MessageSquare, Send, CheckCircle2, MapPin, Phone, Clock, AlertCircle, MessageCircle, ExternalLink, Navigation, Bookmark } from 'lucide-react';
 
@@ -18,6 +18,7 @@ const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
   </svg>
 );
+
 export default function ContactUs() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [formData, setFormData] = useState({
@@ -29,6 +30,37 @@ export default function ContactUs() {
     botField: '',
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const [contactInfo, setContactInfo] = useState({
+    gymName: "Pinaka Fitness Noida",
+    addressLine1: "Pinaka Fitness, Sector 127 Near Shani Mandir",
+    addressLine2: "Noida, UP 201301",
+    phone1: "+91-783-587-0089",
+    phone2: "+91-783-587-0082",
+    email: "pinakafitnessnoidasec127@gmail.com",
+    hoursHeadline: "Open 18/7",
+    hoursNote: "*Staff 5AM-10PM",
+    mapsUrl: "https://www.google.com/maps/place/PINAKA+FITNESS/@28.5332574,77.3542702,851m/data=!3m2!1e3!4b1!4m6!3m5!1s0x390ce7d06cfc41ad:0x5136f01d684bb5c3!8m2!3d28.5332574!4d77.3542702!16s%2Fg%2F11zd49g43c?entry=ttu",
+    instagramUrl: "https://www.instagram.com/pinakafitnessnoida127/?hl=en",
+    youtubeUrl: "#",
+    facebookUrl: "#",
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/content?section=contact')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && isMounted) {
+          setContactInfo((prev) => ({ ...prev, ...data }));
+        }
+      })
+      .catch((err) => console.error('Contact content fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -99,32 +131,39 @@ export default function ContactUs() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.35, staggerChildren: 0.05, ease: [0.22, 1, 0.36, 1] }
-    }
+      transition: {
+        duration: 0.35,
+        ease: [0.22, 1, 0.36, 1],
+        staggerChildren: 0.04,
+      },
+    },
   };
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+    },
   };
 
   return (
-    <>
-      <div className="relative bg-black overflow-hidden" id="contact">
-        {/* Abstract Background Elements */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=75&w=800')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand/20 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
+    <section id="contact" className="relative bg-[#050505] overflow-hidden">
+      {/* Background Lighting Elements */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand/10 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-600/10 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
 
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "150px 0px 150px 0px" }}
-          variants={containerVariants}
-          className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10 transform-gpu"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
         >
-          {/* Left Column: Info & Cards */}
-          <div className="lg:col-span-5 flex flex-col gap-8">
+          {/* Left Column: Contact Cards & Info */}
+          <div className="lg:col-span-5 space-y-8">
             <motion.div variants={itemVariants}>
               {/* Level 1: Eyebrow */}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#120e24]/90 border border-brand/35 backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.15)] mb-2.5">
@@ -148,7 +187,7 @@ export default function ContactUs() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Location Card */}
               <motion.a 
-                href="https://maps.google.com/?q=Sector+127,+Noida" 
+                href={contactInfo.mapsUrl || "https://maps.google.com/?q=Sector+127,+Noida"} 
                 target="_blank" 
                 rel="noreferrer"
                 variants={itemVariants}
@@ -159,7 +198,7 @@ export default function ContactUs() {
                   <MapPin className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">Our Location <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></h5>
-                <p className="text-gray-400 text-xs leading-relaxed">Pinaka Fitness, Sector 127 Near Shani Mandir<br />Noida, UP 201301</p>
+                <p className="text-gray-400 text-xs leading-relaxed">{contactInfo.addressLine1}<br />{contactInfo.addressLine2}</p>
               </motion.a>
 
               {/* Phone Card */}
@@ -172,8 +211,8 @@ export default function ContactUs() {
                   <Phone className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2">Call Us</h5>
-                <a href="tel:+918004963569" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors mb-1">+91-783-587-0089</a>
-                <a href="tel:+911204567890" className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors">+91-783-587-0082</a>
+                <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors mb-1">{contactInfo.phone1}</a>
+                <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="text-gray-400 hover:text-white text-xs leading-relaxed block transition-colors">{contactInfo.phone2}</a>
               </motion.div>
 
               {/* Email Card */}
@@ -186,8 +225,8 @@ export default function ContactUs() {
                   <Mail className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-2">Email Us</h5>
-                <p className="text-gray-400 text-xs font-mono mb-3">pinakafitnessnoidasec127@gmail.com</p>
-                <a href="mailto:pinakafitnessnoidasec127@gmail.com" className="mt-auto text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 group-hover:text-brand-light w-max">
+                <p className="text-gray-400 text-xs font-mono mb-3">{contactInfo.email}</p>
+                <a href={`mailto:${contactInfo.email}`} className="mt-auto text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 group-hover:text-brand-light w-max">
                   Send Email <Navigation className="w-3 h-3 rotate-90" />
                 </a>
               </motion.div>
@@ -202,26 +241,26 @@ export default function ContactUs() {
                   <Clock className="w-4 h-4 text-brand" />
                 </div>
                 <h5 className="text-white font-bold text-sm uppercase tracking-wider mb-1">Hours</h5>
-                <p className="text-brand font-black text-sm uppercase tracking-widest mb-1">Open 18/7</p>
-                <p className="text-gray-500 text-[10px] italic">*Staff 5AM-10PM</p>
+                <p className="text-brand font-black text-sm uppercase tracking-widest mb-1">{contactInfo.hoursHeadline}</p>
+                <p className="text-gray-500 text-[10px] italic">{contactInfo.hoursNote}</p>
               </motion.div>
             </div>
 
             {/* Socials & Embed */}
             <motion.div variants={itemVariants} className="flex items-center gap-4 mt-2">
-              <a href="https://www.instagram.com/pinakafitnessnoida127/?hl=en" aria-label="Pinaka Fitness on Instagram" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
+              <a href={contactInfo.instagramUrl || "https://www.instagram.com/pinakafitnessnoida127/?hl=en"} aria-label="Pinaka Fitness on Instagram" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#E1306C] hover:border-[#E1306C] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(225,48,108,0.4)]">
                 <InstagramIcon className="w-5 h-5" />
               </a>
-              <a href="pinakafitnessnoidasec127@gmail.com" aria-label="Email Pinaka Fitness" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
-                <MessageCircle className="w-5 h-5" /> {/* WhatsApp stand-in */}
+              <a href={`mailto:${contactInfo.email}`} aria-label="Email Pinaka Fitness" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(37,211,102,0.4)]">
+                <MessageCircle className="w-5 h-5" />
               </a>
-              <a href="#" aria-label="Pinaka Fitness on YouTube" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FF0000] hover:border-[#FF0000] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(255,0,0,0.4)]">
+              <a href={contactInfo.youtubeUrl || "#"} aria-label="Pinaka Fitness on YouTube" className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FF0000] hover:border-[#FF0000] text-gray-400 hover:text-white transition-all transform hover:scale-110 shadow-lg hover:shadow-[0_5px_15px_rgba(255,0,0,0.4)]">
                 <YoutubeIcon className="w-5 h-5" />
               </a>
               
               {/* Optional: Tiny Google Map Preview visual */}
               <a 
-                href="https://www.google.com/maps/place/PINAKA+FITNESS/@28.5332574,77.3542702,851m/data=!3m2!1e3!4b1!4m6!3m5!1s0x390ce7d06cfc41ad:0x5136f01d684bb5c3!8m2!3d28.5332574!4d77.3542702!16s%2Fg%2F11zd49g43c?entry=ttu&g_ep=EgoyMDI2MDcyMS4wIKXMDSoASAFQAw%3D%3D"
+                href={contactInfo.mapsUrl || "https://www.google.com/maps/place/PINAKA+FITNESS/@28.5332574,77.3542702,851m/data=!3m2!1e3!4b1!4m6!3m5!1s0x390ce7d06cfc41ad:0x5136f01d684bb5c3!8m2!3d28.5332574!4d77.3542702!16s%2Fg%2F11zd49g43c?entry=ttu"}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Open Pinaka Fitness location in Google Maps"
@@ -238,10 +277,8 @@ export default function ContactUs() {
 
           {/* Right Column: Premium Form */}
           <motion.div variants={itemVariants} className="lg:col-span-7">
-            <div className="bg-[#050505]/80 backdrop-blur-md relative rounded-[2rem] border border-white/10 overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.8)] p-8 lg:p-12 h-full">
-              {/* Gradient overlay inside form box */}
-              <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand/30 blur-[120px] pointer-events-none rounded-full" />
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand via-blue-500 to-brand" />
+            <div className="rounded-3xl bg-[#0c0c0e]/80 border border-white/10 p-8 sm:p-12 relative overflow-hidden backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[100px] rounded-full pointer-events-none" />
 
               <AnimatePresence mode="wait">
                 {status === 'success' ? (
@@ -380,48 +417,35 @@ export default function ContactUs() {
                           Your Message
                         </label>
                         <MessageSquare className="absolute right-5 top-4 w-4 h-4 text-gray-600 peer-focus:text-brand transition-colors" />
-                        {errors.message && <p className="text-red-500 text-xs mt-1 absolute -bottom-3 left-1">{errors.message}</p>}
+                        {errors.message && <p className="text-red-500 text-xs mt-1 absolute -bottom-5 left-1">{errors.message}</p>}
                       </div>
 
-                      <AnimatePresence>
-                        {errors.submit && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 flex items-center gap-3 text-red-500 text-sm mt-4"
-                          >
-                            <AlertCircle className="w-4 h-4 shrink-0" />
-                            <p>{errors.submit}</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      {errors.submit && (
+                        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4" />
+                          <span>{errors.submit}</span>
+                        </div>
+                      )}
 
-                      <motion.button
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.98 }}
+                      <button
                         type="submit"
                         disabled={status === 'submitting'}
-                        className="group relative w-full py-4 mt-6 bg-brand text-white font-bold rounded-xl overflow-hidden transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] uppercase tracking-widest disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full relative group/btn py-4 rounded-xl font-heading font-extrabold uppercase tracking-widest text-xs transition-all overflow-hidden bg-brand text-white hover:bg-brand-light shadow-lg hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] disabled:opacity-50"
                       >
-                        <span className="relative z-10 flex items-center justify-center gap-3">
+                        <span className="relative z-10 flex items-center justify-center gap-2">
                           {status === 'submitting' ? (
                             <>
-                              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                              </svg>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                               Transmitting...
                             </>
                           ) : (
                             <>
-                              Send Message
-                              <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                              <Send className="w-4 h-4" />
+                              Send Transmission
                             </>
                           )}
                         </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-brand to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </motion.button>
+                      </button>
                     </form>
                   </motion.div>
                 )}
@@ -430,6 +454,6 @@ export default function ContactUs() {
           </motion.div>
         </motion.div>
       </div>
-    </>
+    </section>
   );
 }

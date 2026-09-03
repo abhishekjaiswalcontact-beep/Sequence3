@@ -1,15 +1,22 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 import { Dumbbell, HeartPulse, Flame, PersonStanding, ArrowRight } from 'lucide-react';
 
-const programs = [
+const ICON_MAP: Record<string, React.ElementType> = {
+  strength: Dumbbell,
+  cardio: HeartPulse,
+  hiit: Flame,
+  yoga: PersonStanding,
+};
+
+const DEFAULT_PROGRAMS = [
   {
     slug: 'strength',
     title: 'Strength',
-    icon: Dumbbell,
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&auto=format',
     desc: 'Build muscle and power with our free weights and machines.',
     accentColor: '#f59e0b',
@@ -21,7 +28,6 @@ const programs = [
   {
     slug: 'cardio',
     title: 'Cardio',
-    icon: HeartPulse,
     image: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&q=75&auto=format',
     desc: 'Improve endurance with top-tier treadmills and bikes.',
     accentColor: '#ef4444',
@@ -33,7 +39,6 @@ const programs = [
   {
     slug: 'hiit',
     title: 'HIIT',
-    icon: Flame,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=75&auto=format',
     desc: 'High-intensity interval training to burn fat fast.',
     accentColor: '#f97316',
@@ -45,7 +50,6 @@ const programs = [
   {
     slug: 'yoga',
     title: 'Yoga',
-    icon: PersonStanding,
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=75&auto=format',
     desc: 'Enhance flexibility and mindfulness in our calm studio.',
     accentColor: '#a78bfa',
@@ -72,6 +76,23 @@ const cardVariants: Variants = {
 
 export default function Programs() {
   const router = useRouter();
+  const [programList, setProgramList] = useState(DEFAULT_PROGRAMS);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/content?section=programs')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0 && isMounted) {
+          setProgramList(data);
+        }
+      })
+      .catch((err) => console.error('Programs content fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleProgramClick = (slug: string) => {
     router.push(`/program/${slug}`);
@@ -85,8 +106,8 @@ export default function Programs() {
       whileInView="show"
       viewport={{ once: true, margin: '150px 0px 150px 0px' }}
     >
-      {programs.map((prog) => {
-        const Icon = prog.icon;
+      {programList.map((prog) => {
+        const Icon = ICON_MAP[prog.slug] || Dumbbell;
         return (
           <motion.div key={prog.slug} variants={cardVariants}>
             <div 

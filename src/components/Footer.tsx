@@ -1,33 +1,75 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Mail, ArrowRight, Dumbbell, Users, Target, Phone, Quote } from 'lucide-react';
 
-
 const FacebookIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-  );
-  const TwitterIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-  );
-  const YoutubeIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.11 1 12 1 12s0 3.89.46 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.89 23 12 23 12s0-3.89-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon></svg>
-  );
-  const InstagramIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-  );
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+);
+const TwitterIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+);
+const YoutubeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.11 1 12 1 12s0 3.89.46 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.89 23 12 23 12s0-3.89-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon></svg>
+);
+const InstagramIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+);
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+  const [footerInfo, setFooterInfo] = useState({
+    tagline: "We don't just build bodies; we build character. A premium sanctuary dedicated to absolute physical and mental transformation.",
+    membersCount: "500+",
+    equipmentQuality: "Top 1%",
+    whyChooseUs: [
+      'Advanced AI Posture Analysis',
+      'Olympic Weightlifting Zone',
+      'Biomechanically Perfect Equipment',
+      'Exclusive Recovery Lounge',
+      'Personalized Diet Counseling'
+    ],
+  });
+
+  const [contactInfo, setContactInfo] = useState({
+    gymName: "Pinaka Fitness Noida",
+    addressLine1: "Sector 127, Noida Near Shani Mandir",
+    addressLine2: "Uttar Pradesh, India",
+    phone1: "+91 78358 70089",
+    phone2: "+91 78358 70082",
+    email: "pinakafitnessnoidasec127@gmail.com",
+    instagramUrl: "https://www.instagram.com/pinakafitnessnoida127/?hl=en",
+    youtubeUrl: "#",
+    facebookUrl: "#",
+    twitterUrl: "#",
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/content')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && isMounted) {
+          if (data.footer) setFooterInfo((prev) => ({ ...prev, ...data.footer }));
+          if (data.contact) setContactInfo((prev) => ({ ...prev, ...data.contact }));
+        }
+      })
+      .catch((err) => console.error('Footer content fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if(email) {
-        setIsSubscribed(true);
-        setEmail('');
-        setTimeout(() => setIsSubscribed(false), 3000);
+      setIsSubscribed(true);
+      setEmail('');
+      setTimeout(() => setIsSubscribed(false), 3000);
     }
   };
 
@@ -47,19 +89,11 @@ export default function Footer() {
     { title: 'Sitemap', href: '#' },
   ];
 
-  const whyChooseUs = [
-    'Advanced AI Posture Analysis',
-    'Olympic Weightlifting Zone',
-    'Biomechanically Perfect Equipment',
-    'Exclusive Recovery Lounge',
-    'Personalized Diet Counseling'
-  ];
-
   const socialIcons = [
-    { Icon: FacebookIcon, href: '#', label: 'Pinaka Fitness on Facebook' },
-    { Icon: TwitterIcon, href: '#', label: 'Pinaka Fitness on Twitter' },
-    { Icon: YoutubeIcon, href: '#', label: 'Pinaka Fitness on YouTube' },
-    { Icon: InstagramIcon, href: 'https://www.instagram.com/pinakafitnessnoida127/?hl=en', label: 'Pinaka Fitness on Instagram' },
+    { Icon: FacebookIcon, href: contactInfo.facebookUrl || '#', label: 'Pinaka Fitness on Facebook' },
+    { Icon: TwitterIcon, href: contactInfo.twitterUrl || '#', label: 'Pinaka Fitness on Twitter' },
+    { Icon: YoutubeIcon, href: contactInfo.youtubeUrl || '#', label: 'Pinaka Fitness on YouTube' },
+    { Icon: InstagramIcon, href: contactInfo.instagramUrl || 'https://www.instagram.com/pinakafitnessnoida127/?hl=en', label: 'Pinaka Fitness on Instagram' },
   ];
 
   return (
@@ -115,7 +149,7 @@ export default function Footer() {
                 />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-md">
-               We don&apos;t just build bodies; we build character. A premium sanctuary dedicated to absolute physical and mental transformation.
+               {footerInfo.tagline}
             </p>
             
             {/* Location & Contact Focus */}
@@ -125,10 +159,10 @@ export default function Footer() {
                         <MapPin className="w-4 h-4 text-brand" />
                     </div>
                     <div>
-                        <h4 className="text-white font-bold text-sm tracking-wide uppercase mb-1">Pinaka Fitness Noida</h4>
+                        <h4 className="text-white font-bold text-sm tracking-wide uppercase mb-1">{contactInfo.gymName}</h4>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            Sector 127, Noida Near Shani Mandir<br/>
-                            Uttar Pradesh, India
+                            {contactInfo.addressLine1}<br/>
+                            {contactInfo.addressLine2}
                         </p>
                     </div>
                 </div>
@@ -138,8 +172,8 @@ export default function Footer() {
                     </div>
                     <div>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            +91 78358 70089 <br/>
-                            +91 78358 70082
+                            {contactInfo.phone1} <br/>
+                            {contactInfo.phone2}
                         </p>
                     </div>
                 </div>
@@ -149,7 +183,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <p className="text-gray-400 text-sm leading-relaxed hover:text-white transition-colors cursor-pointer">
-                            pinakafitnessnoidasec127@gmail.com
+                            {contactInfo.email}
                         </p>
                     </div>
                 </div>
@@ -162,7 +196,7 @@ export default function Footer() {
                         <Users className="w-5 h-5"/>
                     </div>
                     <div>
-                        <div className="font-heading font-black text-white">500+</div>
+                        <div className="font-heading font-black text-white">{footerInfo.membersCount}</div>
                         <div className="text-[10px] uppercase tracking-widest text-gray-500">Members</div>
                     </div>
                 </div>
@@ -171,7 +205,7 @@ export default function Footer() {
                         <Dumbbell className="w-5 h-5"/>
                     </div>
                     <div>
-                        <div className="font-heading font-black text-white">Top 1%</div>
+                        <div className="font-heading font-black text-white">{footerInfo.equipmentQuality}</div>
                         <div className="text-[10px] uppercase tracking-widest text-gray-500">Equipment</div>
                     </div>
                 </div>
@@ -184,7 +218,7 @@ export default function Footer() {
                 <Target className="w-5 h-5 text-brand" /> Why Pinaka
             </h3>
             <ul className="space-y-4">
-                {whyChooseUs.map((reason, idx) => (
+                {(footerInfo.whyChooseUs || []).map((reason, idx) => (
                     <li key={idx} className="flex items-start gap-3 group">
                         <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand group-hover:shadow-[0_0_8px_rgba(139,92,246,0.8)] transition-shadow shrink-0" />
                         <span className="text-gray-400 text-sm group-hover:text-white transition-colors">{reason}</span>

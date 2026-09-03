@@ -4,10 +4,17 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { useLenis } from 'lenis/react';
 
-const CATEGORIES = ['All', 'Workout', 'Trainers', 'Equipment'];
+interface GalleryItem {
+  id: number | string;
+  category: string;
+  title: string;
+  src: string;
+  caption: string;
+}
 
-const showcaseItems = [
+const DEFAULT_ITEMS: GalleryItem[] = [
   {
     id: 1,
     category: 'Workout',
@@ -94,18 +101,42 @@ const showcaseItems = [
   }
 ];
 
-import { useLenis } from 'lenis/react';
-
 export default function Showcase() {
+  const [items, setItems] = useState<GalleryItem[]>(DEFAULT_ITEMS);
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(6);
   const lenis = useLenis();
 
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/gallery')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0 && isMounted) {
+          setItems(data);
+        }
+      })
+      .catch((err) => console.error('Gallery dynamic fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    set.add('All');
+    items.forEach((i) => {
+      if (i.category) set.add(i.category);
+    });
+    return Array.from(set);
+  }, [items]);
+
   // Memoize filtered items — avoids recompute on every render
   const filteredItems = useMemo(
-    () => showcaseItems.filter(item => activeFilter === 'All' || item.category === activeFilter),
-    [activeFilter]
+    () => items.filter(item => activeFilter === 'All' || item.category === activeFilter),
+    [items, activeFilter]
   );
 
   const openLightbox = useCallback((index: number) => {
@@ -190,7 +221,7 @@ export default function Showcase() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2 shrink-0">
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => {
@@ -369,4 +400,3 @@ export default function Showcase() {
     </section>
   );
 }
-

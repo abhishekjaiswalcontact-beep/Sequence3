@@ -649,3 +649,111 @@ model WorkoutPlan {
   @@index([userId])
   @@map("workout_plans")
 }
+
+model WebsiteTrainer {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  role           String
+  img            String
+  experience     String
+  skills         String   // JSON array of strings
+  certifications String   // JSON array of strings
+  achievements   String   // JSON array of strings
+  bio            String
+  email          String
+  phone          String?  @default("")
+  socialLinks    String?  // JSON string
+  order          Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+  @@map("website_trainers")
+}
+
+model WebsiteGalleryItem {
+  id        String   @id @default(cuid())
+  category  String   // 'Workout', 'Trainers', 'Equipment', etc.
+  title     String
+  src       String
+  caption   String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([order])
+  @@index([isActive])
+  @@map("website_gallery_items")
+}
+
+model WebsitePricingPlan {
+  id          String   @id @default(cuid())
+  planId      String   @unique // 'monthly', 'quarterly', 'half_yearly', 'yearly', or custom
+  title       String
+  price       String
+  period      String
+  subtitle    String
+  savings     String?  @default("")
+  popular     Boolean  @default(false)
+  badge       String?  @default("")
+  gradient    String   @default("from-gray-600 to-gray-800")
+  buttonText  String   @default("Join Now")
+  buttonLink  String   @default("/#contact")
+  features    String?  // Optional JSON array of plan-specific features
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+  @@map("website_pricing_plans")
+}
+
+model WebsiteFAQ {
+  id        String   @id @default(cuid())
+  category  String   // 'General', 'Membership', 'Pricing', 'Trainers', 'Workout', etc.
+  question  String
+  answer    String
+  popular   Boolean  @default(false)
+  videoUrl  String?  @default("")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([popular])
+  @@index([order])
+  @@index([isActive])
+  @@map("website_faqs")
+}
+
+model WebsiteSectionContent {
+  id         String   @id @default(cuid())
+  sectionKey String   @unique // 'hero', 'programs', 'contact', 'amenities', 'footer'
+  content    String   // JSON string storing section data
+  updatedAt  DateTime @updatedAt
+
+  @@map("website_section_contents")
+}
+
+model MediaUpload {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  altText      String?  @default("")
+  folder       String   @default("general")
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("media_uploads")
+}

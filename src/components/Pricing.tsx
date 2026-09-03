@@ -1,10 +1,25 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Zap, Shield, Crown, Dumbbell, Activity, Users } from 'lucide-react';
 import Link from 'next/link';
 
-const plans = [
+interface PlanItem {
+  id: string;
+  title: string;
+  price: string;
+  period: string;
+  subtitle: string;
+  savings: string;
+  popular: boolean;
+  badge?: string;
+  gradient: string;
+  buttonText?: string;
+  buttonLink?: string;
+}
+
+const DEFAULT_PLANS: PlanItem[] = [
   {
     id: 'monthly',
     title: 'Monthly',
@@ -49,23 +64,57 @@ const plans = [
   }
 ];
 
-const features = [
-  { name: 'Full Gym Access', icon: Dumbbell },
-  { name: 'Certified Trainers', icon: Users },
-  { name: 'Clean Changing Room', icon: Activity },
-  { name: 'Steam & Shower', icon: Sparkles },
-  { name: 'World-Class Equipment', icon: Zap },
-  { name: 'Parking Space', icon: Shield },
+const ICON_MAP: Record<string, React.ElementType> = {
+  Dumbbell,
+  Users,
+  Activity,
+  Sparkles,
+  Zap,
+  Shield,
+  Crown,
+};
+
+const DEFAULT_FEATURES = [
+  { name: 'Full Gym Access', icon: 'Dumbbell' },
+  { name: 'Certified Trainers', icon: 'Users' },
+  { name: 'Clean Changing Room', icon: 'Activity' },
+  { name: 'Steam & Shower', icon: 'Sparkles' },
+  { name: 'World-Class Equipment', icon: 'Zap' },
+  { name: 'Parking Space', icon: 'Shield' },
 ];
 
 export default function Pricing() {
+  const [plans, setPlans] = useState<PlanItem[]>(DEFAULT_PLANS);
+  const [amenities, setAmenities] = useState<Array<{ name: string; icon: string }>>(DEFAULT_FEATURES);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/public/pricing')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && isMounted) {
+          if (Array.isArray(data.plans) && data.plans.length > 0) {
+            setPlans(data.plans);
+          }
+          if (Array.isArray(data.features) && data.features.length > 0) {
+            setAmenities(data.features);
+          }
+        }
+      })
+      .catch((err) => console.error('Pricing dynamic fetch error', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center w-full max-w-7xl mx-auto">
       {/* Duration Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mb-16">
         {plans.map((plan, idx) => (
           <motion.div
-            key={plan.id}
+            key={plan.id || idx}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "150px 0px 150px 0px" }}
@@ -107,10 +156,10 @@ export default function Pricing() {
                 )}
               </div>
 
-              <Link href="/#contact" className={`relative w-full py-3.5 rounded-xl font-heading font-semibold uppercase tracking-wider text-xs transition-all overflow-hidden group/btn block text-center ${plan.popular ? 'text-white' : 'text-gray-300 hover:text-white'}`}>
+              <Link href={plan.buttonLink || "/#contact"} className={`relative w-full py-3.5 rounded-xl font-heading font-semibold uppercase tracking-wider text-xs transition-all overflow-hidden group/btn block text-center ${plan.popular ? 'text-white' : 'text-gray-300 hover:text-white'}`}>
                 <div className={`absolute inset-0 bg-gradient-to-r ${plan.popular ? plan.gradient : 'from-white/5 to-white/10'} group-hover/btn:opacity-80 transition-opacity`} />
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-in-out" />
-                <span className="relative z-10">{plan.popular ? 'Get Started' : 'Join Now'}</span>
+                <span className="relative z-10">{plan.buttonText || (plan.popular ? 'Get Started' : 'Join Now')}</span>
               </Link>
             </div>
           </motion.div>
@@ -143,8 +192,8 @@ export default function Pricing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {features.map((feature, idx) => {
-              const Icon = feature.icon;
+            {amenities.map((feature, idx) => {
+              const Icon = ICON_MAP[feature.icon] || Dumbbell;
               return (
                 <div key={idx} className="flex items-center gap-4 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-brand/30 transition-all p-4 rounded-2xl cursor-default group/feat">
                   <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center border border-white/10 group-hover/feat:scale-110 group-hover/feat:border-brand/50 transition-all shadow-inner">

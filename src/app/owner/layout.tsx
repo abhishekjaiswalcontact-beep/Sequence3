@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   ChevronDown,
   Sparkles,
+  Globe,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -37,6 +38,20 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: "Dashboard", href: "/owner", icon: LayoutDashboard },
+  {
+    name: "Website CMS",
+    href: "/admin/trainers",
+    icon: Globe,
+    badge: "Owner",
+    children: [
+      { name: "Trainers & Coaches", href: "/admin/trainers" },
+      { name: "Showcase Gallery", href: "/admin/gallery" },
+      { name: "Pricing & Plans", href: "/admin/pricing" },
+      { name: "Website FAQs", href: "/admin/faqs" },
+      { name: "Website Content", href: "/admin/content" },
+      { name: "Media Library", href: "/admin/media" },
+    ],
+  },
   {
     name: "Members",
     href: "/owner/members",
